@@ -1,8 +1,42 @@
-+++
-title = 'Version Control System'
-date = 2023-11-19T15:10:55+08:00
-draft = false
-+++
+---
+title: Version Control System
+subtitle:
+date: 2023-11-19T20:10:49+08:00
+draft: false
+author:
+  name:
+  link:
+  email:
+  avatar:
+description:
+keywords:
+license:
+comment: false
+weight: 0
+tags:
+categories:
+  - Git
+hiddenFromHomePage: false
+hiddenFromSearch: false
+summary:
+resources:
+  - name: featured-image
+    src: featured-image.jpg
+  - name: featured-image-preview
+    src: featured-image-preview.jpg
+toc: true
+math: true
+lightgallery: true
+password:
+message:
+repost:
+  enable: false
+  url:
+
+# See details front matter: https://fixit.lruihao.cn/documentation/content-management/introduction/#front-matter
+---
+
+<!--more-->
 
 # Data Model
 The following pseudo code can explain the git data model clearly.
