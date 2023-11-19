@@ -1,0 +1,7 @@
+baseURL = 'https://gaohongy.github.io/blog/'
+languageCode = 'zh-cn'
+title = 'website'
+theme = 'ananke'
+
+[taxonomies]
+	category = "categories"
