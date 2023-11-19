@@ -49,7 +49,7 @@ repost:
 ## static_cast
 > Any well-deﬁned type conversion, other than those involving low-level const, can be requested using a `static_cast`.
 
-```
+```c++
 // i and j are both int type,
 double slope = static_cast<double>(j) / i; 
 
@@ -81,7 +81,7 @@ Maybe we will confused with the difference between `1 + '0'` and `static_cast<ch
 
 It is different from the `static_cast`, which only be used to change the type of an expression. 
 i.e. if we use `static_cast` to change the constness of an expression or `const_cast` to change the type of an expression, we will get a compile-time error.
-```
+```c++
 const char * cp; 
 
 // error: static_cast can’t cast away const
@@ -94,13 +94,13 @@ const_cast<string>(cp);
 ## reinterpret_cast
 > performs a low-level reinterpretation of the bit pattern of its operands.
 
-```
+```c++
 int * ip; 
 char * pc = reinterpret_cast<char * >(ip);
 ```
 
 It is worth noting that `reinterpret_cast` is dangerous. As the following code shows.
-```
+```c++
 int * ip; 
 char * pc = reinterpret_cast<char * >(ip);
 string str(pc);
@@ -110,3 +110,6 @@ So the actual object addressed by pc is an int, not a character. Any use of pc t
 But about `string str(pc)`, the compiler has no way of knowing that it actually holds a pointer to an int. Thus, the initialization of str with pc is absolutely correct—albeit in this case meaningless or worse.
 
 ## dynamic_cast
+
+# Reference
+> -[1] [关于编码、X 进制、Python3 字符串的那些事儿](https://testerhome.com/topics/18788)
