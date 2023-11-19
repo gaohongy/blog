@@ -1,4 +1,4 @@
 baseURL = 'https://gaohongy.github.io/blog/'
-languageCode = 'en-us'
+languageCode = 'zh-cn'
 title = 'website'
 theme = 'ananke'
