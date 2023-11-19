@@ -20,7 +20,7 @@ jobs:
         extended: true  # 如果使用的是 Hugo 扩展版本
 
     - name: Build
-      run: hugo --minify
+      run: pwd & ls -a
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
