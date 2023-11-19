@@ -75,9 +75,9 @@ theme = "FixIt"
     # FixIt 0.2.0 | 新增 是否显示 Hugo 和主题信息
     hugo = false
     # FixIt 0.2.0 | 新增 是否显示版权信息
-    copyright = true
+    copyright = false
     # FixIt 0.2.0 | 新增 是否显示作者
-    author = true
+    author = false
     # 网站创立年份
     since = 2019
     # FixIt 0.2.14 | 新增 是否显示网站内容总字数
@@ -90,7 +90,7 @@ theme = "FixIt"
     license = '<a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a>'
     # FixIt 0.2.17 | 更改 网站创立时间
     [params.footer.siteTime]
-      enable = true
+      enable = false
       animate = true
       icon = "fa-solid fa-heartbeat"
       pre = ""
@@ -155,7 +155,7 @@ theme = "FixIt"
     # FixIt 0.2.17 | 新增 是否使用 预计阅读
     readingTime = true
     # FixIt 0.2.17 | 新增 文章结束标志
-    endFlag = ""
+    endFlag = "EOF"
     # FixIt 0.2.18 | 新增 是否开启即时页面
     instantPage = false
 
@@ -175,7 +175,7 @@ theme = "FixIt"
       # 是否显示代码块的复制按钮
       copy = true
       # FixIt 0.2.13 | 新增 是否显示代码块的编辑按钮
-      edit = true
+      edit = false
       # 默认展开显示的代码行数
       maxShownLines = 10
 
@@ -186,12 +186,6 @@ theme = "FixIt"
       # url = "/edit/branch-name/subdirectory-name" # 相对于 `params.gitRepo`
       # url = "https://github.com/user-name/repo-name/edit/branch-name/subdirectory-name" # 完整链接
       url = ""
-
-# FixIt 0.2.12 | 新增 不蒜子统计
-  [params.ibruce]
-    enable = true
-    # 在文章中开启
-    enablePost = false
 
 # FixIt 0.2.16 | 新增 返回顶部
   [params.backToTop]
@@ -210,18 +204,6 @@ theme = "FixIt"
     light = ""
     dark = ""
     height = "2px"
-
-# FixIt 0.2.17 | 新增 页面加载期间顶部的进度条
-  # 有关详细信息：https://github.com/CodeByZach/pace
-  [params.pace]
-    enable = false
-    # 所有可用颜色：
-    # ["black", "blue", "green", "orange", "pink", "purple", "red", "silver", "white", "yellow"]
-    color = "blue"
-    # 所有可用主题：
-    # ["barber-shop", "big-counter", "bounce", "center-atom", "center-circle", "center-radar", "center-simple",
-    # "corner-indicator", "fill-left", "flash", "flat-top", "loading-bar", "mac-osx", "material", "minimal"]
-    theme = "minimal"
 
 # 作者配置
 [author]
