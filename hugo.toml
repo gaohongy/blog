@@ -1,7 +1,7 @@
 baseURL = 'https://gaohongy.github.io/blog/'
 languageCode = 'zh-cn'
 title = 'website'
-theme = 'LoveIt'
+theme = 'even'
 
 [taxonomies]
 	category = "categories"

@@ -2,7 +2,7 @@
 title = 'Version Control System'
 date = 2023-11-19T15:10:55+08:00
 draft = false
-categories: ["git"]
+categories = ["git"]
 +++
 
 # Data Model
