@@ -1,4 +1,3 @@
 baseURL = "https://gaohongy.github.io/blog"
 languageCode = "en-us"
 title = "My Hugo Site"
-theme = "ananke"
