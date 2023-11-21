@@ -1,5 +1,5 @@
 ---
-title: C++类型转换
+title: C++ 类型转换
 subtitle:
 date: 2023-11-19T21:33:22+08:00
 draft: false
