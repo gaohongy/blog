@@ -101,7 +101,26 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 但是实际测试，变量指定数组大小应用于kernel函数时，会报错"error: expression must have a constant value"
 
 #### Bank Conflict
-Why?
+According to the [real hardware architecture of SM](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure), SM has multiple **warp schedulers**.
+
+A block will be distributed to a SM, but the unit of execution of SM is warp which has 32 threads. 
+> It is easy to understand the principle of this setting, as we all know a block has many threads, if SM dispatch all of them at the same time, it will casuce difficulties. So the designer divide the block into warp.
+
+All warps in the same block will share the same shared memory. Shared memory is also divided into many subdivisions. The number of subdivisions equals to the number of warp.
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222214856.png)
+Warp access shared memory use the bank as the unit.
+
+The most optimal situation is every warp correspondens to a bank. At this situation, the time of accessing whole 32 banks is just 1 memory cycle.
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222218255.png)
+> To be precise, it should contains 32 threads and banks in figure. It is just a schematic drawing.
+
+But if many bank access the same bank, it will cause the following situation. At this situation, the time of accessing whole 32 banks is 32 memory cycles.
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222219570.png)
+> To be precise, it should contains 32 threads and banks in figure. It is just a schematic drawing.
+
+**How can we solve this problem ?**
+We can pad and adjust the memory structure as the following picture shows.
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
 
 ## Software structure

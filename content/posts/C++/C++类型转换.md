@@ -105,4 +105,4 @@ But about `string str(pc)`, the compiler has no way of knowing that it actually 
 ### dynamic_cast
 
 ## Reference
-> -[1] [关于编码、X 进制、Python3 字符串的那些事儿](https://testerhome.com/topics/18788)
+> - [1] [关于编码、X 进制、Python3 字符串的那些事儿](https://testerhome.com/topics/18788)
