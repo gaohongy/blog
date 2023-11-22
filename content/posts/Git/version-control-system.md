@@ -1,35 +1,43 @@
 ---
 title: Version Control System
 subtitle:
+description:
+keywords:
+summary:
+license:
 date: 2023-11-19T20:10:49+08:00
 tags:
 categories:
   - Git
-draft: false
-description:
-keywords:
-license:
-comment: false
 weight: 0
+
+password:
+message:
+
+draft: false
+repost:
+  enable: false
+  url:
+
 hiddenFromHomePage: false
 hiddenFromSearch: false
-summary:
+
+comment: false
+toc: true
+math: true
+lightgallery: force
+ruby: true
+fraction: true
+fontawesome: true
+
 resources:
   - name: featured-image
     src: featured-image.jpg
   - name: featured-image-preview
     src: featured-image-preview.jpg
-toc: true
-math: true
-lightgallery: force
-password:
-message:
-repost:
-  enable: false
-  url:
 ---
 
-# Data Model
+## Data Model
 The following pseudo code can explain the git data model clearly.
 
 Firstly, we will talk about the three models in git.
@@ -132,7 +140,7 @@ def load_reference(name_or_id):
 To insure current working stage, git introduces a HEAD, which can point to a reference (branch) or a commit. When the HEAD doesn't point to a reference, it is called 'detached HEAD' state. 
 When you use top level command `git checkout`, you will edit the HEAD, the .git/HEAD file. When you use top level command `git branch`, you will edit the branch/reference, the .git/refs/heads file.
 
-# staging area
+## staging area
 暂存区目前比较难理解，尤其是其内容的变化不知道是如何进行的，以及tree该如何理解
 
 Staging area is a middle state between current state and snapshot/commit.
@@ -141,8 +149,8 @@ If you have created many modifications, and you only want to use some of them to
 Every staging area is a tree, it is like a directory, which concludes some files and/or some directories. 
 Tree is also a object in git, so there is a hash string of tree in .git/objects. If you use the command `git cat-file -p` to get the value of a tree object, you will find its content is some files and/or some directories.
 
-# Movement
-## HEAD movement
+## Movement
+### HEAD movement
 Using relative reference
 
 You can use `^` operator to move to a previous state, such as `main^` and `HEAD^`. And you can use multiple operators to move to multiple previous states.
@@ -151,8 +159,8 @@ To simplify the operation of multiple states movement, you can use `~` operator.
 `^ + <number>` isn't similar with `~ + <number>`, its usage is shown in the following figure.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308161233851.png)
 
-## Branch/Commit movement
-### Merge branches
+### Branch/Commit movement
+#### Merge branches
 The begining state is shown in the following figure:
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308160033120.png)
 
@@ -170,7 +178,7 @@ An important and easily overlooked point is that excute an rebase command to a c
 
 If the work of using command `git rebase` to adjust the branch is too complex, you can use the interactive version of rebase. Just add a extra parameter `-i` (interactive).
 
-### Revoke changes
+#### Revoke changes
 The begining state is shown in the following figure:
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308160023109.png)
 
@@ -190,7 +198,7 @@ After we excute the command `git revert HEAD`
 
 The difference between the two commands is that the latter command create a new commit, which can be push to the remote, so that other people can see the change.
 
-### Move the specify commit 
+#### Move the specify commit 
 - `git cherry-pick commit...`
 
 In software development, the term cherry-pick is used to describe the action of choosing specific commits from one branch and applying them to current branch. It is derived from the analogy of a tree with branches that have many cherries (commits).
@@ -203,7 +211,7 @@ Now we are in the main branch, after we excute the command `git cherry-pick bugF
 
 If you select multiple commits when you use this command, it will pick the commit one by one, its role is similar with `git rebose -i`
 
-# Realistic scenarios
+## Realistic scenarios
 1. select a specific historical commit to commit
 The scenario is that you just want to select the bugFix branch to merge with main and to commit.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308161047477.png)
@@ -231,11 +239,11 @@ At last, switch to main branch and excute `git rebase caption` to move the main 
 
 > You can also use the `git cherry-pick` to solve this problem
 
-# Tag
+## Tag
 -   `git tag <tag_name> <commit>`: create a tag named tag_name at specify commit
 
-# Remote warehouse
-##  git fetch
+## Remote warehouse
+###  git fetch
 - download commit records which don't exist in local from remote
 - update the remote reference
 
@@ -252,7 +260,7 @@ download the remote source branch to the local destination branch, for example
 If the source is null, the command will create a new local destination branch
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308162343713.png)
 
-##  git pull
+###  git pull
 Because `git fetch` just download the remote data, we need edit the local data manually. So `git pull` will complete two works of download remote data and merge the remote and local reference.
 
 The local and remote structure is shown in the following figure.
@@ -265,7 +273,7 @@ Then we excute the command `git merge o/main`.
 
 If we excute `git pull`, we can get the same result. All in all, `git pull` = `git fetch` + `git merge`
 
-## git push
+### git push
 `git pull --rebase` = `git fetch` + `git rebase`
 
 Before push the local commit, maybe we need to handle some special situations.
@@ -289,15 +297,15 @@ When we set the mapping relationship between source and destination at origin, w
 If the source is null, the command will delete the remote destination branch
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308162341950.png)
 
-# Remote tracking
+## Remote tracking
 The remote tracking means that you can specify a branch to track a remote branch.
 Think about it, why when we commit an main branch, it will commit to the main branch in remote warehouse. The reason is that the local main branch maps to the original main branch.
 You can use `git branch -u original/main side` to set the side branch to track the remote main branch, after it, you can git push directly at side branch. The result of changing the map relationship is shown in the following figure.
 
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308162242181.png)
 
-# Some questions
-## .gitignore无效
+## Some questions
+### .gitignore无效
 > 原因：.gitignore 只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的
 
 ```
@@ -308,8 +316,8 @@ You can use `git branch -u original/main side` to set the side branch to track t
 ```
 [原因及解决方法](https://zhuanlan.zhihu.com/p/102890728)
 
-# Comments
-## The commands which are used in experiment
+## Comments
+### The commands which are used in experiment
 ```
 —————————————————————————————————
 control the ordinary file
@@ -356,6 +364,6 @@ git symbolic-ref HEAD
 git symbolic-ref HEAD refs/haeds/other
 ```
 
-# Reference
+## Reference
 - [1] [version control - missing-semester](https://missing-semester-cn.github.io/2020/version-control/)
 - [2] [Learn Git Branching](https://learngitbranching.js.org/?locale=zh_CN)

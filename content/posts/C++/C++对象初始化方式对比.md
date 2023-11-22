@@ -1,32 +1,40 @@
 ---
 title: C++ 对象初始化方式对比
 subtitle:
+description:
+keywords:
+summary:
+license:
 date: 2023-11-21T08:42:40+08:00
 tags:
 categories:
   - C++
-draft: false
-description:
-keywords:
-license:
-comment: false
 weight: 0
+
+password:
+message:
+
+draft: false
+repost:
+  enable: false
+  url:
+
 hiddenFromHomePage: false
 hiddenFromSearch: false
-summary:
+
+comment: false
+toc: true
+math: true
+lightgallery: force
+ruby: true
+fraction: true
+fontawesome: true
+
 resources:
   - name: featured-image
     src: featured-image.jpg
   - name: featured-image-preview
     src: featured-image-preview.jpg
-toc: true
-math: true
-lightgallery: force
-password: 
-message: 
-repost:
-  enable: false
-  url:
 ---
 
 在了解创建对象的方式之前，首先了解一下**初始化**和**赋值**两个操作，

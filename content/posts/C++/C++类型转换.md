@@ -29,17 +29,17 @@ repost:
   url:
 ---
 
-# 普通类型
+## 普通类型
 
-# 类类型
+## 类类型
 
 对于类类型,编译器只能自动执行一步隐式类型转换.例如从字符串字面值转换为string类型,但是无法继续将string隐式转换为其他类型
 
-# 新式显示类型转换
+## 新式显示类型转换
 格式
 > cast-name<type>(expression);
 
-## static_cast
+### static_cast
 > Any well-deﬁned type conversion, other than those involving low-level const, can be requested using a `static_cast`.
 
 ```c++
@@ -69,7 +69,7 @@ Before encountering this problem, I don't know the principle of `static_cast`. I
 
 Maybe we will confused with the difference between `1 + '0'` and `static_cast<char>(1)`. In fact, the former is not a type conversion, it just add 1 to the ASCII of the character '0'.
 
-## const_cast
+### const_cast
 > `const_cast` only be used to change the constness of an expression.
 
 It is different from the `static_cast`, which only be used to change the type of an expression. 
@@ -84,7 +84,7 @@ char * q = static_cast<char * >(cp);
 const_cast<string>(cp);
 ```
 
-## reinterpret_cast
+### reinterpret_cast
 > performs a low-level reinterpretation of the bit pattern of its operands.
 
 ```c++
@@ -102,7 +102,7 @@ We ought to know that no matter what type of pointer it is, the pc itselt is jus
 So the actual object addressed by pc is an int, not a character. Any use of pc that assumes it’s an ordinary character pointer is likely to fail at run time.
 But about `string str(pc)`, the compiler has no way of knowing that it actually holds a pointer to an int. Thus, the initialization of str with pc is absolutely correct—albeit in this case meaningless or worse.
 
-## dynamic_cast
+### dynamic_cast
 
-# Reference
+## Reference
 > -[1] [关于编码、X 进制、Python3 字符串的那些事儿](https://testerhome.com/topics/18788)
