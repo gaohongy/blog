@@ -2,20 +2,15 @@
 title: C++ 对象初始化方式对比
 subtitle:
 date: 2023-11-21T08:42:40+08:00
+tags:
+categories:
+  - C++
 draft: false
-author:
-  name:
-  link:
-  email:
-  avatar:
 description:
 keywords:
 license:
 comment: false
 weight: 0
-tags:
-categories:
-  - C++
 hiddenFromHomePage: false
 hiddenFromSearch: false
 summary:
@@ -26,7 +21,7 @@ resources:
     src: featured-image-preview.jpg
 toc: true
 math: true
-lightgallery: true
+lightgallery: force
 password: 
 message: 
 repost:

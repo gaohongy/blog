@@ -2,20 +2,15 @@
 title: Version Control System
 subtitle:
 date: 2023-11-19T20:10:49+08:00
+tags:
+categories:
+  - Git
 draft: false
-author:
-  name:
-  link:
-  email:
-  avatar:
 description:
 keywords:
 license:
 comment: false
 weight: 0
-tags:
-categories:
-  - Git
 hiddenFromHomePage: false
 hiddenFromSearch: false
 summary:
@@ -26,17 +21,13 @@ resources:
     src: featured-image-preview.jpg
 toc: true
 math: true
-lightgallery: true
+lightgallery: force
 password:
 message:
 repost:
   enable: false
   url:
-
-# See details front matter: https://fixit.lruihao.cn/documentation/content-management/introduction/#front-matter
 ---
-
-<!--more-->
 
 # Data Model
 The following pseudo code can explain the git data model clearly.

@@ -2,21 +2,16 @@
 title: BFS总结
 subtitle:
 date: 2023-11-19T19:51:30+08:00
+tags:
+  - BFS
+categories:
+  - Algorithm Template
 draft: false
-author:
-  name:
-  link:
-  email:
-  avatar:
 description:
 keywords:
 license:
 comment: false
 weight: 0
-tags:
-  - BFS
-categories:
-  - Algorithm Template
 hiddenFromHomePage: false
 hiddenFromSearch: false
 summary:
@@ -27,17 +22,13 @@ resources:
     src: featured-image-preview.jpg
 toc: true
 math: true
-lightgallery: true
+lightgallery: force
 password:
 message:
 repost:
   enable: false
   url:
-
-# See details front matter: https://fixit.lruihao.cn/documentation/content-management/introduction/#front-matter
 ---
-
-<!--more-->
 
 ![](https://cdn.jsdelivr.net/gh/G-ghy/cloudImages/20210425095448.png)
 

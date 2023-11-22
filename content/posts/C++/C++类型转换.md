@@ -2,20 +2,15 @@
 title: C++ 类型转换
 subtitle:
 date: 2023-11-19T21:33:22+08:00
+tags:
+categories:
+  - C++
 draft: false
-author:
-  name:
-  link:
-  email:
-  avatar:
 description:
 keywords:
 license:
 comment: false
 weight: 0
-tags:
-categories:
-  - C++
 hiddenFromHomePage: false
 hiddenFromSearch: false
 summary:
@@ -26,14 +21,12 @@ resources:
     src: featured-image-preview.jpg
 toc: true
 math: true
-lightgallery: false
+lightgallery: force
 password:
 message:
 repost:
   enable: false
   url:
-
-# See details front matter: https://fixit.lruihao.cn/documentation/content-management/introduction/#front-matter
 ---
 
 # 普通类型
