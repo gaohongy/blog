@@ -13,8 +13,6 @@ theme = "FixIt"
   # FixIt 主题版本
   version = "0.2.X"
   disableThemeInject = false
-  # 公共 git 仓库路径，仅在 enableGitInfo 设为 true 时有效
-  gitRepo = "https://github.com/gaohongy/blog"
 
   # 页面头部导航栏配置
   [params.header]
@@ -187,7 +185,7 @@ theme = "FixIt"
       # FixIt 0.2.15 | 更改 编辑的基础链接
       # url = "/edit/branch-name/subdirectory-name" # 相对于 `params.gitRepo`
       # url = "https://github.com/user-name/repo-name/edit/branch-name/subdirectory-name" # 完整链接
-      # url = "https://github.com/gaohongy/blog/edit/main/content"
+      url = "https://github.com/gaohongy/blog/edit/main/content"
 
 # FixIt 0.2.16 | 新增 返回顶部
   [params.backToTop]
