@@ -57,11 +57,9 @@ main time consuming:
 2. thread block switch
 
 ## Hardware structure
-<<<<<<< HEAD
-
 Grid、Block are login concepts, they are created by CUDA for programmers.
 According to the real physical level, every SM in GPU will excute multiple blocks, and it will divides block into multiple warps. The basic execution unit of SM is warp.
-=======
+
 In fact, the amazing computing capility of GPU comes from multiple thread. But we couldn't just use thread this only one concept to program since that it is difficult to describe the job or we can say organize them.
 
 So, CUDA introduce the concept of Grid and Block which are logic concepts, they are created by CUDA for programmers. In fact, we we can see them as a organization structure.
@@ -88,8 +86,6 @@ sm的组成：
 
 According to the real physical level, a SM(Streaming Multiprocessor) has many SP(Streaming Processor). Considure how can a 
  every SM in GPU will excute multiple blocks, and it will divides block into multiple warps. The basic execution unit of SM is warp. 
-
->>>>>>> ecc19f3 (Publish variables-in-Linux.md)
 
 > Some official concepts about warp:
 
@@ -141,13 +137,6 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 但是实际测试，变量指定数组大小应用于kernel函数时，会报错"error: expression must have a constant value"
 
 #### Bank Conflict
-<<<<<<< HEAD
-
-According to the [real hardware architecture of SM](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure), SM has multiple **warp schedulers**.
-
-A block will be distributed to a SM, but the unit of execution of SM is warp which has 32 threads.
-
-=======
 To understand this problem well, we should revisiv the [hardware structure of gpu](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure).
 
 在此基础上，我们将gpu的建议结构图进行扩充，装入shared memory和bank的结构
@@ -177,9 +166,8 @@ bank的划分单位和最大bandwith都是32bits=4bytes=1word
 
 According to the [real hardware architecture of SM](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure), SM has multiple **warp schedulers**.
 
-
 A block will be distributed to a SM, but the unit of execution of SM is warp which has 32 threads. 
->>>>>>> ecc19f3 (Publish variables-in-Linux.md)
+
 > It is easy to understand the principle of this setting, as we all know a block has many threads, if SM dispatch all of them at the same time, it will casuce difficulties. So the designer divide the block into warp.
 
 All warps in the same block will share the same shared memory. Shared memory is also divided into many subdivisions. The number of subdivisions equals to the number of warp.
@@ -188,12 +176,10 @@ Warp access shared memory use the bank as the unit.
 
 The most optimal situation is every warp correspondens to a bank. At this situation, the time of accessing whole 32 banks is just 1 memory cycle.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222218255.png)
-
 > To be precise, it should contains 32 threads and banks in figure. It is just a schematic drawing.
 
 But if many bank access the same bank, it will cause the following situation. At this situation, the time of accessing whole 32 banks is 32 memory cycles.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222219570.png)
-
 > To be precise, it should contains 32 threads and banks in figure. It is just a schematic drawing.
 
 
@@ -208,12 +194,9 @@ To get maximum performance, it is therefore important to understand how memory a
 We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
-<<<<<<< HEAD
-=======
 ### Global Memory
 #### coalesced & uncoalesced
 
->>>>>>> ecc19f3 (Publish variables-in-Linux.md)
 ## Software structure
 
 > All CUDA threads in a grid execute the same kernel function;
