@@ -34,17 +34,17 @@ resources:
 ---
 
 # 方法概览
-```
+```bash
 % echo "echo 'Hello Script'" > script.sh
 ```
 ## 方式1：直接运行可执行文件
-```
+```bash
 % chmod +x script.sh
 % ./script.sh
 Hello Script
 ```
 ## 方式2：使用命令 sh 或 bash
-```
+```bash
 % sh script.sh
 Hello Script
 
@@ -52,7 +52,7 @@ Hello Script
 Hello Script
 ```
 ## 方式3：使用命令 source 或 .
-```
+```bash
 % source script.sh
 Hello Script
 
@@ -70,30 +70,49 @@ Hello Script
 **实验验证**
 - 实验原理：子进程能够共享父进程数据，但父进程无法获取子进程设置的数据
 - 实验方法：通过两个文件A和B，A负责设置一个变量，由B以不同方式执行A。若A和B处在相同的shell环境中，则B能够访问到A设置的变量，反之则不同。通过查看B能否访问到A设置的变量来确定A的执行方式是否会创建子进程
-- 实验流程（以source和sh执行A为例）：
+- 实验流程（以source和bash执行A为例）：
 ```bash
 # 使用source命令执行A，由于source并不会让A在子进程中执行，因此B能够访问到同一进程中的变量
-% echo "var='show'" > f_a.sh
-% echo "source f_a.sh" > f_b.sh
-% echo 'echo $var' >> f_b.sh
 
-% sh f_b.sh
+# f_a.sh
+var=show
+
+#f_b.sh
+source f_a.sh
+echo $var
+
+# result
+% bash f_b.sh
 show
 ```
 
+由于f_b文件在执行f_a时使用的是`source`，并不会在子进程中执行f_a中的command，f_a和f_b处于同一个进程下，所以f_b可以访问到var
+
 ```bash
 # 使用sh命令执行A，由于sh会让A在子进程中执行，由于B在父进程中，因此无法访问到变量值
-% echo "var='show'" > f_a.sh
-% echo "sh f_a.sh" > f_b.sh
-% echo 'echo $var' >> f_b.sh
 
-% sh f_b.sh
+# f_a.sh
+var=show
+
+# f_b.sh
+bash f_a.sh
+echo $var
+
+# result
+% bash f_b.sh
 
 ```
+
+由于f_b文件在执行f_a时使用的是`bash`，会在子进程中执行f_a中的command，f_b由于在父进程中，所以f_b无法访问到子进程中的变量var
 
 > 注：在此过程中，需要了解单引号和双引号在终端中的以下几点
 > - 双引号内的变量会被解析，转义字符会被处理，并且可以嵌套使用单引号
 > - 单引号内的变量不会被解析，转义字符会被视为普通字符，并且可以嵌套使用双引号
+
+以上的两个执行已经验证了之前的判断，不过有一个容易被忽视的点，即执行f_b.sh时选择的方式。根据f_b.sh和f_a.sh的执行方式的组合（以`source`和`bash`为例），可以得到下图
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311241812397.png)
+也就是说，参与进来的进程数量最少是1，即当前进程在执行f_b.s时没有创建子进程，f_b.sh在执行f_a.sh时也没有创建子进程；参与进程数量最多是3，即两个执行过程都创建了子进程。
+理解到2个执行阶段的情况，这一整个实验的验证原理才算完整。
 
 # 采用何种解释器执行脚本?
 在脚本文件的第一行可以添加shebang（也称为hashbang）行，指定要用于解释和执行该脚本的解释器
