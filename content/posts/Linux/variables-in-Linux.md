@@ -45,3 +45,4 @@ Several commands related to variables in Linux are:
 ## Types of variables
 1. Environment Variables 
 2. Shell Variables
+

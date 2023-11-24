@@ -9,8 +9,10 @@ hasCJKLanguage = true
 # 更改使用 Hugo 构建网站时使用的默认主题
 theme = "FixIt"
 
+enableGitInfo = true
+
 [frontmatter]
-  date = ['date', 'publishdate', 'pubdate', 'published', 'lastmod', 'modified']
+  # date = ['date', 'publishdate', 'pubdate', 'published', 'lastmod', 'modified']
   lastmod = [':git', 'lastmod', 'modified', 'date', 'publishdate', 'pubdate', 'published']
 
 [params]

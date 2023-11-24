@@ -6,6 +6,7 @@ keywords:
 summary:
 license:
 date: {{ .Date }}
+lastmod:
 tags:
 categories:
   - 
