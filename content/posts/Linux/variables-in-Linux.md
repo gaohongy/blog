@@ -6,6 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-11-24T10:32:30+08:00
+lastmod: 
 tags:
 categories:
   - Linux
@@ -42,4 +43,5 @@ Several commands related to variables in Linux are:
 4. `declare`
 
 ## Types of variables
-
+1. Environment Variables 
+2. Shell Variables

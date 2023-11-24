@@ -9,6 +9,10 @@ hasCJKLanguage = true
 # 更改使用 Hugo 构建网站时使用的默认主题
 theme = "FixIt"
 
+[frontmatter]
+  date = ['date', 'publishdate', 'pubdate', 'published', 'lastmod', 'modified']
+  lastmod = [':git', 'lastmod', 'modified', 'date', 'publishdate', 'pubdate', 'published']
+
 [params]
   # FixIt 主题版本
   version = "0.2.X"
@@ -276,7 +280,35 @@ theme = "FixIt"
       copyTex = true
       # KaTeX 插件 mhchem
       mhchem = true
-      
+
+# FixIt 0.2.0 | 更改 文章页面的分享信息设置
+    [params.page.share]
+      enable = false
+      Twitter = true
+      Facebook = true
+      Linkedin = false
+      Whatsapp = true
+      Pinterest = false
+      Tumblr = false
+      HackerNews = false
+      Reddit = false
+      VK = false
+      Buffer = false
+      Xing = false
+      Line = true
+      Instapaper = false
+      Pocket = false
+      Flipboard = false
+      Weibo = true
+      Myspace = true
+      Blogger = true
+      Baidu = false
+      Odnoklassniki = false
+      Evernote = true
+      Skype = false
+      Trello = false
+      Mix = false
+
 # Hugo 解析文档的配置
 [markup]
   # 语法高亮设置 (https://gohugo.io/content-management/syntax-highlighting)
