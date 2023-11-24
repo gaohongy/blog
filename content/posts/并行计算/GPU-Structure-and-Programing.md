@@ -57,9 +57,39 @@ main time consuming:
 2. thread block switch
 
 ## Hardware structure
+<<<<<<< HEAD
 
 Grid、Block are login concepts, they are created by CUDA for programmers.
 According to the real physical level, every SM in GPU will excute multiple blocks, and it will divides block into multiple warps. The basic execution unit of SM is warp.
+=======
+In fact, the amazing computing capility of GPU comes from multiple thread. But we couldn't just use thread this only one concept to program since that it is difficult to describe the job or we can say organize them.
+
+So, CUDA introduce the concept of Grid and Block which are logic concepts, they are created by CUDA for programmers. In fact, we we can see them as a organization structure.
+
+首先给出一个gpu的简易逻辑图，理解gpu，sm，sp，warp scheduler的关系
+
+一个kernel 函数是一个grid，对应整个gpu
+然后grid中包含很多block，这个和gpu中的sm对应
+block包含很多thread，这个和sm中的sp对应
+
+sm的组成：
+1. register
+2. shared memory
+3. the cache of constant memory
+4. the cache of texture and surface memory
+5. L1 cache
+6. warp scheduler
+7. sp
+
+所以调度问题分为两个层面：
+1. 对于block的调度: 这个和sm有关系，多个block和多个sm，sm可以任意选择block执行，而且这种选择并不是一选定终生，中间过程还可以调整，但是block并不能拆分，只能整个放到sm上
+2. 对于thread的调度: 把一个block放到一个sm上，这时候我们的视角就要缩小到这个sm中了，这时候我们不需要考虑block层面了，只是要考虑block中这一大堆thread如何调度。这时候warp的概念就出现了，把一大堆thread范围为一些warp。然后由warp scheduler调度这一个warp，更准确的说法是由warp scheduler调度warp中的thread，所以warp只是一个中间概念，最终调度的仍然是thread(明确这一点对于理解后文的[bank conflict](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#bank-conflict)至关重要)
+
+
+According to the real physical level, a SM(Streaming Multiprocessor) has many SP(Streaming Processor). Considure how can a 
+ every SM in GPU will excute multiple blocks, and it will divides block into multiple warps. The basic execution unit of SM is warp. 
+
+>>>>>>> ecc19f3 (Publish variables-in-Linux.md)
 
 > Some official concepts about warp:
 
@@ -81,6 +111,9 @@ According to the real physical level, every SM in GPU will excute multiple block
    `--ptxas-option` is used to specify options directly to ptxas(the PTX optimizing assembler, its location in the whole compilation process can be seen at [CUDA Compilation](https://www.cnblogs.com/hongyugao/p/17445574.html#CUDA%20Compilation:~:text=occupancy(%E5%8D%A0%E7%94%A8%E7%8E%87)%E3%80%82-,CUDA%20Compilation,-%E6%B6%89%E5%8F%8A%E5%88%B0%E4%B8%A4))
 2. Use nvcc compilation option `-keep`
 3. Use `nvprof` command `nvprof --print-gpu-trace <program path>`
+
+### Register & Local Memory
+
 
 ### Shared Memory
 
@@ -108,11 +141,45 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 但是实际测试，变量指定数组大小应用于kernel函数时，会报错"error: expression must have a constant value"
 
 #### Bank Conflict
+<<<<<<< HEAD
 
 According to the [real hardware architecture of SM](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure), SM has multiple **warp schedulers**.
 
 A block will be distributed to a SM, but the unit of execution of SM is warp which has 32 threads.
 
+=======
+To understand this problem well, we should revisiv the [hardware structure of gpu](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure).
+
+在此基础上，我们将gpu的建议结构图进行扩充，装入shared memory和bank的结构
+还需要一张shared memory中是如何划分的bank
+
+bank的划分单位和最大bandwith都是32bits=4bytes=1word
+但是寻址单位还是1byte
+
+哪些情况下会产生bank conflict, 首先看一下都有哪些可能的bank访问情况
+1. 同一warp：
+	1.1 两个thread访问同一个bank中相同的字中的地址 (broadcast, conflict-free)
+	1.2 两个thread访问同一个bank中不同的字中的地址 (conflict)
+	1.3 两个thread访问不同bank (conflict-free)
+2. 不同warp：
+	2.1 两个thread访问同一个bank相同的字中的地址 (conflict)
+	2.2 两个thread访问同一个bank不同的字中的地址 (conflict)
+	1.3 两个thread访问不同bank (conflict-free)
+
+要理解bank conflict，需要首先了解bank是怎么回事，
+> To achieve high bandwidth, shared memory is divided into equally-sized memory modules, called banks, which can be **accessed simultaneously**.
+
+尤其是后面这句话比较重要，不同bank可以同时响应数据请求（实现这一点应该是需要硬件支持的，每一个bank是一个独立的存储单元）
+
+所以就可以理解为什么不同thread访问同一个bank的时会降低效率，因为本来可以同时读，现在只能串行读(关于这一点还有以下疑点：bank coflict 只发生在不同warp中的thread在访问同一个bank的不同byte时，同一个warp内的thread无论如何访问都不会产生bank conflict)
+
+这样来看，bank本身和ram的性质类似，但是整个shared_memory可以看为是多个ram拼接而成
+
+According to the [real hardware architecture of SM](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure), SM has multiple **warp schedulers**.
+
+
+A block will be distributed to a SM, but the unit of execution of SM is warp which has 32 threads. 
+>>>>>>> ecc19f3 (Publish variables-in-Linux.md)
 > It is easy to understand the principle of this setting, as we all know a block has many threads, if SM dispatch all of them at the same time, it will casuce difficulties. So the designer divide the block into warp.
 
 All warps in the same block will share the same shared memory. Shared memory is also divided into many subdivisions. The number of subdivisions equals to the number of warp.
@@ -129,10 +196,24 @@ But if many bank access the same bank, it will cause the following situation. At
 
 > To be precise, it should contains 32 threads and banks in figure. It is just a schematic drawing.
 
+
+**An correlative calculation of this problem**
+The hardware splits a memory request with bank conflicts into as many separate conflict-free requests as necessary, decreasing throughput by a factor equal to the number of separate memory requests. 
+
+If the number of separate memory requests is n, the initial memory request is said to cause n-way bank conflicts.
+
+To get maximum performance, it is therefore important to understand how memory addresses map to memory banks in order to schedule the memory requests so as to minimize bank conflicts.
+
 **How can we solve this problem ?**
 We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
+<<<<<<< HEAD
+=======
+### Global Memory
+#### coalesced & uncoalesced
+
+>>>>>>> ecc19f3 (Publish variables-in-Linux.md)
 ## Software structure
 
 > All CUDA threads in a grid execute the same kernel function;
