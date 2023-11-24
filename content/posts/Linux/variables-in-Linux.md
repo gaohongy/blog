@@ -57,6 +57,8 @@ The difference between these two variables is that environment variables can be 
 1. `export` is used to transform a Shell Variable to a Environment Variable so that child processes can inhert the environment of parent process.
 2. `declare -x` is used to transform a Shell Variable to a Environment Variable, it is like `export` command.
 
+理解访问范围可以结合 shell脚本执行方式对比的文章
+Linux下执行export出来的都是declare -x，但是macos就不一样
 
 
 ## Reference
