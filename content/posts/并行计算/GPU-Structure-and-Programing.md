@@ -136,6 +136,12 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 在C/C++中，存在一个变长数组（Variable Length Arrays，VLA）的概念，允许使用变量来指定数组的大小。
 但是实际测试，变量指定数组大小应用于kernel函数时，会报错"error: expression must have a constant value"
 
+#### Warp
+
+> The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps.
+
+一个SM可能执行多个block。虽然说不同block之间可以并行执行（不过要求在不同SM上才可以并行），但是映射到同一个SM的block，它上面的warp是不能并行执行的，只能相互等待。
+
 #### Bank Conflict
 To understand this problem well, we should revisiv the [hardware structure of gpu](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure).
 
@@ -195,7 +201,15 @@ We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
 ### Global Memory
+The path of accessing global memory: L1 cache -> L2 cache -> global memory
+
 #### coalesced & uncoalesced
+coalesced memory access <=> a global memory access request from a warp will cause to the least data transforming.
+
+$Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (warp实际请求数据量) }{ bytes \ number \ that \ participate \ in \ the \ data \ transforming \ (实际输出的数据量)}$
+
+About the L2 cache.
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311242150971.png)
 
 ## Software structure
 
@@ -220,13 +234,9 @@ vecAddKernel<<<dimGrid, dimBlock>>>(...);
 
 > About the more detail specifications please see [official technical specifications](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#features-and-technical-specifications)
 
-### Warp
 
-> The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps.
 
-一个SM可能执行多个block。虽然说不同block之间可以并行执行（不过要求在不同SM上才可以并行），但是映射到同一个SM的block，它上面的warp是不能并行执行的，只能相互等待。
-
-## Softwarhhe stack
+## Software stack
 
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309241804271.png)
 
