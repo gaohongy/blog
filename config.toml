@@ -14,7 +14,7 @@ theme = "FixIt"
   version = "0.2.X"
   disableThemeInject = false
   # 公共 git 仓库路径，仅在 enableGitInfo 设为 true 时有效
-  # gitRepo = "https://github.com/gaohongy/blog"
+  gitRepo = "https://github.com/gaohongy/blog"
 
   # 页面头部导航栏配置
   [params.header]
