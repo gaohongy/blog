@@ -9,6 +9,9 @@ hasCJKLanguage = true
 # 更改使用 Hugo 构建网站时使用的默认主题
 theme = "FixIt"
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [params]
   # FixIt 主题版本
   version = "0.2.X"
@@ -232,15 +235,15 @@ theme = "FixIt"
 
 # FixIt 0.2.0 | 新增 搜索配置
   [params.search]
-    enable = false
+    enable = true
     # 搜索引擎的类型 ["lunr", "algolia", "fuse"]
-    type = "lunr"
+    type = "fuse"
     # 文章内容最长索引长度
     contentLength = 4000
     # 搜索框的占位提示语
     placeholder = ""
     # FixIt 0.2.1 | 新增 最大结果数目
-    maxResultLength = 10
+    maxResultLength = 20
     # FixIt 0.2.3 | 新增 结果内容片段长度
     snippetLength = 50
     # FixIt 0.2.1 | 新增 搜索结果中高亮部分的 HTML 标签
