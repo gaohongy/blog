@@ -134,19 +134,27 @@ We can refer to [Query L2 cache Properties](https://docs.nvidia.com/cuda/cuda-c-
 The path of accessing global memory: L1 cache -> L2 cache -> global memory
 
 #### coalesced & uncoalesced
-coalesced memory access <=> a global memory access request from a warp will cause to the least data transforming.
+coalesced memory access <=> a global memory access request from **a warp** will cause to 100% degree of coalescing.
+> The above conclusion has two important things we need to pay attention to:
+> 1. The object we talk about is a warp
+> 2. The definition of degree of coalescing is described as the following  formula
 
 $Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (warp实际请求数据量) }{ bytes \ number \ that \ participate \ in \ the \ data \ transforming \ (实际输出的数据量)}$
 
+
 #### Common memory access types
 1. Sequential **coalesced** access
+
 2. Out-of-order **coalesced** access
 3. Misaligned **uncoalesced** access
 4. Strided **uncoalesced** access
 
-> Please Note that this is different from 
-5. Broad **uncoalesced** access
+> Please Note that this is different from [grid stride loop](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#grid-stride-loop), which emphasizes that how to solve the big problem which the scale is bigger than the amount of threads. But there we want to emphasize a type of memory access.
 
+5. Broadcast **uncoalesced** access
+
+使用event和stream测量一下以上几种访问类型的执行时间
+其实这块判断是否会发生合并的一个前提就是确定从global memory一次到底取多少数据，现有认知是按照字节编制，但是按照字进行读取，但是书上却说一次读取32Bytes，一个字总不能有32Bytes吧。
 
 ### Shared Memory
 
@@ -268,6 +276,8 @@ vecAddKernel<<<dimGrid, dimBlock>>>(...);
 
 ## Software stack
 
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311251423321.png)
+
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309241804271.png)
 
 ## Kernel Function
@@ -310,6 +320,12 @@ The communication between CPU and GPU is asynchronous for high performance. So n
 - `__global__`
 - `__device__`
 
+|  access type \ function type    |   `__global__`   |   `__device__`   |   `__host__`   |
+| ---- | ---- | ---- | ---- |
+|  host    |   yes   |   no   |  yes    |
+| `__global__` function   |   yes   |   yes   |   no   |
+|  `__device__` function    |   no   |   yes   |   no   |
+
 When you don't specify the type of function, the default is the `__host__`
 Host can call `__global__`, `__global` can call `__device__`, `__device__` can call `__device__`
 
@@ -348,13 +364,14 @@ Host and device has different authorities to use the memory. The following table
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309271517094.png)
 
 ## Common Parallelization methods
+### Grid-stride loop
+This method is used to solve the problem, the parallelism(并行度) is more than the quantity of threads.
 
-1. Grid-stride loop
+In some situations, we can create many threads so that satisfied the parallelism, that we can allocate a separate thread for every threads.
 
-   This method is used to solve the problem, the parallelism(并行度) is more than the quantity of threads.
-   In some situations, we can create many threads so that satisfied the parallelism, that we can allocate a separate thread for every threads.
-   But if the parallelism is more than the quantity of threads and we still use the above strategy, we will get the following result.
-   ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309241915666.png)
+But if the parallelism is more than the quantity of threads and we still use the above strategy, we will get the following result.
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309241915666.png)
 
 > The parallelism is 32, but we just have 8 threads, we can't allocate a separate thread for every threads.
 
@@ -367,8 +384,7 @@ In short, the core approach to implement it is `for (size_t i = threadIdx.x; i <
 
 Grid-stride loop uses <total number of threads> to map the threads to tasks reasonably, the <total number of threads> is a magic number, it can ensure different thread will not intersect with each other and finish all tasks.
 
-2. Another way to solve the data conflict
-
+### Fixed location solve the data conflict
 The most obvious answer is using mutex or atomic operation. But as we all know, whether it's mutex or atomic, they both have some consuming.
 
 We know that the data conflict comes from shared data, different thread maybe use the same data at the same time. So an approach to avoid happening this problem is that control different threads use different data.
@@ -377,7 +393,7 @@ According to the process of Grid-stride loop, we notice that different threads u
 
 A good example is array summation. As the following code shows.
 
-```c++
+```cuda
 #include <iostream>
 #include <vector>
 #include <cuda_runtime.h>
@@ -489,7 +505,7 @@ ptxas -arch=sm_52 "sample.ptx" -o "sample.sm_52.cubin"
 
 > 可以发现上述示例命令中的选项和描述并不对应，第2条指令使用-arch但是却指定了一个Real Architecture的版本。
 > 当省略-code选项时，-arch选项指定的可以是Real Architecture的版本，此时由nvcc自行确定一个Virtual Architecture的合适版本
-> 这一点内容详见官方文档[--gpu-architecture (-arch)](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-architecture-arch)和[--gpu-code code (-code)](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-code-code-code)
+> 详见官方文档[--gpu-architecture (-arch)](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-architecture-arch)和[--gpu-code code (-code)](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-code-code-code)
 
 ### Reference
 
