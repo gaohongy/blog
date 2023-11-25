@@ -108,7 +108,44 @@ According to the real physical level, a SM(Streaming Multiprocessor) has many SP
 2. Use nvcc compilation option `-keep`
 3. Use `nvprof` command `nvprof --print-gpu-trace <program path>`
 
+### Cache
+There are 5 types of cache in cuda:
+1. shared memory(equivalent to a user-managed chache)
+2. L1 cache
+3. L3 cache
+4. constant cache
+5. texture cache
+
+We will talk more details about shared memory later, so we only focus on the remaining four types of real cache.
+
+#### L2 cache
+Just like L1 cache and shared memory, the L2 cache and global memory is related.
+
+L2 cache is used to provide higher bandwidth and lower latency accesses to global memory.
+
+We can refer to [Query L2 cache Properties](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#query-l2-cache-properties) to get the properties of L2 cache.
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311242150971.png)
+
+
 ### Register & Local Memory
+
+### Global Memory
+The path of accessing global memory: L1 cache -> L2 cache -> global memory
+
+#### coalesced & uncoalesced
+coalesced memory access <=> a global memory access request from a warp will cause to the least data transforming.
+
+$Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (warp实际请求数据量) }{ bytes \ number \ that \ participate \ in \ the \ data \ transforming \ (实际输出的数据量)}$
+
+#### Common memory access types
+1. Sequential **coalesced** access
+2. Out-of-order **coalesced** access
+3. Misaligned **uncoalesced** access
+4. Strided **uncoalesced** access
+
+> Please Note that this is different from 
+5. Broad **uncoalesced** access
 
 
 ### Shared Memory
@@ -200,16 +237,9 @@ To get maximum performance, it is therefore important to understand how memory a
 We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
-### Global Memory
-The path of accessing global memory: L1 cache -> L2 cache -> global memory
 
-#### coalesced & uncoalesced
-coalesced memory access <=> a global memory access request from a warp will cause to the least data transforming.
 
-$Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (warp实际请求数据量) }{ bytes \ number \ that \ participate \ in \ the \ data \ transforming \ (实际输出的数据量)}$
 
-About the L2 cache.
-![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311242150971.png)
 
 ## Software structure
 
@@ -320,6 +350,7 @@ Host and device has different authorities to use the memory. The following table
 ## Common Parallelization methods
 
 1. Grid-stride loop
+
    This method is used to solve the problem, the parallelism(并行度) is more than the quantity of threads.
    In some situations, we can create many threads so that satisfied the parallelism, that we can allocate a separate thread for every threads.
    But if the parallelism is more than the quantity of threads and we still use the above strategy, we will get the following result.
@@ -329,17 +360,24 @@ Host and device has different authorities to use the memory. The following table
 
 Grid-stride loop provide a new approach to solve this problem. At first, we studt the content of this method and we will think the core principle of this method.
 The process of grid-stride loop looks like the following figure.
+
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309241933388.png)
+
 In short, the core approach to implement it is `for (size_t i = threadIdx.x; i < n; i += <total number of threads>`. When the number of threads is smaller than parallelism, we can't use the traditional method to implement the parallel, simply speaking, the distribution of thread can't satisfied the parallelism.
+
 Grid-stride loop uses <total number of threads> to map the threads to tasks reasonably, the <total number of threads> is a magic number, it can ensure different thread will not intersect with each other and finish all tasks.
 
 2. Another way to solve the data conflict
-   The most obvious answer is using mutex or atomic operation. But as we all know, whether it's mutex or atomic, they both have some consuming.
-   We know that the data conflict comes from shared data, different thread maybe use the same data at the same time. So an approach to avoid happening this problem is that control different threads use different data.
-   According to the process of Grid-stride loop, we notice that different threads use the different datas which have different locations. We can specify a fixed location to store a thread's data to avoid using the mutex or atomic.
-   A good example is array summation. As the following code shows.
 
-```
+The most obvious answer is using mutex or atomic operation. But as we all know, whether it's mutex or atomic, they both have some consuming.
+
+We know that the data conflict comes from shared data, different thread maybe use the same data at the same time. So an approach to avoid happening this problem is that control different threads use different data.
+
+According to the process of Grid-stride loop, we notice that different threads use the different datas which have different locations. We can specify a fixed location to store a thread's data to avoid using the mutex or atomic.
+
+A good example is array summation. As the following code shows.
+
+```c++
 #include <iostream>
 #include <vector>
 #include <cuda_runtime.h>
