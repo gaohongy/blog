@@ -143,17 +143,57 @@ $Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (war
 
 
 #### Common memory access types
-1. Sequential **coalesced** access
+Please note that the third and the last code can't get the right answer. The following code is just to used to describe types of memory access type.
 
-2. Out-of-order **coalesced** access
-3. Misaligned **uncoalesced** access
-4. Strided **uncoalesced** access
+1. Sequential **coalesced** access(顺序的合并访问)
+```cuda
+__global__ void add_sequential_coalesced(float *x, float *y, float *z) {
+    int threadId = threadIdx.x + blockDim.x * blockIdx.x;
+
+    z[threadId] = x[threadId] + y[threadId];
+}
+```
+
+2. Out-of-order **coalesced** access(乱序的合并访问)
+```cuda
+__global__ void add_out_of_order_coalesced(float *x, float *y, float *z) {
+    int threadId = threadIdx.x ^ 0x1;
+    threadId = threadIdx.x + blockDim.x * blockIdx.x;
+    
+    z[threadId] = x[threadId] + y[threadId];
+}
+```
+
+3. Misaligned **uncoalesced** access(不对齐的非合并访问)
+```cuda
+__global__ void add_misaligned_uncoalesced(float *x, float *y, float *z) {
+    int threadId = threadIdx.x + blockDim.x * blockIdx.x + 1;
+
+    z[threadId] = x[threadId] + y[threadId];
+}
+```
+
+4. Strided **uncoalesced** access(跨越式的非合并访问)
+```cuda
+__global__ void add_stripped_uncoalesced(float *x, float *y, float *z) {
+    int threadId = blockIdx.x + threadIdx.x * blockDim.x;
+
+    z[threadId] = x[threadId] + y[threadId];
+}
+```
 
 > Please Note that this is different from [grid stride loop](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#grid-stride-loop), which emphasizes that how to solve the big problem which the scale is bigger than the amount of threads. But there we want to emphasize a type of memory access.
 
-5. Broadcast **uncoalesced** access
+5. Broadcast **uncoalesced** access(广播式的非合并访问)
+```cuda
+__global__ void add_broadcast_uncoalesced(float *x, float *y, float *z) {
+    int threadId = threadIdx.x + blockDim.x * blockIdx.x;
 
-使用event和stream测量一下以上几种访问类型的执行时间
+    z[threadId] = x[0] + y[threadId];
+}
+```
+
+其实global memory就类似dram，l2 cache也就是个cache，所以thread访问global memory的过程和体系结构里面对于cache的分析过程是完全一样的，thread请求一个字节的数据，发现cache中不存在，即发生cache miss，然后就去访存，并且把数据缓存到cache line中，访问同一cache line对应数据的thread的再访存就是cache hit了，所说的这个合并访问似乎不过是访问这个cache line的过程，只要是一次访存对应几次都是cache hit就算是合并访存了，似乎完全可以这样理解.
 其实这块判断是否会发生合并的一个前提就是确定从global memory一次到底取多少数据，现有认知是按照字节编制，但是按照字进行读取，但是书上却说一次读取32Bytes，一个字总不能有32Bytes吧。
 
 ### Shared Memory
@@ -591,6 +631,7 @@ int magic_number_opt;
 > - [2] [Working with GPGPU-Sim - Adding Configuration Options](https://coffeebeforearch.github.io/2020/04/13/gpgpu-sim-2.html)
 > - [3] [Improving GPGPU-Sim Performance](https://coffeebeforearch.github.io/2020/03/31/perf-gpgpu-sim.html)
 > - [4] [ECE 695 GPGPU-Sim Tutorial 学习笔记](https://zhuanlan.zhihu.com/p/576442425)
+> - [5] [GPGPU-SIM系列文章 | 科学网](https://blog.sciencenet.cn/home.php?mod=space&uid=1067211&do=blog&view=me)
 
 附加内容：
 
