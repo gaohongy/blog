@@ -6,6 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-08-13T00:41:49+08:00
+lastmod: 2023-08-13T00:41:49+08:00
 tags:
 categories:
   - Git
@@ -367,3 +368,4 @@ git symbolic-ref HEAD refs/haeds/other
 ## Reference
 - [1] [version control - missing-semester](https://missing-semester-cn.github.io/2020/version-control/)
 - [2] [Learn Git Branching](https://learngitbranching.js.org/?locale=zh_CN)
+- [3] [Pro Git book](https://git-scm.com/book/en/v2)
