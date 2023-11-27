@@ -195,6 +195,7 @@ __global__ void add_broadcast_uncoalesced(float *x, float *y, float *z) {
 }
 ```
 
+broatcast这种方式还涉及到constant memory的使用
 其实global memory就类似dram，l2 cache也就是个cache，所以thread访问global memory的过程和体系结构里面对于cache的分析过程是完全一样的，thread请求一个字节的数据，发现cache中不存在，即发生cache miss，然后就去访存，并且把数据缓存到cache line中，访问同一cache line对应数据的thread的再访存就是cache hit了，所说的这个合并访问似乎不过是访问这个cache line的过程，只要是一次访存对应几次都是cache hit就算是合并访存了，似乎完全可以这样理解.
 其实这块判断是否会发生合并的一个前提就是确定从global memory一次到底取多少数据，现有认知是按照字节编制，但是按照字进行读取，但是书上却说一次读取32Bytes，一个字总不能有32Bytes吧。
 
