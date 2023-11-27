@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-11-27T17:17:15+08:00
+lastmod: 2023-11-27T17:35:21+08:00
 description: null
 draft: false
 fontawesome: true
@@ -11,7 +11,7 @@ fraction: true
 hiddenFromHomePage: false
 hiddenFromSearch: false
 keywords: null
-lastmod: 2023-11-27T17:17:15+0800
+lastmod: 2023-11-27T17:35:21+08:00
 license: null
 lightgallery: force
 math: true
@@ -33,6 +33,14 @@ title: GPU Structure and Programing(CUDA)
 toc: true
 weight: 0
 ---
+
+## Todo
+- [ ] L2 cache gpgpu-sim 源码分析
+- [ ] Bank conflict 的题目分析
+- [ ] warp occupancy 概念和计算 
+- [ ] 由broadcast式访问global memory引申的对于constant memory的理解和使用
+- [ ] 并行化+访存优化，并行化中有一个branch divergence的问题
+- [ ] 查找 DRAM burst突发传送官方文档说明
 
 > - CUDA C只是对标准C进行了语言级的扩展，通过增加一些修饰符使编译器可以确定哪些代码在主机上运行，哪些代码在设备上运行
 > - GPU计算的应用前景很大程度上取决于能否从问题中发掘出大规模并行性
@@ -143,6 +151,8 @@ coalesced memory access <=> a global memory access request from **a warp** will 
 
 $Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (warp实际请求数据量) }{ bytes \ number \ that \ participate \ in \ the \ data \ transforming \ (实际输出的数据量)}$
 
+看到一句话，提到了DRAM burst，暂时还没有找到官方的解释
+> CUDA Coalesced access uses the DRAM’s burst mode
 
 #### Common memory access types
 Please note that the third and the last code can't get the right answer. The following code is just to used to describe types of memory access type.
@@ -196,6 +206,7 @@ __global__ void add_broadcast_uncoalesced(float *x, float *y, float *z) {
 ```
 
 broatcast这种方式还涉及到constant memory的使用
+
 其实global memory就类似dram，l2 cache也就是个cache，所以thread访问global memory的过程和体系结构里面对于cache的分析过程是完全一样的，thread请求一个字节的数据，发现cache中不存在，即发生cache miss，然后就去访存，并且把数据缓存到cache line中，访问同一cache line对应数据的thread的再访存就是cache hit了，所说的这个合并访问似乎不过是访问这个cache line的过程，只要是一次访存对应几次都是cache hit就算是合并访存了，似乎完全可以这样理解.
 其实这块判断是否会发生合并的一个前提就是确定从global memory一次到底取多少数据，现有认知是按照字节编制，但是按照字进行读取，但是书上却说一次读取32Bytes，一个字总不能有32Bytes吧。
 
@@ -229,6 +240,8 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 > The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps.
 
 一个SM可能执行多个block。虽然说不同block之间可以并行执行（不过要求在不同SM上才可以并行），但是映射到同一个SM的block，它上面的warp是不能并行执行的，只能相互等待。
+
+**How to understand and calculate occupancy ?**
 
 #### Bank Conflict
 To understand this problem well, we should revisiv the [hardware structure of gpu](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure).
@@ -289,8 +302,39 @@ We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
 
+## Memory API
+
+CUDA C提供了与C语言在语言级别上的集成，主机代码和设备代码由不同的编译器负责编译，设备函数调用样式上接近主机函数调用
+
+`cudaMemcpy()` will synchronize automatically, so if the last line code is `cudaMemcpy()`, we needn't to use the `cudaDeviceSynchronize()`
+
+**Different devices corresponding to different memory functions**
 
 
+| Location       | memory allocate   | memory release |
+| -------------- | ----------------- | -------------- |
+| Host           | malloc/new        | free/delete    |
+| Device         | cudaMalloc        | cudaFree       |
+| Unified Memory | cudaMallocManaged | cudaFree       |
+
+**Which memory types do we have ?**
+Host and device has different authorities to use the memory. The following table describes their authorities.
+
+
+| Memory type     | Host | Device |
+| --------------- | ---- | ------ |
+| Global memory   | W/R  | W/R    |
+| Constant memory | W/R  | R      |
+|                 |      |        |
+
+**Why we need unified memory ?**
+
+1. Additional transfers between host and device memory increase the latency and reduce the throughput.
+2. Device memory is small compared with the host memory. Allocating the large data from host memory to device memory is difficult.
+
+> Annotate: W means Write and R means Read
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309271517094.png)
 
 ## Software structure
 
@@ -371,40 +415,6 @@ The communication between CPU and GPU is asynchronous for high performance. So n
 
 When you don't specify the type of function, the default is the `__host__`
 Host can call `__global__`, `__global` can call `__device__`, `__device__` can call `__device__`
-
-## Memory
-
-CUDA C提供了与C语言在语言级别上的集成，主机代码和设备代码由不同的编译器负责编译，设备函数调用样式上接近主机函数调用
-
-`cudaMemcpy()` will synchronize automatically, so if the last line code is `cudaMemcpy()`, we needn't to use the `cudaDeviceSynchronize()`
-
-**Different devices corresponding to different memory functions**
-
-
-| Location       | memory allocate   | memory release |
-| -------------- | ----------------- | -------------- |
-| Host           | malloc/new        | free/delete    |
-| Device         | cudaMalloc        | cudaFree       |
-| Unified Memory | cudaMallocManaged | cudaFree       |
-
-**Which memory types do we have ?**
-Host and device has different authorities to use the memory. The following table describes their authorities.
-
-
-| Memory type     | Host | Device |
-| --------------- | ---- | ------ |
-| Global memory   | W/R  | W/R    |
-| Constant memory | W/R  | R      |
-|                 |      |        |
-
-**Why we need unified memory ?**
-
-1. Additional transfers between host and device memory increase the latency and reduce the throughput.
-2. Device memory is small compared with the host memory. Allocating the large data from host memory to device memory is difficult.
-
-> Annotate: W means Write and R means Read
-
-![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309271517094.png)
 
 ## Common Parallelization methods
 ### Grid-stride loop
@@ -661,3 +671,4 @@ int magic_number_opt;
 > - [5] [CUDA编程方法论-知乎专栏](https://www.zhihu.com/column/c_1139113249399345152)
 > - [6] [CUDA Crash Course - Youtube](https://www.youtube.com/playlist?list=PLxNPSjHT5qvtYRVdNN1yDcdSl39uHV_sU)
 > - [7] [GPGPU架构优秀PPT(Teaching部分)](https://team.inria.fr/pacap/members/collange/)
+> - [8] [Accelerated Computing - Programming GPUs](https://tschmidt23.github.io/cse599i/)
