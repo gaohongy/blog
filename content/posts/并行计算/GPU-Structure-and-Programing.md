@@ -1,8 +1,9 @@
 ---
 categories:
-- 并行计算
+  - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
+lastmod: 2023-05-31T11:17:35+08:00
 description: null
 draft: false
 fontawesome: true
@@ -32,6 +33,7 @@ title: GPU Structure and Programing(CUDA)
 toc: true
 weight: 0
 ---
+
 > - CUDA C只是对标准C进行了语言级的扩展，通过增加一些修饰符使编译器可以确定哪些代码在主机上运行，哪些代码在设备上运行
 > - GPU计算的应用前景很大程度上取决于能否从问题中发掘出大规模并行性
 
