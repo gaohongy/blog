@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-11-27T21:59:42+08:00
+lastmod: 2023-11-28T10:00:57+08:00
 description: null
 draft: false
 fontawesome: true
@@ -11,7 +11,7 @@ fraction: true
 hiddenFromHomePage: false
 hiddenFromSearch: false
 keywords: null
-lastmod: 2023-11-27T21:59:42+08:00
+lastmod: 2023-11-28T10:00:57+08:00
 license: null
 lightgallery: force
 math: true
@@ -44,6 +44,16 @@ weight: 0
 
 > - CUDA C只是对标准C进行了语言级的扩展，通过增加一些修饰符使编译器可以确定哪些代码在主机上运行，哪些代码在设备上运行
 > - GPU计算的应用前景很大程度上取决于能否从问题中发掘出大规模并行性
+
+## 宏观视角
+高性能计算的第一性原理：访存优化。所有的努力（优化硬件设计，优化算法）都是在试图解决内存墙。
+
+访存优化3大关键：
+- 一是减少数据搬运
+- 二是减少数据访存延时
+- 三是保证负载均衡
+
+GPU中的并行算法设计：设计block和thread的workload，搞清楚一个block负责哪部分的计算，一个thread要负责哪部分的计算。而设计的原则就是尽可能地减少访存，提高数据的复用概率，然后让所有的处理器都满负荷地进行工作，不能浪费。
 
 ## SIMD & SIMT
 
@@ -672,3 +682,6 @@ int magic_number_opt;
 > - [6] [CUDA Crash Course - Youtube](https://www.youtube.com/playlist?list=PLxNPSjHT5qvtYRVdNN1yDcdSl39uHV_sU)
 > - [7] [GPGPU架构优秀PPT(Teaching部分)](https://team.inria.fr/pacap/members/collange/)
 > - [8] [Accelerated Computing - Programming GPUs](https://tschmidt23.github.io/cse599i/)
+> - [9] [Good course | Understanding GPU Architecture](https://cvw.cac.cornell.edu/gpu-architecture)
+> - [10] [Good course | Parallel Programming Concepts and High Performance Computing](https://cvw.cac.cornell.edu/parallel)
+> - [11] [深入浅出访存优化 | 知乎](https://www.zhihu.com/column/c_1437330196193640448)
