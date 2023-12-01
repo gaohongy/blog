@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-01T12:15:18+08:00
+lastmod: 2023-12-01T12:18:14+08:00
 description: null
 draft: false
 fontawesome: true
@@ -60,6 +60,7 @@ GPU中的并行算法设计：设计block和thread的workload，搞清楚一个b
 说明两种方式的区别
 
 The two most important things about SIMD and SIMT are:
+
 1. How is the SIMT to implement ?
 2. How is the SIMD to calculate ?
 
