@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-01T11:46:15+08:00
-lastmod: 2023-12-01T12:04:22+08:00
+lastmod: 2023-12-01T12:15:18+08:00
 tags:
 categories:
   - Computer-Architecture
@@ -35,9 +35,7 @@ resources:
 
 ## 分支预测
 1. 正常执行的效果
-
 2. 预测未选中
-
 3. 预测选中
 
 三种方式下一个非常重要的问题就是**在哪个阶段确定的是分支指令? 在哪个阶段确定的分支指令的目标地址?**
