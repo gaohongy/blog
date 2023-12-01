@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-11-29T17:01:53+08:00
+lastmod: 2023-12-01T12:04:22+08:00
 description: null
 draft: false
 fontawesome: true
@@ -11,7 +11,7 @@ fraction: true
 hiddenFromHomePage: false
 hiddenFromSearch: false
 keywords: null
-lastmod: 2023-11-29T17:01:53+08:00
+lastmod: 2023-12-01T12:04:22+08:00
 license: null
 lightgallery: force
 math: true
