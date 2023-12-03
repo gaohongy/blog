@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-01T12:22:52+08:00
+lastmod: 2023-12-03T22:57:19+08:00
 description: null
 draft: false
 fontawesome: true
@@ -40,6 +40,7 @@ weight: 0
 - [ ] 由broadcast式访问global memory引申的对于constant memory的理解和使用
 - [ ] 并行化+访存优化，并行化中有一个branch divergence的问题
 - [ ] 查找 DRAM burst突发传送官方文档说明
+- [ ] 发现矩阵乘法是一个结合各种并行算法以及CUDA硬件架构知识的好的入手点，create一门课程 “从矩阵乘法入门并行计算-CUDA版”
 
 > - CUDA C只是对标准C进行了语言级的扩展，通过增加一些修饰符使编译器可以确定哪些代码在主机上运行，哪些代码在设备上运行
 > - GPU计算的应用前景很大程度上取决于能否从问题中发掘出大规模并行性
@@ -62,6 +63,8 @@ GPU中的并行算法设计：设计block和thread的workload，搞清楚一个b
 The two most important things about SIMD and SIMT are:
 1. How is the SIMT to implement ?
 2. How is the SIMD to calculate ?
+
+GPU从整体上来说是SIMT，但是到Warp层次后实际就是SIMD了
 
 ## Kernel hardware mapping
 
@@ -219,6 +222,7 @@ broatcast这种方式还涉及到constant memory的使用
 其实这块判断是否会发生合并的一个前提就是确定从global memory一次到底取多少数据，现有认知是按照字节编制，但是按照字进行读取，但是书上却说一次读取32Bytes，一个字总不能有32Bytes吧。
 
 ### Shared Memory
+共享内存中的内存块通常被直接称为 memory tile 或简称为 tile。（可能这就是Tiled Matrix Multiplication的由来）
 
 #### Create Shared Memory
 
@@ -618,6 +622,25 @@ int magic_number_opt;
 -magic_number                          25 # A dummy magic number
 ```
 
+### Reference
+> - [1] [Working with GPGPU-Sim - Introduction](https://coffeebeforearch.github.io/2020/03/30/gpgpu-sim-1.html)
+> - [2] [Working with GPGPU-Sim - Adding Configuration Options](https://coffeebeforearch.github.io/2020/04/13/gpgpu-sim-2.html)
+> - [3] [Improving GPGPU-Sim Performance](https://coffeebeforearch.github.io/2020/03/31/perf-gpgpu-sim.html)
+> - [4] [ECE 695 GPGPU-Sim Tutorial 学习笔记](https://zhuanlan.zhihu.com/p/576442425)
+> - [5] [GPGPU-SIM系列文章 | 科学网](https://blog.sciencenet.cn/home.php?mod=space&uid=1067211&do=blog&view=me)
+
+附加内容：
+
+1. If want to use ptxplus (native ISA) change the following options in the configuration file
+
+> -gpgpu_ptx_use_cuobjdump 1
+> -gpgpu_ptx_convert_to_ptxplus 1
+
+2. If want to use GPUWatch change the following options in the configuration file
+
+> -power_simulation_enabled 1 (1=Enabled, 0=Not enabled)
+> -gpuwattch_xml_file <filename>.xml
+
 ## Related Programming Models
 
 1. OpenCL
@@ -646,25 +669,11 @@ int magic_number_opt;
 2.1 gpu的存储模型（《大众高性能》）
 2.2 小彭课程第7讲
 
-### Reference
+### SGEMM
+> Single-precision General Matrix Multiply
 
-> - [1] [Working with GPGPU-Sim - Introduction](https://coffeebeforearch.github.io/2020/03/30/gpgpu-sim-1.html)
-> - [2] [Working with GPGPU-Sim - Adding Configuration Options](https://coffeebeforearch.github.io/2020/04/13/gpgpu-sim-2.html)
-> - [3] [Improving GPGPU-Sim Performance](https://coffeebeforearch.github.io/2020/03/31/perf-gpgpu-sim.html)
-> - [4] [ECE 695 GPGPU-Sim Tutorial 学习笔记](https://zhuanlan.zhihu.com/p/576442425)
-> - [5] [GPGPU-SIM系列文章 | 科学网](https://blog.sciencenet.cn/home.php?mod=space&uid=1067211&do=blog&view=me)
-
-附加内容：
-
-1. If want to use ptxplus (native ISA) change the following options in the configuration file
-
-> -gpgpu_ptx_use_cuobjdump 1
-> -gpgpu_ptx_convert_to_ptxplus 1
-
-2. If want to use GPUWatch change the following options in the configuration file
-
-> -power_simulation_enabled 1 (1=Enabled, 0=Not enabled)
-> -gpuwattch_xml_file <filename>.xml
+#### Reference
+> - [1] [Intel-maxas | SGEMM](https://github.com/NervanaSystems/maxas/wiki/SGEMM)
 
 ## CUDA Related Documents
 
@@ -680,6 +689,3 @@ int magic_number_opt;
 > - [6] [CUDA Crash Course - Youtube](https://www.youtube.com/playlist?list=PLxNPSjHT5qvtYRVdNN1yDcdSl39uHV_sU)
 > - [7] [GPGPU架构优秀PPT(Teaching部分)](https://team.inria.fr/pacap/members/collange/)
 > - [8] [Accelerated Computing - Programming GPUs](https://tschmidt23.github.io/cse599i/)
-> - [9] [Good course | Understanding GPU Architecture](https://cvw.cac.cornell.edu/gpu-architecture)
-> - [10] [Good course | Parallel Programming Concepts and High Performance Computing](https://cvw.cac.cornell.edu/parallel)
-> - [11] [深入浅出访存优化 | 知乎](https://www.zhihu.com/column/c_1437330196193640448)
