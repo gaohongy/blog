@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-05T22:52:31+08:00
+lastmod: 2023-12-05T23:04:31+08:00
 description: null
 draft: false
 fontawesome: true
@@ -259,12 +259,15 @@ We can get answer from [4.1. SIMT Architecture](https://docs.nvidia.com/cuda/cud
 > The way a block is partitioned into warps is always the same; each warp contains threads of consecutive, increasing thread IDs with the first warp containing thread 0.
 
 从这个答案中，不难引发另一个疑问，即
+
 **How thread ID can be calculated?**
 We can get answer from [2.2. Thread Hierarchy](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-hierarchy).
 > The index of a thread and its thread ID relate to each other in a straightforward way: 
-> - For a one-dimensional block, they are the same; 
+> - For a one-dimensional block, they are the same;
 > - for a two-dimensional block of size $(D_x, D_y)$, the thread ID of a thread of index $(x, y)$ is $(x + y \times D_x)$; 
 > - for a three-dimensional block of size $(D_x, D_y, D_z)$, the thread ID of a thread of index $(x, y, z)$ is $(x + y \times D_x + z \times D_x \times D_y)$.
+
+(Editer replenishment): please note that the above comparison is between **index of thread** and **thread ID**, so dont's be confused about the first situation. i.e. "for a one-dimensional block, they are the same", it means for a one-dimensional block, the thread ID is equals to the index of this thread.
 
 **How to understand and calculate occupancy ?**
 
