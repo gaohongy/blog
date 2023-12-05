@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-03T22:57:19+08:00
+lastmod: 2023-12-05T22:52:31+08:00
 description: null
 draft: false
 fontawesome: true
@@ -165,6 +165,7 @@ $Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (war
 看到一句话，提到了DRAM burst，暂时还没有找到官方的解释
 > CUDA Coalesced access uses the DRAM’s burst mode
 
+想要理解memory coalesced和uncoalesced，思维必须从串行思维转换到并行思维，关注的重点不应放在一个单独的thread上，我觉得一个比较合适的视角是放在一个warp上（关于这一点，有一个很明显的错误示范，就是矩阵乘法P=MxN，如果从单一thread的角度来看，对M的访问应当是满足coalesced地，但是如果考虑属于一个warp的不同thread，就会发现实际上对N的访问才是coalesced。考虑某一时刻属于同一个warp的thread的访存方式。
 #### Common memory access types
 Please note that the third and the last code can't get the right answer. The following code is just to used to describe types of memory access type.
 
@@ -252,6 +253,18 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 > The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps.
 
 一个SM可能执行多个block。虽然说不同block之间可以并行执行（不过要求在不同SM上才可以并行），但是映射到同一个SM的block，它上面的warp是不能并行执行的，只能相互等待。
+
+**How block’s threads get mapped to warps?**
+We can get answer from [4.1. SIMT Architecture](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#simt-architecture).
+> The way a block is partitioned into warps is always the same; each warp contains threads of consecutive, increasing thread IDs with the first warp containing thread 0.
+
+从这个答案中，不难引发另一个疑问，即
+**How thread ID can be calculated?**
+We can get answer from [2.2. Thread Hierarchy](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-hierarchy).
+> The index of a thread and its thread ID relate to each other in a straightforward way: 
+> - For a one-dimensional block, they are the same; 
+> - for a two-dimensional block of size $(D_x, D_y)$, the thread ID of a thread of index $(x, y)$ is $(x + y \times D_x)$; 
+> - for a three-dimensional block of size $(D_x, D_y, D_z)$, the thread ID of a thread of index $(x, y, z)$ is $(x + y \times D_x + z \times D_x \times D_y)$.
 
 **How to understand and calculate occupancy ?**
 
@@ -547,7 +560,7 @@ SM中活动的warp数量占物理warp数量的比率为occupancy(占用率)。
 
 下面结合编译流程主要说明以下几个问题：
 
-1. 何为PTX，为何会设计它
+1. 何为PTX(Parallel Thread Execution) ，为何会设计它
 2. 何为SASS，为何会设计它
 
 因为硬件在发展过程中，设计和架构可能会发生很大的改变，为了避免在硬件更新时软件发生较大的改变，一种常用的设计策略是**抽象**。即把真实的物理架构抽象为逻辑架构，开发者仅需要关注逻辑架构，从逻辑到物理的映射由框架开发商完成。
@@ -669,8 +682,34 @@ int magic_number_opt;
 2.1 gpu的存储模型（《大众高性能》）
 2.2 小彭课程第7讲
 
-### SGEMM
+### 对任务划分的理解
+想要实现并行化，很重要的一点是考虑“如何合理地将任务划分到不同的thread上”
+
+### 矩阵乘法
+1. SGEMM
 > Single-precision General Matrix Multiply
+单精度通用矩阵乘法
+
+2. DGEMM
+> Double-precision General Matrix Multiply 
+双精度通用矩阵乘法
+
+3. CGEMM
+> Complex-single-precision General Matrix Multiply
+复数单精度通用矩阵乘法
+
+4. ZGEMM
+> Complex-double-precision General Matrix Multiply
+复数双精度矩阵乘法
+
+目前感觉从具体的算子入门CUDA编程中的各种概念、并行算法、访存优化的手段是个非常好的方式，因为各种算法，访存优化一定都是基于实际的应用场景而出现的，都不是仅仅的概念本身
+
+把thread都放置在同一个block中的缺点在于，SM无法对block进行调度，原本的两层调度：block调度和warp调度，现在就只剩下一个warp调度了
+
+native implementation 的核心问题是：计算访存比过低，即使将global memory替换为shared memory，访存时间占比仍然远大于计算时间占比。所以才会考虑矩阵分块
+
+
+
 
 #### Reference
 > - [1] [Intel-maxas | SGEMM](https://github.com/NervanaSystems/maxas/wiki/SGEMM)
@@ -689,3 +728,7 @@ int magic_number_opt;
 > - [6] [CUDA Crash Course - Youtube](https://www.youtube.com/playlist?list=PLxNPSjHT5qvtYRVdNN1yDcdSl39uHV_sU)
 > - [7] [GPGPU架构优秀PPT(Teaching部分)](https://team.inria.fr/pacap/members/collange/)
 > - [8] [Accelerated Computing - Programming GPUs](https://tschmidt23.github.io/cse599i/)
+> - [9] [CUDA编程入门及优化 | 知乎](https://www.zhihu.com/column/c_1522503697624346624)
+> - [10] [Tensor Core技术解析（上）](https://www.cnblogs.com/wujianming-110117/p/12992932.html)
+> - [11] [Tensor Core技术解析（下）](https://www.cnblogs.com/wujianming-110117/p/12993096.html)
+> - [12] [NVIDIA Developer Tools 汇总](https://developer.nvidia.com/tools-overview)
