@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-05T23:04:31+08:00
+lastmod: 2023-12-06T11:23:09+08:00
 description: null
 draft: false
 fontawesome: true
@@ -255,12 +255,14 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 一个SM可能执行多个block。虽然说不同block之间可以并行执行（不过要求在不同SM上才可以并行），但是映射到同一个SM的block，它上面的warp是不能并行执行的，只能相互等待。
 
 **How block’s threads get mapped to warps?**
+
 We can get answer from [4.1. SIMT Architecture](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#simt-architecture).
 > The way a block is partitioned into warps is always the same; each warp contains threads of consecutive, increasing thread IDs with the first warp containing thread 0.
 
 从这个答案中，不难引发另一个疑问，即
 
 **How thread ID can be calculated?**
+
 We can get answer from [2.2. Thread Hierarchy](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-hierarchy).
 > The index of a thread and its thread ID relate to each other in a straightforward way: 
 > - For a one-dimensional block, they are the same;
@@ -268,6 +270,16 @@ We can get answer from [2.2. Thread Hierarchy](https://docs.nvidia.com/cuda/cuda
 > - for a three-dimensional block of size $(D_x, D_y, D_z)$, the thread ID of a thread of index $(x, y, z)$ is $(x + y \times D_x + z \times D_x \times D_y)$.
 
 (Editer replenishment): please note that the above comparison is between **index of thread** and **thread ID**, so dont's be confused about the first situation. i.e. "for a one-dimensional block, they are the same", it means for a one-dimensional block, the thread ID is equals to the index of this thread.
+
+According to the question of "[Does CUDA think of multi-dimensional gridDim, blockDim and threadIdx just as a linear sequence?](https://stackoverflow.com/questions/31058001/cuda-griddim-blockdim-and-threadidx)", we can see the type of thread organization as the **column major ordered multi-dimensional arrays**. But please the difference between the index in CUDA and the index of traditional array or matrix.
+
+For traditional array or matrix, we are used to use the **(row_index, col_index)** to indicate the position of an element in an array or a matrix. But in CUDA, the coordinates seem to become adverse, CUDA uses the **(x = column_number, y = row_number)** to express a grid or block.
+
+In fact, these two expressions don't create conflicts. The (row_index, col_index) is a perspective of actual storage mode. Now, if we place the array or the matrix into a coordinate system, we can also use the (x, y) to indicate an element of the array or matrix.
+
+We can say that the (row_index, col_index) is a coordinate from storage structure perspective and the (x = column_number, y = row_number) is a coordinate from math coordinate system perspective.
+
+Because the concept grid and block are just for programmer convenience, so they don't imply the actual storage structure, so the CUDA use the math coordinate to indicate the position of an element in an array or a matrix. 
 
 **How to understand and calculate occupancy ?**
 
