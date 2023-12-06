@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-06T11:23:09+08:00
+lastmod: 2023-12-06T22:53:18+08:00
 description: null
 draft: false
 fontawesome: true
@@ -165,7 +165,18 @@ $Degree \ of \ coalescing \ (合并度) = \frac{ request \ bytes \ number \ (war
 看到一句话，提到了DRAM burst，暂时还没有找到官方的解释
 > CUDA Coalesced access uses the DRAM’s burst mode
 
-想要理解memory coalesced和uncoalesced，思维必须从串行思维转换到并行思维，关注的重点不应放在一个单独的thread上，我觉得一个比较合适的视角是放在一个warp上（关于这一点，有一个很明显的错误示范，就是矩阵乘法P=MxN，如果从单一thread的角度来看，对M的访问应当是满足coalesced地，但是如果考虑属于一个warp的不同thread，就会发现实际上对N的访问才是coalesced。考虑某一时刻属于同一个warp的thread的访存方式。
+因为coalesced access是基于DRAM的burst mode来实现的，所以本质上会涉及到DRAM burst发生的性质和要求：
+- 对齐
+- 访存大小
+
+疑惑点其实是在于发生coalesced是否和warp相关，是不是必须是同一个warp内的线程的访问才肯跟造成coalesced access，还是说同一个block不同warp，还是说不同block都可以？如果仅从DRAM burst发生的角度考虑，burst发生的条件应该是和CUDA的一些概念无关的，所以视角似乎可以直接放到不同线程上，并不需要考虑是否是同一warp或者是否是同一block
+
+想要理解memory coalesced和uncoalesced，思维必须从串行思维转换到并行思维，
+
+> Coalesce happens amongst threads, not amongst different iterations of the loop within each thread’s execution.
+
+关注的重点不应放在一个单独的thread上，我觉得一个比较合适的视角是放在一个warp上（关于这一点，有一个很明显的错误示范，就是矩阵乘法P=MxN，如果从单一thread的角度来看，对M的访问应当是满足coalesced地，但是如果考虑属于一个warp的不同thread，就会发现实际上对N的访问才是coalesced。考虑某一时刻属于同一个warp的thread的访存方式。关于这一示例的详细分析，可见[The CUDA Parallel Programming Model - 5. Memory Coalescing](https://nichijou.co/cuda5-coalesce/)
+
 #### Common memory access types
 Please note that the third and the last code can't get the right answer. The following code is just to used to describe types of memory access type.
 
@@ -271,7 +282,7 @@ We can get answer from [2.2. Thread Hierarchy](https://docs.nvidia.com/cuda/cuda
 
 (Editer replenishment): please note that the above comparison is between **index of thread** and **thread ID**, so dont's be confused about the first situation. i.e. "for a one-dimensional block, they are the same", it means for a one-dimensional block, the thread ID is equals to the index of this thread.
 
-According to the question of "[Does CUDA think of multi-dimensional gridDim, blockDim and threadIdx just as a linear sequence?](https://stackoverflow.com/questions/31058001/cuda-griddim-blockdim-and-threadidx)", we can see the type of thread organization as the **column major ordered multi-dimensional arrays**. But please the difference between the index in CUDA and the index of traditional array or matrix.
+According to the question of "[Does CUDA think of multi-dimensional gridDim, blockDim and threadIdx just as a linear sequence?](https://stackoverflow.com/questions/31058001/cuda-griddim-blockdim-and-threadidx)", we can see the type of thread organization as the **row major ordered multi-dimensional arrays**. But please note the difference between the index in CUDA and the index of traditional array or matrix.
 
 For traditional array or matrix, we are used to use the **(row_index, col_index)** to indicate the position of an element in an array or a matrix. But in CUDA, the coordinates seem to become adverse, CUDA uses the **(x = column_number, y = row_number)** to express a grid or block.
 
@@ -279,7 +290,11 @@ In fact, these two expressions don't create conflicts. The (row_index, col_index
 
 We can say that the (row_index, col_index) is a coordinate from storage structure perspective and the (x = column_number, y = row_number) is a coordinate from math coordinate system perspective.
 
-Because the concept grid and block are just for programmer convenience, so they don't imply the actual storage structure, so the CUDA use the math coordinate to indicate the position of an element in an array or a matrix. 
+Because the concept grid and block are just for programmer convenience, so they don't imply the actual storage structure, so the CUDA use the math coordinate to indicate the position of an element in an array or a matrix. For the thread index $(x, y)$, the x is the column number, y is the row number, it is like the following picture of block index.
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312061851353.png)
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312062024529.png)
 
 **How to understand and calculate occupancy ?**
 
@@ -723,11 +738,22 @@ int magic_number_opt;
 
 native implementation 的核心问题是：计算访存比过低，即使将global memory替换为shared memory，访存时间占比仍然远大于计算时间占比。所以才会考虑矩阵分块
 
-
-
+#### Tiled Matrix Multiplication
+More information please see the original passage [Tiled Matrix Multiplication](https://penny-xu.github.io/blog/tiled-matrix-multiplication).
 
 #### Reference
 > - [1] [Intel-maxas | SGEMM](https://github.com/NervanaSystems/maxas/wiki/SGEMM)
+
+### Convolution
+#### 1D Convolution
+边界处理：
+- 判断法
+- 扩展法
+
+#### 2D Convolution
+
+#### 3D Convolutoin
+
 
 ## CUDA Related Documents
 
