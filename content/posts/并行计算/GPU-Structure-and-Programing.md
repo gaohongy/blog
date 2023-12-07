@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-07T11:32:21+08:00
+lastmod: 2023-12-07T22:19:38+08:00
 description: null
 draft: false
 fontawesome: true
@@ -356,6 +356,15 @@ To get maximum performance, it is therefore important to understand how memory a
 We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
+### Host Side Memory
+1. pageable memory(可分页内存)
+- 使用`malloc()/new()`和`free()/delete()`函数分配和释放
+- 此类型内存是可以从内存被换出到磁盘的
+
+2. pinned memory(页锁定内存)
+- 使用`cudaHostAlloc()`和`cudaFreeHost()`函数分配和释放
+- 此类型内存一直停留在内存，不会被换出到磁盘
+- 此类型内存支持DMA访问，支持与GPU之间进行异步通信（asynchronous data transfer）
 
 ## Memory API
 
