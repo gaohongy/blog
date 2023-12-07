@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-06T22:53:18+08:00
+lastmod: 2023-12-07T11:32:21+08:00
 description: null
 draft: false
 fontawesome: true
@@ -745,6 +745,58 @@ More information please see the original passage [Tiled Matrix Multiplication](h
 > - [1] [Intel-maxas | SGEMM](https://github.com/NervanaSystems/maxas/wiki/SGEMM)
 
 ### Convolution
+卷积这块有一个神奇的题目和神奇的公式：
+
+问: kD convolution 过程中（不考虑ghost elements的运算），每个元素的平均访问次数
+
+答: 平均访问次数=$\frac{output_{width}^k \times mask_{width}^k}{input_{width}^k}$
+
+其中，在$stride=1$的情况下，满足$output_{width} = input_{width} - mask_{width} + 1$,即$input_{width} = output_{width} + mask_{width} - 1$
+
+2D convolution上述公式的验证代码如下：
+```c++
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+int main() {
+	int m, n;
+	std::cin >> m >> n;
+
+	int width;
+	std::cin >> width;
+
+	auto count = std::vector<std::vector<int>>(m + 10, std::vector<int>(n + 10, 0));
+
+	for (int begin_x = 1; begin_x + width - 1 <= m; begin_x++) {
+		for (int begin_y = 1; begin_y + width - 1 <= n; begin_y++) {
+			for (int i = 0; i < width; i++) {
+				for (int j = 0; j < width; j++) {
+					int x = begin_x + i, y = begin_y + j;
+					count[x][y]++;
+				}
+			}
+		}
+	}
+
+	float sum = 0.0f;
+	std::cout << std::endl;
+	for (int i = 1; i <= m; i++) {
+		for (int j = 1; j <= n; j++) {
+			std::cout << count[i][j] << ' ';
+			sum += count[i][j];
+		}
+		std::cout << std::endl;
+	}
+
+	std::cout << "\n" << sum << std::endl;
+	std::cout << "\n" << (sum / (m * n)) << std::endl;
+
+	return 0;
+}
+```
+
+
 #### 1D Convolution
 边界处理：
 - 判断法
