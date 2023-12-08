@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-07T22:19:38+08:00
+lastmod: 2023-12-08T18:33:52+08:00
 description: null
 draft: false
 fontawesome: true
@@ -361,10 +361,15 @@ We can pad and adjust the memory structure as the following picture shows.
 - 使用`malloc()/new()`和`free()/delete()`函数分配和释放
 - 此类型内存是可以从内存被换出到磁盘的
 
-2. pinned memory(页锁定内存)
+2. pinned memory(page-locked, 页锁定内存)
 - 使用`cudaHostAlloc()`和`cudaFreeHost()`函数分配和释放
 - 此类型内存一直停留在内存，不会被换出到磁盘
 - 此类型内存支持DMA访问，支持与GPU之间进行异步通信（asynchronous data transfer）
+
+有一种说法是
+> cudaMemcpy() requires an extra copy from the user space to pinged buffer
+
+所以即使在不考虑从磁盘调页的过程，pageable memory也是较为耗时的，不过关于pinged buffer是否存在还未详细查询
 
 ## Memory API
 
@@ -564,6 +569,45 @@ CPU programing needs synchronous mechanism, GPU programing also needs it.
 ### Atomic
 
 We can learn about the execution logic by refering to [C++ atomic](https://www.cnblogs.com/hongyugao/p/17692121.html#atomic) and details of function by refering to [CUDA C++ Programming Guide](https://docs.nvidia.com/cuda/pdf/CUDA_C_Programming_Guide.pdf).
+
+## Asynchronization (CUDA stream)
+Serialize data transfer and GPU computation causes that PCIe idle and GPU idel appear interleavly.
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312081112953.png)
+
+Most CUDA devices support device overlap. Because data transmission is more timeless than computation, so simultaneously execute a kernel while performing a copy between device and host memory can cover up the time consumation of data transmission.
+
+CUDA supports parallel execution of kernels and cudaMemcpy with streams. A stream is a sequence of commands that execute in order.
+
+The commands issued on a stream may execute when all the dependencies of the command are met. The dependencies could be previously launched commands on same stream or dependencies from other streams.
+
+About the PCIe transmission rate is shown as the following picture:
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312081517982.png)
+
+流的分类：
+1. 根据发出方分类：
+- Host端发出的流(主要讨论的是这种)
+- Device端发出的流
+
+2. 根据有无内容分类：
+- 默认流(default stream) / 空流(null stream)
+- 明确指定的非空流
+
+### Execution order
+同一个CUDA流中的操作是串行顺次执行的，不同stream中的operation随机执行，可能是并发交错执行的
+
+### Related API
+1. `__host__ ​cudaError_t cudaStreamCreate ( cudaStream_t* pStream )`
+> Create an asynchronous stream. 
+
+2. `__host__ ​__device__ ​cudaError_t cudaStreamDestroy ( cudaStream_t stream )`
+> Destroys and cleans up an asynchronous stream.
+
+3. `__host__ ​cudaError_t cudaStreamQuery ( cudaStream_t stream )`
+> Queries an asynchronous stream for completion status.
+
+4. `__host__​ cudaError_t cudaStreamSynchronize ( cudaStream_t stream )`
+> Waits for stream tasks to complete.
 
 ## C++ Encapsulation
 
