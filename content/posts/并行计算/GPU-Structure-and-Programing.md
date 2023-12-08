@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-08T18:33:52+08:00
+lastmod: 2023-12-08T23:04:30+08:00
 description: null
 draft: false
 fontawesome: true
@@ -361,7 +361,7 @@ We can pad and adjust the memory structure as the following picture shows.
 - 使用`malloc()/new()`和`free()/delete()`函数分配和释放
 - 此类型内存是可以从内存被换出到磁盘的
 
-2. pinned memory(page-locked, 页锁定内存)
+2. pinned memory(non-pageable memory(不可分页内存) / page-locked(页锁定内存))
 - 使用`cudaHostAlloc()`和`cudaFreeHost()`函数分配和释放
 - 此类型内存一直停留在内存，不会被换出到磁盘
 - 此类型内存支持DMA访问，支持与GPU之间进行异步通信（asynchronous data transfer）
@@ -608,6 +608,15 @@ About the PCIe transmission rate is shown as the following picture:
 
 4. `__host__​ cudaError_t cudaStreamSynchronize ( cudaStream_t stream )`
 > Waits for stream tasks to complete.
+
+### 如何理解流
+从主机和设备两个视角的动作来分析
+
+使用`cudaMemcpyAsync()`时，Host memory必须是[non-pageable memroy / pinned memory](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#host-side-memory), 数据传输过程由GPU的DMA负责
+
+如果是[pageable memroy](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#host-side-memory)使用`cudaMemcpyAsync()`, 需要首先将pageable memory移动到pinned memory，这个过程中就会涉及到数据同步。
+
+还有一个需要注意的事情就是PCIe，同一时刻H2D和D2H都只能进行1个操作。
 
 ## C++ Encapsulation
 
