@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-08T23:04:30+08:00
+lastmod: 2023-12-09T23:05:03+08:00
 description: null
 draft: false
 fontawesome: true
@@ -70,6 +70,12 @@ GPU从整体上来说是SIMT，但是到Warp层次后实际就是SIMD了
 
 kernel function -> GPU
 block -> SM（one block can only be executed by one SM, but one SM can execute multiple blocks)
+> 这里有一个疑问，一个SM可以执行多个block，多个block的执行是并发的还是可以并行的，换个角度来说就是正在执行的warp是同属于一个block的，还是可以隶属于多个block
+
+关于此问题，还尚未找到官方资料中给出的证据，暂且认为SM上执行的warp可能属于不同block，也就是可以理解为开始执行kernel函数后，grid中的多个block被分配到某一个SM上，然后在SM的视角下就不再有block的概念，它所能看到的就是一些warp，通过warp scheduler来对warp进行调度，并且认为block一开始被分配到某个SM后不会在执行过程中去更换SM，直到执行完毕。
+
+这种理解方式有一定的合理性，原因在于grid，block，warp本身就是为programmer所提供的逻辑概念，对于硬件来说，它能看到的不过是一些thread，它调度的也是thread。但是对于人来说，thread这一调度单位太细，很难实现对具体问题的抽象，所以才提供了更高一级的概念，即grid，block和warp。从这一角度来看，一个SM在同一时间能调度多个block就是合理的。
+
 thread -> SP
 
 main time consuming:
@@ -98,7 +104,7 @@ sm的组成：
 4. the cache of texture and surface memory
 5. L1 cache
 6. warp scheduler
-7. sp
+7. SP（截止到2023/12/09，对sp的理解是它只是一个泛称，不是特指某种具体的运算单元，SP可能对应于不同的硬件组件，包括浮点运算单元（FP）、整数运算单元（INT）、特殊功能单元（SFU））
 
 所以调度问题分为两个层面：
 1. 对于block的调度: 这个和sm有关系，多个block和多个sm，sm可以任意选择block执行，而且这种选择并不是一选定终生，中间过程还可以调整，但是block并不能拆分，只能整个放到sm上
@@ -777,6 +783,12 @@ int magic_number_opt;
 ### 对任务划分的理解
 想要实现并行化，很重要的一点是考虑“如何合理地将任务划分到不同的thread上”
 
+如何选择grid和block的规模，除了考虑以上合理的任务划分之外，还可以从性能的角度进行考量。
+如果仅从下图内容来看，block规模的确定要更为重要，grid的规模只需要根据任务划分和block规模来确定即可
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312092139368.png)
+
+
 ### 矩阵乘法
 1. SGEMM
 > Single-precision General Matrix Multiply
@@ -801,6 +813,8 @@ int magic_number_opt;
 native implementation 的核心问题是：计算访存比过低，即使将global memory替换为shared memory，访存时间占比仍然远大于计算时间占比。所以才会考虑矩阵分块
 
 #### Tiled Matrix Multiplication
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/tiled-matrix-multiplication.gif)
+
 More information please see the original passage [Tiled Matrix Multiplication](https://penny-xu.github.io/blog/tiled-matrix-multiplication).
 
 #### Reference
