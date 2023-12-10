@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-09T23:05:03+08:00
+lastmod: 2023-12-10T23:14:49+08:00
 description: null
 draft: false
 fontawesome: true
@@ -814,6 +814,8 @@ native implementation 的核心问题是：计算访存比过低，即使将glob
 
 #### Tiled Matrix Multiplication
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/tiled-matrix-multiplication.gif)
+
+tiled matrix multiplication之所以减小了对内存带宽的要求，是因为一个thread读取的内容是可以被其他thread共享的。在分tile之前，一个thread从global memory读取的数据只会让它自己使用，但是分了tile之，一个thread从global memory加载的数据也可以被处于同一个tile中的其他thread所访问，增加了数据重用率。
 
 More information please see the original passage [Tiled Matrix Multiplication](https://penny-xu.github.io/blog/tiled-matrix-multiplication).
 
