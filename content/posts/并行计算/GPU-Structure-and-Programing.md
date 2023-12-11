@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-10T23:14:49+08:00
+lastmod: 2023-12-11T22:59:03+08:00
 description: null
 draft: false
 fontawesome: true
@@ -482,14 +482,23 @@ The communication between CPU and GPU is asynchronous for high performance. So n
 - `__global__`
 - `__device__`
 
-|  access type \ function type    |   `__global__`   |   `__device__`   |   `__host__`   |
-| ---- | ---- | ---- | ---- |
-|  host    |   yes   |   no   |  yes    |
-| `__global__` function   |   yes   |   yes   |   no   |
-|  `__device__` function    |   no   |   yes   |   no   |
+|  function type \  action     |   Callable from   |   Executed on   |
+| ---- | ---- | ---- |
+|  `__global__`    |   host / divice(compute capability 5.0 or higher)   |   device   |
+| `__device__`   |   device   |   device   |
+|  `__host__`    |   host   |   host   |
 
-When you don't specify the type of function, the default is the `__host__`
-Host can call `__global__`, `__global` can call `__device__`, `__device__` can call `__device__`
+Without any of the `__host__`, `__device__`, or `__global__` specifier is equivalent only the `__host__` specifier.
+
+Some special usage:
+
+- The `__global__` and `__device__` execution space specifiers **cannot** be used together.
+
+- The `__global__` and `__host__` execution space specifiers **cannot** be used together.
+
+- The `__device__` and `__host__` execution space specifiers **can** be used together.
+
+More informations please see the [official station](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#function-execution-space-specifiers).
 
 ## Common Parallelization methods
 ### Grid-stride loop
