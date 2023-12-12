@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-11T22:59:03+08:00
+lastmod: 2023-12-12T13:34:08+08:00
 description: null
 draft: false
 fontawesome: true
@@ -363,19 +363,47 @@ We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
 ### Host Side Memory
+
 1. pageable memory(可分页内存)
 - 使用`malloc()/new()`和`free()/delete()`函数分配和释放
 - 此类型内存是可以从内存被换出到磁盘的
 
-2. pinned memory(non-pageable memory(不可分页内存) / page-locked(页锁定内存))
-- 使用`cudaHostAlloc()`和`cudaFreeHost()`函数分配和释放
+2. [pinned memory(non-pageable memory(不可分页内存) / page-locked(页锁定内存))](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#page-locked-host-memory)
+- 使用[`cudaHostAlloc()`](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1gb65da58f444e7230d3322b6126bb4902)和`cudaFreeHost()`函数分配和释放
 - 此类型内存一直停留在内存，不会被换出到磁盘
 - 此类型内存支持DMA访问，支持与GPU之间进行异步通信（asynchronous data transfer）
 
-有一种说法是
-> cudaMemcpy() requires an extra copy from the user space to pinged buffer
 
-所以即使在不考虑从磁盘调页的过程，pageable memory也是较为耗时的，不过关于pinged buffer是否存在还未详细查询
+**Some background on the memory management in operating systems**
+
+- `cudaMemcpy()` uses the hardware **direct memoryory access (DMA) device**.
+- The operating system give a translated physical address to DMA, i.e. the DMA hardware operates on physical addresses.
+- Uses the DMA to implement the `cudaMemcpy()` faces a chance that the data in the pageable memroy can be overwritten by the paging activity before the DMA transmission.
+
+The solution is to perform the copy operation in two steps:
+
+1. For a host-to-device copy, the CUDA runtime first copies the source host memory data into a **pinned memory buffer**, sometimes also referred to as **page locked memory buffer**.
+2. It then uses the DMA device to copy the data from the pinned memory buffer to the device memory.
+
+The problems of this solution:
+
+1. Extra copy adds delay to the cudaMemcpy() operation.
+2. Extra complexity involved leads to a synchronous implementation of the cudaMemcpy() function.
+> About the synchronous and asynchronous, please see the [API synchronization behavior](https://docs.nvidia.com/cuda/cuda-runtime-api/api-sync-behavior.html#api-sync-behavior__memcpy-sync)
+
+To solve this problem, we can use the `cudaHostAlloc()` to open up pinned memory buffer, and use the `cudaMemcpyAsync()` to copy a data asynchronously.
+
+### Unified memory
+Unified Memory是一种逻辑上的存在，它提供了一种抽象层，让程序员可以将主机（CPU）和设备（GPU）上的内存视为一个统一的内存空间。
+
+使用Unified Memory的情况下，程序员无需显式地管理数据的迁移，系统会根据需要自动处理。
+
+Unified Memory通过使用页表和硬件支持，实现了逻辑上的一致性。
+
+Unified Memory并不是物理上的一块内存，而是一个逻辑概念，通过系统的管理和硬件支持，实现了对主机和设备上内存的透明管理。这有助于简化GPU编程中的内存管理任务。
+
+#### Optimization Techniques
+[Unified Memory for CUDA Beginners](https://developer.nvidia.com/blog/unified-memory-cuda-beginners/)
 
 ## Memory API
 
@@ -410,6 +438,11 @@ Host and device has different authorities to use the memory. The following table
 > Annotate: W means Write and R means Read
 
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309271517094.png)
+
+### 2D Array
+Refering to the methos of opening up a 2D space in host code which see the first dimension of array is some pointers and the second dimension of array is a 1D array. When we want to allocate a 2D array in device memory, the above method is difficult, because we need to access a space of device memory in host code.
+
+So, CUDA provide **pitched memory** to implement it. We can use `cudaMallocPitch()` to create a 2D space in device memory, `cudaMemset2D()` to copy data between host and device and `cudaFree()` to release space.
 
 ## Software structure
 
