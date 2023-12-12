@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-12T13:34:08+08:00
+lastmod: 2023-12-12T23:32:10+08:00
 description: null
 draft: false
 fontawesome: true
@@ -529,7 +529,7 @@ Some special usage:
 
 - The `__global__` and `__host__` execution space specifiers **cannot** be used together.
 
-- The `__device__` and `__host__` execution space specifiers **can** be used together.
+- The `__device__` and `__host__` execution space specifiers **can** be used together.(This usage is used to decrease the verbose codes, the compiler will compile the function for host and device seperately)
 
 More informations please see the [official station](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#function-execution-space-specifiers).
 
@@ -682,6 +682,31 @@ Taking the `std::vector` as an example, next, we will discuss the method of allo
 一个kernel函数在逻辑上以block为单位映射到SM中，物理上以warp为单位解析指令将指令分发到具体的运算单元(SP/core, SFU, DP)或访存单元(LD/ST)。
 SM中活动的warp数量占物理warp数量的比率为occupancy(占用率)。
 
+## Device API
+1. `__host__ ​__device__ ​cudaError_t 	cudaGetDeviceCount ( int* count )`
+> Returns the number of compute-capable devices.
+
+2. `__host__ ​cudaError_t cudaGetDeviceProperties ( cudaDeviceProp* prop, int  device )`
+> Returns information about the compute-device.
+
+3. `__host__​ cudaError_t cudaSetDevice ( int  device )`
+> Set device to be used for GPU executions.
+
+More information please see the [official website](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE).
+
+## CUDA Libraries
+### cuBLAS
+
+### cuSOLVER
+
+### cuFFT
+
+### Thrust
+1. Three main functionalities
+- The host and device vector containers
+- A collection of parallel primitives such as, sort, reduce and transformations
+- Fancy iterators
+
 ## CUDA Compilation
 
 涉及到两部分内容，一部分是cuda面对编译问题时的设计架构，另一方面是cuda实际的编译流程
@@ -795,13 +820,29 @@ int magic_number_opt;
 > -gpuwattch_xml_file <filename>.xml
 
 ## Related Programming Models
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312122126429.png)
 
 1. OpenCL
+> Open Computing Language
+
 2. OpenACC
-3. MPI
-   process parallelism
-4. OpenMP
+> Open Accelerators
+
+3. OpenMP
+> Open Multi-Processing
+
+Reference to the memroy modle of OpenMP, we can get the following information: "The OpenMP API provides a relaxed-consistency, shared-memory model."
+
    threaded parallelism
+
+4. MPI
+> Message Passing Interface
+
+MPI可以理解为是一种独立于语言的信息传递标准, 本身和代码没有关系，可以看为是一种规定。
+OpenMPI和MPICH等编程模型是对这种标准的具体实现。也就是说，OpenMPI和MPICH这类库是具体用代码实现了MPI标准。因此我们需要安装OpenMPI或者MPICH去实现我们所学的MPI的信息传递标准。
+
+   process parallelism
+
 
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311221659870.png)
 
