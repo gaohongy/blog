@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-13T17:03:40+08:00
+lastmod: 2023-12-13T23:03:30+08:00
 description: null
 draft: false
 fontawesome: true
@@ -36,6 +36,7 @@ weight: 0
 - [ ] 并行化+访存优化，并行化中有一个branch divergence的问题
 - [ ] 查找 DRAM burst突发传送官方文档说明
 - [ ] 发现矩阵乘法是一个结合各种并行算法以及CUDA硬件架构知识的好的入手点，create一门课程 “从矩阵乘法入门并行计算-CUDA版”
+- [] 需要验证如果shared memory中的元素大小和bank大小不一致时，访问其中更小的数据是否会造成bank conflict。需要借助nvprof，但是nvprof在选择检测bank事件时无法正常工作
 
 > - CUDA C只是对标准C进行了语言级的扩展，通过增加一些修饰符使编译器可以确定哪些代码在主机上运行，哪些代码在设备上运行
 > - GPU计算的应用前景很大程度上取决于能否从问题中发掘出大规模并行性
@@ -354,6 +355,7 @@ If the number of separate memory requests is n, the initial memory request is sa
 To get maximum performance, it is therefore important to understand how memory addresses map to memory banks in order to schedule the memory requests so as to minimize bank conflicts.
 
 **How can we solve this problem ?**
+
 We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
 
@@ -402,8 +404,46 @@ To solve this problem, we can use the `cudaHostAlloc()` to open up pinned memory
 The zero-copy memory is a special host memory, it is a pinned memory.
 
 1. When we use `cudaHostAlloc()` to open up a pinned memory, we need to transmit the third parameter `flag`. We need to transmit `cudaHostAllocMapped` as a flag to cudaHostAlloc().
-2. Device code use [`cudaHostGetDevicePointer()`](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1gc00502b44e5f1bdc0b424487ebb08db0) to get a pointer which points to the pinned memroy.
+2. **Host code** use [`cudaHostGetDevicePointer()`](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1gc00502b44e5f1bdc0b424487ebb08db0) to get a pointer which points to the pinned memroy.
+> Please note that we should get the zero-copy memory pointer in host code rather than device cost, although it is more reasonable to get this pointer in device code.
+
 3. At this time, the pinned memory is called zero-copy memory.
+
+```c++
+#include <iostream>
+#include <cuda_runtime.h>
+
+__host__ __device__ void output(int *a) {
+    for (int i = 0; i < 10; i++)
+        printf("%d", a[i]);
+    printf("\n");
+}
+
+__global__ void kernel(int *d_a) {
+    output(d_a);
+    d_a[2] = 5;
+}
+
+int main() {
+    int *h_a, *d_a;
+
+    cudaHostAlloc((void **)&h_a, 10 * sizeof(int), cudaHostAllocMapped);
+    cudaHostGetDevicePointer((void **)&d_a, h_a, 0);
+
+    for (int i = 0; i < 10; i++) h_a[i] = 1;
+
+    kernel<<<1, 1>>>(d_a);
+    cudaDeviceSynchronize();
+
+    output(h_a);
+
+    return 0;
+}
+
+// output:
+// 1111111111
+// 1151111111
+```
 
 ### Unified Memory
 Unified Memory是一种逻辑上的存在，它提供了一种抽象层，让程序员可以将主机（CPU）和设备（GPU）上的内存视为一个统一的内存空间。
