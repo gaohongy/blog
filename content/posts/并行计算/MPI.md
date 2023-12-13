@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-12T21:49:28+08:00
-lastmod: 2023-12-12T23:32:10+08:00
+lastmod: 2023-12-13T17:03:40+08:00
 tags:
 categories:
   - 并行计算
@@ -25,13 +25,10 @@ hiddenFromSearch: false
 
 comment: false
 lightgallery: force
-
-resources:
-  - name: featured-image
-    src: featured-image.jpg
-  - name: featured-image-preview
-    src: featured-image-preview.jpg
 ---
+
+## CUDA-Aware MPI
+[An Introduction to CUDA-Aware MPI](https://developer.nvidia.com/blog/introduction-cuda-aware-mpi/)
 
 ## Reference
 > - [1] [MPI Tutorial](https://mpitutorial.com/tutorials/)

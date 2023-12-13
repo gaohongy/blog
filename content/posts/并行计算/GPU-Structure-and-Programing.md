@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-12T23:32:10+08:00
+lastmod: 2023-12-13T17:03:40+08:00
 description: null
 draft: false
 fontawesome: true
@@ -19,11 +19,6 @@ password: null
 repost:
   enable: false
   url: null
-resources:
-- name: featured-image
-  src: featured-image.jpg
-- name: featured-image-preview
-  src: featured-image-preview.jpg
 ruby: true
 subtitle: null
 summary: null
@@ -364,12 +359,18 @@ We can pad and adjust the memory structure as the following picture shows.
 
 ### Host Side Memory
 
-1. pageable memory(可分页内存)
+#### pageable memory
+> 可分页内存
+
 - 使用`malloc()/new()`和`free()/delete()`函数分配和释放
 - 此类型内存是可以从内存被换出到磁盘的
 
-2. [pinned memory(non-pageable memory(不可分页内存) / page-locked(页锁定内存))](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#page-locked-host-memory)
-- 使用[`cudaHostAlloc()`](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1gb65da58f444e7230d3322b6126bb4902)和`cudaFreeHost()`函数分配和释放
+#### pinned memory 
+> [pinned memory](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#page-locked-host-memory), aka non-pageable memory(不可分页内存) / page-locked(页锁定内存)
+
+- 使用[`cudaHostAlloc()`](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1gb65da58f444e7230d3322b6126bb4902) / [`cudaMallocHost()`](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1gab84100ae1fa1b12eaca660207ef585b)和`cudaFreeHost()`函数分配和释放
+> `cudaHostAlloc()`和`cudaMallocHost()`的关系是 `cudaHostAlloc(xxx, yyy, cudaHostAllocDefault)` 等价于 `cudaMallocHost(xxx, yyy)`
+
 - 此类型内存一直停留在内存，不会被换出到磁盘
 - 此类型内存支持DMA访问，支持与GPU之间进行异步通信（asynchronous data transfer）
 
@@ -393,7 +394,18 @@ The problems of this solution:
 
 To solve this problem, we can use the `cudaHostAlloc()` to open up pinned memory buffer, and use the `cudaMemcpyAsync()` to copy a data asynchronously.
 
-### Unified memory
+#### Zero-Copy Memory
+首先，零拷贝内存并不是像unified memory这样的逻辑存在，其是一种物理存在。其特别之处在于实际的物理存储空间实际是 Host Memory，但是 device 却可以通过某种方式直接访问，无需人工进行拷贝操作。
+
+**The way of opening up zero-copy memory**
+
+The zero-copy memory is a special host memory, it is a pinned memory.
+
+1. When we use `cudaHostAlloc()` to open up a pinned memory, we need to transmit the third parameter `flag`. We need to transmit `cudaHostAllocMapped` as a flag to cudaHostAlloc().
+2. Device code use [`cudaHostGetDevicePointer()`](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__MEMORY.html#group__CUDART__MEMORY_1gc00502b44e5f1bdc0b424487ebb08db0) to get a pointer which points to the pinned memroy.
+3. At this time, the pinned memory is called zero-copy memory.
+
+### Unified Memory
 Unified Memory是一种逻辑上的存在，它提供了一种抽象层，让程序员可以将主机（CPU）和设备（GPU）上的内存视为一个统一的内存空间。
 
 使用Unified Memory的情况下，程序员无需显式地管理数据的迁移，系统会根据需要自动处理。
@@ -694,6 +706,11 @@ SM中活动的warp数量占物理warp数量的比率为occupancy(占用率)。
 
 More information please see the [official website](https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__DEVICE.html#group__CUDART__DEVICE).
 
+Three are three ways to transfer data from one device to another:
+1. `cudaMemcpyPeerAsync()`
+2. `cudaMemcpy()`: rely on the unified address system
+3. Implicit peer memory access performed by the driver
+
 ## CUDA Libraries
 ### cuBLAS
 
@@ -820,7 +837,7 @@ int magic_number_opt;
 > -gpuwattch_xml_file <filename>.xml
 
 ## Related Programming Models
-![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312122126429.png)
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312131446434.png)
 
 1. OpenCL
 > Open Computing Language
@@ -834,6 +851,8 @@ int magic_number_opt;
 Reference to the memroy modle of OpenMP, we can get the following information: "The OpenMP API provides a relaxed-consistency, shared-memory model."
 
    threaded parallelism
+
+虽然OpenMP只能用于单机，但是可以处理单机上的多卡
 
 4. MPI
 > Message Passing Interface
