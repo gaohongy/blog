@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-13T23:03:30+08:00
+lastmod: 2023-12-15T23:14:55+08:00
 description: null
 draft: false
 fontawesome: true
@@ -358,6 +358,29 @@ To get maximum performance, it is therefore important to understand how memory a
 
 We can pad and adjust the memory structure as the following picture shows.
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311222225417.png)
+
+> Reference
+> - [1] [hardware-effects-gpu-Bank conflicts](https://github.com/Kobzol/hardware-effects-gpu/blob/master/bank-conflicts/README.md)
+> - [2] [Nsight Compute CLI - Metric Comparison](https://docs.nvidia.com/nsight-compute/NsightComputeCli/index.html#nvprof-metric-comparison)
+
+### Constant Memory
+A simple use of constant memory comes from [convolution](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#convolution).
+
+In convolution, because there are four aspects which leads to that we can use constant memory.
+
+1. The ratio of floating-point arithmetic calculation to global memory accesses is so low.(计算访存比较低，简单理解就是读了很多数据但是计算的比较少，事倍功半)
+2. The size of mask is small. (The constant memory size is small)
+3. The constants of mask are not changed throughout the execution of the kernel. (The constant memory is prohibited modification)
+4. All threads need to access the mask elements. (store memory into cache is effective)
+
+According to the [picture](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#memory-structure) at the beginning of the Memory structure. We can learn about the constant memory is in DRAM.
+
+But because the variable or space in constant is prohibited modification, so cuda runtime can put its content to cache trustfully, at the same time, no modification means that there is no cache coherence issue.
+
+There are three important aspects of using constant memory:
+1. `__constant__ float M[];`, use the `__constant__` specifier and M should be a global variable
+2. `cudaMemcpyToSymbol(M, M_h, Mask_Width*sizeof(float));`
+
 
 ### Host Side Memory
 
@@ -1021,6 +1044,10 @@ int main() {
 边界处理：
 - 判断法
 - 扩展法
+
+**背景介绍**
+1. 假定每个thread处理一个output element
+2. 每一个block要处理的部分称为一个input tile, 生成的部分称为一个output tile
 
 #### 2D Convolution
 
