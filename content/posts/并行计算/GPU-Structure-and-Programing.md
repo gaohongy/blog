@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-15T23:14:55+08:00
+lastmod: 2023-12-17T23:29:25+08:00
 description: null
 draft: false
 fontawesome: true
@@ -261,44 +261,7 @@ kernel<<<gridSize, blockSize, sizeof(float) * 1024>>>( … );
 在C/C++中，存在一个变长数组（Variable Length Arrays，VLA）的概念，允许使用变量来指定数组的大小。
 但是实际测试，变量指定数组大小应用于kernel函数时，会报错"error: expression must have a constant value"
 
-#### Warp
 
-> The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps.
-
-一个SM可能执行多个block。虽然说不同block之间可以并行执行（不过要求在不同SM上才可以并行），但是映射到同一个SM的block，它上面的warp是不能并行执行的，只能相互等待。
-
-**How block’s threads get mapped to warps?**
-
-We can get answer from [4.1. SIMT Architecture](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#simt-architecture).
-> The way a block is partitioned into warps is always the same; each warp contains threads of consecutive, increasing thread IDs with the first warp containing thread 0.
-
-从这个答案中，不难引发另一个疑问，即
-
-**How thread ID can be calculated?**
-
-We can get answer from [2.2. Thread Hierarchy](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-hierarchy).
-> The index of a thread and its thread ID relate to each other in a straightforward way: 
-> - For a one-dimensional block, they are the same;
-> - for a two-dimensional block of size $(D_x, D_y)$, the thread ID of a thread of index $(x, y)$ is $(x + y \times D_x)$; 
-> - for a three-dimensional block of size $(D_x, D_y, D_z)$, the thread ID of a thread of index $(x, y, z)$ is $(x + y \times D_x + z \times D_x \times D_y)$.
-
-(Editer replenishment): please note that the above comparison is between **index of thread** and **thread ID**, so dont's be confused about the first situation. i.e. "for a one-dimensional block, they are the same", it means for a one-dimensional block, the thread ID is equals to the index of this thread.
-
-According to the question of "[Does CUDA think of multi-dimensional gridDim, blockDim and threadIdx just as a linear sequence?](https://stackoverflow.com/questions/31058001/cuda-griddim-blockdim-and-threadidx)", we can see the type of thread organization as the **row major ordered multi-dimensional arrays**. But please note the difference between the index in CUDA and the index of traditional array or matrix.
-
-For traditional array or matrix, we are used to use the **(row_index, col_index)** to indicate the position of an element in an array or a matrix. But in CUDA, the coordinates seem to become adverse, CUDA uses the **(x = column_number, y = row_number)** to express a grid or block.
-
-In fact, these two expressions don't create conflicts. The (row_index, col_index) is a perspective of actual storage mode. Now, if we place the array or the matrix into a coordinate system, we can also use the (x, y) to indicate an element of the array or matrix.
-
-We can say that the (row_index, col_index) is a coordinate from storage structure perspective and the (x = column_number, y = row_number) is a coordinate from math coordinate system perspective.
-
-Because the concept grid and block are just for programmer convenience, so they don't imply the actual storage structure, so the CUDA use the math coordinate to indicate the position of an element in an array or a matrix. For the thread index $(x, y)$, the x is the column number, y is the row number, it is like the following picture of block index.
-
-![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312061851353.png)
-
-![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312062024529.png)
-
-**How to understand and calculate occupancy ?**
 
 #### Bank Conflict
 To understand this problem well, we should revisiv the [hardware structure of gpu](https://gaohongy.github.io/blog/posts/%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97/gpu-structure-and-programing/#hardware-structure).
@@ -1053,6 +1016,119 @@ int main() {
 
 #### 3D Convolutoin
 
+## GPU Microarchitecture(SIMT Core)
+The microarchitecture of the GPU pipeline is divided into a SIMT front-end and a SIMD back-end.
+
+The GPU pipeline consists of three scheduling “loops”: 
+
+1. instruction fetch loop: Fetch, I-Cache, Decode, and I-Buﬀer
+2. instruction issue loop: I-Buﬀer, Scoreboard, Issue, and SIMT Stack
+3. register access scheduling loop: Operand Collector, ALU, and Memory
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312171448912.png)
+> 注意蓝色和橙色部分存在I-Buffer的交叉
+
+在讲述One/Two/Three-Loop Approximation之前，需要明确的是我们要分析的是SIMT Core的结构，要考虑的问题是如何统筹规划每一个warp所要执行的指令。这一点前提认知很重要，会直接影响到对后面一些结构的理解。
+
+### One-Loop Approximation
+#### SIMT stack
+The SIMT stack helps eﬃciently handle two key issues that occur when **all threads can execute independently**:
+
+1. nested control ﬂow
+2. skipping computation
+
+a warp is eligible to issue an instruction if it has a valid and ready (according to the scoreboard) in the I-Buffer. 
+
+in-order pipeline
+
+### Two-Loop Approximation
+The problem of One-Loop Approximation is that it assumes that the warp will not issue another instruction until the first instruction completes execution, so maybe it will cause a long execution latencies.
+
+A method to address this problem is that issue a subsequent instruction from a warp while earlier instructions have not yet completed, but it will face a new problem, we don't know whether the next instruction to issue for the warp has a dependency upon an earlier instruction that has not yet completed execution.
+
+So a separate scheduler is introduced, it is used to decide which of several instructions in the instruction buﬀer should be issued next to the rest of the pipeline to avoid dependency problem.
+
+总结一下，简单来说，所谓的two-loop approximation不过是面对one-loop approximation所遇到的问题，考虑额外添加一个调度器，在前一条指令还没有执行完毕时就能够发射其他指令以类似流水线的方式执行从而可以增加指令吞吐量，但是遇到一个依赖性的问题，可能还没有执行的指令和要发射的指令存在数据相关，所以就引入了计分板来尝试解决这个问题，然后又发现单纯使用计分板同样遇到了一些问题，然后就有一个大佬提出了一种解决方案。这整个过程就是一个发现问题，然后解决问题的循环。
+
+#### Scoreboard
+Scoreboards can be designed to support either in-order execution or out-of-order execution.
+
+Scoreboarding keeps track of dependencies to make sure we do not allow an instruction to start executing if there is a dependency with a previous instruction that is still executing. As the following example shows:
+
+add r3, r2, r1    // r3 = r2+r1
+sub r5, r3, r4    // RAW
+add r5, r2, r1    // WAW
+
+1. After the first instruction issues, we mark r3 as unavailable.  
+2. When the sub instruction arrives, it cannot issue since r3 is not ready (RAW).
+3. After the first instruction completes, sub now can read the new value of r3 and issue, marking r5 which is the destination register as unavailable.
+4. The third instruction cannot issue since it writes to r5 (WAW).
+
+> Please note that in the above example, we issue in order: the read has already read the register values when we issue the write after it. So there is no WAR.
+
+**The two problem and solve method of the above implementation of scoreboard is used in in-order execution**
+1. The simple in-order scoreboard design needs too many storage space
+> Solution: change the implementation of scoreboard
+- The original way is hold a single bit per register per warp(每个warp都有一个完整的下图的结构), it looks like the following picture
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312172233091.png)
+- Now, the design contains a small number of entries per warp(每个warp一个bit vector), where each entry is the identifier of a register. It looks like the following picture
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312172236391.png)
+
+2. If an instruction that encounters a dependency must repeatedly lookup its operands in the scoreboard until the prior instruction it depends upon writes its results to the register file. It consumes too many computation resources
+
+首先可以确定的一点在计分板结构改变后，维护计分板内容的方式也发生了改变。根据书上说的，改变了修改计分板的时机。我现在对于解决这个问题大致的一个理解是，计分板和指令buffer是两个分离的结构，当一条指令执行结束后会修改计分板的内容，然后顺便把指令buffer中对应存在依赖的寄存器标记清空，这样在从指令buffer中取指令的时候拿到的就是新的状态，如果从指令buffer中读取到的指令不存在对于某个寄存器的依赖时就去执行这一指令，如果存在就换别的执行，不过这块的逻辑还没有看的太明白。
+
+### Warp
+
+> The multiprocessor creates, manages, schedules, and executes threads in groups of 32 parallel threads called warps.
+
+一个SM可能执行多个block。虽然说不同block之间可以并行执行（不过要求在不同SM上才可以并行），但是映射到同一个SM的block，它上面的warp是不能并行执行的，只能相互等待。
+
+**How block’s threads get mapped to warps?**
+
+We can get answer from [4.1. SIMT Architecture](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#simt-architecture).
+> The way a block is partitioned into warps is always the same; each warp contains threads of consecutive, increasing thread IDs with the first warp containing thread 0.
+
+从这个答案中，不难引发另一个疑问，即
+
+**How thread ID can be calculated?**
+
+We can get answer from [2.2. Thread Hierarchy](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#thread-hierarchy).
+> The index of a thread and its thread ID relate to each other in a straightforward way: 
+> - For a one-dimensional block, they are the same;
+> - for a two-dimensional block of size $(D_x, D_y)$, the thread ID of a thread of index $(x, y)$ is $(x + y \times D_x)$; 
+> - for a three-dimensional block of size $(D_x, D_y, D_z)$, the thread ID of a thread of index $(x, y, z)$ is $(x + y \times D_x + z \times D_x \times D_y)$.
+
+(Editer replenishment): please note that the above comparison is between **index of thread** and **thread ID**, so dont's be confused about the first situation. i.e. "for a one-dimensional block, they are the same", it means for a one-dimensional block, the thread ID is equals to the index of this thread.
+
+According to the question of "[Does CUDA think of multi-dimensional gridDim, blockDim and threadIdx just as a linear sequence?](https://stackoverflow.com/questions/31058001/cuda-griddim-blockdim-and-threadidx)", we can see the type of thread organization as the **row major ordered multi-dimensional arrays**. But please note the difference between the index in CUDA and the index of traditional array or matrix.
+
+For traditional array or matrix, we are used to use the **(row_index, col_index)** to indicate the position of an element in an array or a matrix. But in CUDA, the coordinates seem to become adverse, CUDA uses the **(x = column_number, y = row_number)** to express a grid or block.
+
+In fact, these two expressions don't create conflicts. The (row_index, col_index) is a perspective of actual storage mode. Now, if we place the array or the matrix into a coordinate system, we can also use the (x, y) to indicate an element of the array or matrix.
+
+We can say that the (row_index, col_index) is a coordinate from storage structure perspective and the (x = column_number, y = row_number) is a coordinate from math coordinate system perspective.
+
+Because the concept grid and block are just for programmer convenience, so they don't imply the actual storage structure, so the CUDA use the math coordinate to indicate the position of an element in an array or a matrix. For the thread index $(x, y)$, the x is the column number, y is the row number, it is like the following picture of block index.
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312061851353.png)
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312062024529.png)
+
+**How to understand and calculate occupancy ?**
+
+#### Warp Scheduling Strategy
+1. Loose Round Robin (LRR)
+处于Ready状态了就开始执行，否则跳过先发射下一个warp
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312171630189.png)
+
+2. Two-level (TL)
+把warp分为两组，Pending warps 和 Active warps，warp在这两个组之间变换，当warp需要等待某些长延迟操作时，就切换到pending warp那一组，当条件就绪后，则转到active warp这一组，在active warp这一组采用LRR的调度策略
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312171633345.png)
+
+3. Greedy-then-oldest (GTO)
+考虑到局部性，会贪婪地执行一个warp，直到它进入stall状态才会切换其他warp执行
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312171635290.png)
 
 ## CUDA Related Documents
 
