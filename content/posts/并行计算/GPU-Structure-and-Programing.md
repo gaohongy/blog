@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-18T17:18:01+08:00
+lastmod: 2023-12-18T18:10:06+08:00
 description: null
 draft: false
 fontawesome: true
@@ -1121,7 +1121,7 @@ add r5, r2, r1    // WAW
 
 为了实现这一点，就需要使用较大的 registers file。而 registers file最朴素的实现方式就是 one port per operand per instruction issued per cycle， 但是这样我理解着是只能串行访问，吞吐量比较低。所以一种方式就是划分bank，不同bank可以做到并行访问，从而增大并行度。
 
-引入了 bank，同时也就引入了bank conflict, 下图的naive microarchitecture就具有这种问题，设计operand collector也正是为了解决这种问题
+引入了 bank，同时也就引入了bank conflict, 下图的naive microarchitecture就具有这种问题，设计operand collector也正是为了解决这种问题, operand collector就是引入的第3个scheduler，完成指令在并行访问寄存器堆时的调度工作。
 
 naive microarchitecture for providing increased register file bandwidth(by single-ported logical banks of registers)
 
@@ -1141,6 +1141,13 @@ operand collector究竟是怎么调度的似乎书上并没有详细描述，只
 1. release-on-commit warpboard: at most one instruction per warp to be executing
 2. release-on-read warpboard: only one instruction at a time per warp to be collecting operands
 3. instruction level parallelism 
+
+#### Instruction Replay
+当一条指令在GPU流水线上发生结构冒险了怎么办？对于一般的CPU来说我们可以简单的暂停当前指令，直到结构冒险消除再继续执行。但是这种方法在高吞吐量的系统中并不适用，停滞的指令可能处于任务的关键路径上进而影响到任务的完成时间，并且大量的停滞需要额外的缓冲区来存储寄存器信息。同时停滞一个指令可能会停滞其他完全不必要停滞的指令，降低了系统的吞吐量。
+
+在GPU中我们可以尝试使用instruction replay来解决这个问题。instruction replay最早是在CPU的推测执行中作为一种恢复机制出现的，当我们执行了错误的分支，正确的指令会被重新取回并执行，消除错误分支的影响。在GPU中我们一般会避免推测执行，因为这会浪费宝贵的能源以及吞吐量。GPU实现instruction replay是为了减少流水线阻塞以及芯片面积和对应的时间开销。
+
+在GPU上实现instruction replay可以通过在instruction buffer中保存当前指令直到这条指令已经执行完成，然后再将其移出。
 
 ### Warp
 
@@ -1212,3 +1219,4 @@ Because the concept grid and block are just for programmer convenience, so they 
 > - [10] [Tensor Core技术解析（上）](https://www.cnblogs.com/wujianming-110117/p/12992932.html)
 > - [11] [Tensor Core技术解析（下）](https://www.cnblogs.com/wujianming-110117/p/12993096.html)
 > - [12] [NVIDIA Developer Tools 汇总](https://developer.nvidia.com/tools-overview)
+> - [13] [《General-Purpose Graphics Processor Architecture》中文翻译](https://zhuanlan.zhihu.com/p/522546744)
