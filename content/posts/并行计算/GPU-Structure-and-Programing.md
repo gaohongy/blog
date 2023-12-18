@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-17T23:29:25+08:00
+lastmod: 2023-12-18T17:12:14+08:00
 description: null
 draft: false
 fontawesome: true
@@ -1030,8 +1030,41 @@ The GPU pipeline consists of three scheduling “loops”:
 
 在讲述One/Two/Three-Loop Approximation之前，需要明确的是我们要分析的是SIMT Core的结构，要考虑的问题是如何统筹规划每一个warp所要执行的指令。这一点前提认知很重要，会直接影响到对后面一些结构的理解。
 
+还有一个比较重要的事情，就是弄清楚这里说的one,two,three到底指的是什么，目前理解指的是3种scheduler,分别是SIMT stack, Scoreboard 和 Operand Collector.
+
 ### One-Loop Approximation
 #### SIMT stack
+The SIMT stack is used to solve the thread divergence. It sends the target PC to the fetch unit and the active mask to the issue unit.
+> - The fetch unit is used to control which instruction is fetched next.
+> - The issue unit is used to control which lanes of the warp are active.
+
+The mask is a bit vector with 1 for every thread that is active for the corresponding control flow branch.  When that control flow branch is being executed, only the threads with 1 in the corresponding branch bit execute those instructions.
+
+A simple method to address the control divergence is PDOM mechanism(post-dominator stack-based reconvergence mechanism). The post-dominator active mask has 1 for every thread that is active in each of the divergent paths that reconverge at that point.
+
+When we hit a divergent point, we push on the stack: 
+- (1) the current active mask and the next PC at the reconverge point; 
+> 虽然这里说的是current active mask，但是current active mask和 reconverge point 的active mask实际是一样的
+
+- (2) the active mask, PC, and reconverge PC for every branch.  
+> 如果有多个branch，入栈的先后顺序一般采取 the entry with the most active threads ﬁrst and then the entry with fewer active threads。我的理解是thread越多越有可能引入新的branch，所以优先让较少thread先执行，避免使局面变得更加混乱。由于栈是FILO，所以the entry with fewer active threads后入栈.不过这只是一般做法，并非强制要求。
+
+For example, look at the following picture, we hit a divergent point A
+- (1) the current active mask / reconverge point active mask is 1111, and the reconverge point is G
+- (2) the branch of this divergent point A contains B and F
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312181346451.png)
+
+关于(2)中不同branch入栈的顺序，下图B分支点处采用的是一般的原则，A处则和一般原则相反
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312181352896.png)
+
+以上我们只讲述了SIMT stack是怎么使用的，现在思考一下它到底起到了什么作用，我们为何需要引入这样一种结构
+
+观察上图中的(b)部分，不难发现程序的执行流从(a)那种复杂的形式，已经转变为了(b)中这种串行的方式。每个cycle执行一条指令即可，所以引入stack的目标就是 To achieve this serialization of divergent code paths one approach.
+
+---
+
 The SIMT stack helps eﬃciently handle two key issues that occur when **all threads can execute independently**:
 
 1. nested control ﬂow
@@ -1039,7 +1072,6 @@ The SIMT stack helps eﬃciently handle two key issues that occur when **all thr
 
 a warp is eligible to issue an instruction if it has a valid and ready (according to the scoreboard) in the I-Buffer. 
 
-in-order pipeline
 
 ### Two-Loop Approximation
 The problem of One-Loop Approximation is that it assumes that the warp will not issue another instruction until the first instruction completes execution, so maybe it will cause a long execution latencies.
@@ -1055,9 +1087,11 @@ Scoreboards can be designed to support either in-order execution or out-of-order
 
 Scoreboarding keeps track of dependencies to make sure we do not allow an instruction to start executing if there is a dependency with a previous instruction that is still executing. As the following example shows:
 
+```x86asm
 add r3, r2, r1    // r3 = r2+r1
 sub r5, r3, r4    // RAW
 add r5, r2, r1    // WAW
+```
 
 1. After the first instruction issues, we mark r3 as unavailable.  
 2. When the sub instruction arrives, it cannot issue since r3 is not ready (RAW).
@@ -1070,13 +1104,43 @@ add r5, r2, r1    // WAW
 1. The simple in-order scoreboard design needs too many storage space
 > Solution: change the implementation of scoreboard
 - The original way is hold a single bit per register per warp(每个warp都有一个完整的下图的结构), it looks like the following picture
+
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312172233091.png)
+
 - Now, the design contains a small number of entries per warp(每个warp一个bit vector), where each entry is the identifier of a register. It looks like the following picture
+
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312172236391.png)
 
 2. If an instruction that encounters a dependency must repeatedly lookup its operands in the scoreboard until the prior instruction it depends upon writes its results to the register file. It consumes too many computation resources
 
 首先可以确定的一点在计分板结构改变后，维护计分板内容的方式也发生了改变。根据书上说的，改变了修改计分板的时机。我现在对于解决这个问题大致的一个理解是，计分板和指令buffer是两个分离的结构，当一条指令执行结束后会修改计分板的内容，然后顺便把指令buffer中对应存在依赖的寄存器标记清空，这样在从指令buffer中取指令的时候拿到的就是新的状态，如果从指令buffer中读取到的指令不存在对于某个寄存器的依赖时就去执行这一指令，如果存在就换别的执行，不过这块的逻辑还没有看的太明白。
+
+### Three-Loop Approximation
+#### Operand Collector
+为了隐藏长时间的内存访问延迟，一种方法就是实现以周期为单位对warp进行切换，通过warp切换来掩盖延迟。
+
+为了实现这一点，就需要使用较大的 registers file。而 registers file最朴素的实现方式就是 one port per operand per instruction issued per cycle， 但是这样我理解着是只能串行访问，吞吐量比较低。所以一种方式就是划分bank，不同bank可以做到并行访问，从而增大并行度。
+
+引入了 bank，同时也就引入了bank conflict, 下图的naive microarchitecture就具有这种问题，设计operand collector也正是为了解决这种问题
+
+naive microarchitecture for providing increased register file bandwidth(by single-ported logical banks of registers)
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312181639756.png)
+
+
+operand collector microarchitecture(the staging registers have been replaced with collector units)
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312181640755.png)
+
+operand collector究竟是怎么调度的似乎书上并没有详细描述，只是给了一种新的从 register 到 bank 的映射方式(如下图所示），确保不同 warp 原来会被分到同一个 bank 的register 现在会被分到不同bank，但是同一个 warp 内不同 thread 之间的 bank conflict 并没有解决, 也就是它只对减少不同 warp 间的 bank conflict 起到了作用。
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312181709819.png)
+
+
+具有 WAR hazard, 3种可能的解决方法：
+1. release-on-commit warpboard: at most one instruction per warp to be executing
+2. release-on-read warpboard: only one instruction at a time per warp to be collecting operands
+3. instruction level parallelism 
 
 ### Warp
 
