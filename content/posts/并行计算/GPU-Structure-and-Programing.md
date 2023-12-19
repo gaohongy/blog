@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-18T18:10:06+08:00
+lastmod: 2023-12-19T23:15:18+08:00
 description: null
 draft: false
 fontawesome: true
@@ -1072,6 +1072,42 @@ The SIMT stack helps eﬃciently handle two key issues that occur when **all thr
 
 a warp is eligible to issue an instruction if it has a valid and ready (according to the scoreboard) in the I-Buffer. 
 
+#### SIMT deadlock
+**What is the SIMT deadlock problem?**
+```cpp
+*mutex = 0; // A
+while (!atomicCAS(mutex, 0, 1)); // B
+atomicExch(mutex, 0); // C
+```
+
+上述代码中包含一个分支， 考虑在使用 SIMT-stack 时的场景
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312191937165.png)
+
+> 图中B表示条件命中，B'表示条件不命中
+
+
+SIMT-stack内容如下
+
+|   Ret/Reconv PC   |   Next PC   |   Active Mask   |
+| ---- | ---- | ---- |
+|   -   |   C   |   mask-A / mask-C  |
+|   C   |   B'   |   mask-B'   |
+|   C   |   B   |   mask-B   |
+
+> 最下方一行是TOS(top of stack)
+
+根据SIMT stack的内容，首先弹栈会让第一个命中的thread退出循环，它通过`atomicCAS()`将mutex修改为了1。然后SIMT stack会继续弹栈，这时候其他thread开始执行。但是问题在于现在还没有把C弹栈，所以mutex还没有被改回0，而现在正在执行的指令必须等到mutex等于0后才可以正常执行从而推出循环，而它们不执行完，SIMT stack就不会继续弹栈。这就造成了死锁。
+
+
+**A mechanism for avoiding SIMT deadlock**
+stackless branch reconvergence mechanism
+
+Assuming a warp contains 32 threads, the barrier participation mask is 32-bits wide.
+
+If a bit is set, that means the corresponding thread in the warp participates in this convergence barrier
+
+The barrier participation mask is used by the warp scheduler to stop threads at a specific convergence barrier
 
 ### Two-Loop Approximation
 The problem of One-Loop Approximation is that it assumes that the warp will not issue another instruction until the first instruction completes execution, so maybe it will cause a long execution latencies.
@@ -1148,6 +1184,35 @@ operand collector究竟是怎么调度的似乎书上并没有详细描述，只
 在GPU中我们可以尝试使用instruction replay来解决这个问题。instruction replay最早是在CPU的推测执行中作为一种恢复机制出现的，当我们执行了错误的分支，正确的指令会被重新取回并执行，消除错误分支的影响。在GPU中我们一般会避免推测执行，因为这会浪费宝贵的能源以及吞吐量。GPU实现instruction replay是为了减少流水线阻塞以及芯片面积和对应的时间开销。
 
 在GPU上实现instruction replay可以通过在instruction buffer中保存当前指令直到这条指令已经执行完成，然后再将其移出。
+
+### Memory system
+#### First Level
+The shared memory is implemented as a static random access memory (SRAM).
+
+每一个lane都有一个对应的bank，bank上各有一个读port和一个写port
+
+shared memory 和 global memory 的访问粒度似乎是不同的，shared memory可以以warp为单位进行访问，但是global memory每次就是访问一个cache block
+
+> While the data array is highly banked to enable ﬂexible access to shared memory by individual warps, access to global memory is restricted to a single cache block per cycle.
+
+The L1 cache block size is 128 bytes in Fermi and Kepler and is further divided into four 32byte sectors in Maxwell and Pascal.
+
+要是按照这个的说法，每次读取global memory最小单位就是32B
+
+The 32-byte sector size corresponds to the minimum size of data that can be read from a recent graphics DRAM chip in a single access.
+
+一个128B的cache block，会分为32个bank，每个bank对应4B(32-bit entries)
+Each 128-byte cache block is composed of 32-bit entries at the same row in each of the 32 banks.
+
+The data to be written either to shared memory or global memory is ﬁrst placed write data buﬀer (WDB).
+
+#### Memory Partition Unit
+The memory access schedulers in memory partition unit contains **frame buffer**(FB) and **raster operation**(ROP) unit.
+
+1. L2 cache
+To match the DRAM atom size of 32 bytes in GDDR5, each cache line inside the slice has four 32-byte sectors.
+
+L2 cache line的长度是128B，由4个32B组成
 
 ### Warp
 
