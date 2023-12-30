@@ -3,7 +3,7 @@ categories:
   - 并行计算
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-20T17:58:43+08:00
+lastmod: 2023-12-30T22:12:45+08:00
 description: null
 draft: false
 fontawesome: true
@@ -793,6 +793,12 @@ ptxas -arch=sm_52 "sample.ptx" -o "sample.sm_52.cubin"
 > 当省略-code选项时，-arch选项指定的可以是Real Architecture的版本，此时由nvcc自行确定一个Virtual Architecture的合适版本
 > 详见官方文档[--gpu-architecture (-arch)](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-architecture-arch)和[--gpu-code code (-code)](https://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/index.html#gpu-code-code-code)
 
+### GPU Architecture and Compute Capability
+关于 GPU Architecture 的发展，截止到 2022 年的情况可见下图，最新的架构可见[官方文档](https://www.nvidia.cn/technologies/)
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312301835235.png)
+
+关于不同GPU的计算能力，可见[官方文档](https://developer.nvidia.com/cuda-gpus#compute)([中文](https://developer.nvidia.com/zh-cn/cuda-gpus#compute))
+
 ### Reference
 
 > - [1] [NVCC与PTX](https://zhuanlan.zhihu.com/p/432674688)
@@ -865,11 +871,16 @@ int magic_number_opt;
 ## Related Programming Models
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202312131446434.png)
 
+就目前了解到的 OpenACC 和 OpenMP 是由编译器提出的一种叫做[Offloading](https://gcc.gnu.org/wiki/Offloading)的机制实现的
+
 1. OpenCL
 > Open Computing Language
 
+
 2. OpenACC
 > Open Accelerators
+
+OpenACC is a feature of the compiler, so we don't need to install it if we want use it. More details please see the [gnu official website](https://gcc.gnu.org/wiki/openmp).
 
 3. OpenMP
 > Open Multi-Processing
@@ -879,6 +890,8 @@ Reference to the memroy modle of OpenMP, we can get the following information: "
    threaded parallelism
 
 虽然OpenMP只能用于单机，但是可以处理单机上的多卡
+
+OpenMP is a feature of the compiler, so we don't need to install it if we want use it. More details please see the [gnu official website](https://gcc.gnu.org/wiki/openmp).
 
 4. MPI
 > Message Passing Interface
