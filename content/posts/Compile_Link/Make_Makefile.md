@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-09-16T17:49:00+08:00
-lastmod: 2023-12-30T22:12:45+08:00
+lastmod: 2023-12-30T22:30:32+08:00
 tags:
 categories:
   - Compile_Link
@@ -27,7 +27,7 @@ comment: false
 lightgallery: force
 ---
 
-# Wildcard
+## Wildcard
 The wildcard in makefile is similar with macro in C/C++, it isn't similar with wildcard in linux shell, so it doesn't expend automatically.
 ```
 object1 = *.c  // *.c
@@ -35,11 +35,11 @@ object1 = *.c  // *.c
 object2 = $(wildcard *.cpp) // main.cpp t1.cpp t2.cpp
 ```
 
-# Automatically generate dependencies
+## Automatically generate dependencies
 Utilizing the `-M` and `-MM` options to get the dependencies of source code from gcc/g++.
 > These options' document can be found at [Preprocessor-Options](https://gcc.gnu.org/onlinedocs/gcc-12.3.0/gcc/Preprocessor-Options.html). (About why these option in the preprocessor options, it is easy to understand. In the state of preprocessor, the preprocessor will judge the header file, so it knows which files are dependented by current file.)
 
-#  Hide commands themself
+##  Hide commands themself
 Place  `@` front of the command, e.g. 
 If you use `echo "compiling..."` in makefile, you will get the output
 ```
@@ -52,10 +52,10 @@ If you use `@echo "compiling..."`, you will get the output
 compiling...
 ``` 
 
-# Function
+## Function
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309171043153.png)
 
-# Automation variables
+## Automation variables
 - `$@` : 表示规则中的目标文件集
 - `$%` : 仅当目标是函数库文件中，表示规则中的目标成员名
 - `$<` : 依赖目标中的第一个目标名字
@@ -63,7 +63,7 @@ compiling...
 - `$^` : 所有的依赖目标的集合
 - `$+` : 这个变量很像 $^ ，也是所有依赖目标的集合。只是它不去除重复的依赖目标
 
-# Example
+## Example
 <details>
 <summary>Advanced makefile usage example code</summary>
 
@@ -174,7 +174,7 @@ build/funcs.o build/main.o
 ```
 Based on the project file structure, we can understand the difference between them.
 
-# Pattern-specific Variable Values
+## Pattern-specific Variable Values
 The most obvious and easy example is distinguishing the difference between `$<` and `$^` in Automation variables.
 i.e. the difference between `$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp` and `$(OBJS): $(SRCS)`
 
@@ -183,6 +183,6 @@ Although we know the `$<` is the name of the first prerequisite and `$^` is the 
 In short, if we still use the above file structure, when using `$(OBJS): $(SRCS)`, the `$(OBJS)` is the 'build/funcs.o build/main.o`, they are one expression, but using 
 `$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp`, the `$(BUILD_DIR)/%.o` is `build/funcs.o` and `build/main.o`, they are two expressions, it looks like a enumation, so we can use this to generate the corresponding .o object file and .c source file.
 
-# Reference
+## Reference
 > - [1] [GNU Make Manual](https://www.gnu.org/software/make/manual/)
 > - [2] [What does 'make install' do?](https://superuser.com/questions/360178/what-does-make-install-do)
