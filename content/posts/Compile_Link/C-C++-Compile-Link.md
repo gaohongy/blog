@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-31T21:54:31+08:00
-lastmod: 2023-12-31T23:15:17+08:00
+lastmod: 2024-01-01T22:07:17+08:00
 tags:
 categories:
   - Compile_Link
@@ -174,35 +174,90 @@ gcc -c hello.c -o hello.o
 
 注：关于"not stripped"，和`strip`命令有关，表示没有Removes symbols and sections of files.
 
-### 链接[^link]
+### 链接
 > 将多个可重定位目标文件和标准库函数合并为可执行目标文件
-
-[^link]: 详细分析见[程序编译的链接过程](https://www.cnblogs.com/G-H-Y/p/17077224.html)
 
 在链接之前，各个程序模块都是相互独立的，模块A所使用到的模块B的内容，在模块A的视角下仅仅是一个符号，并不清楚其具体内容。链接过程可以理解为把模块B的内容结合到A中。整个过程类似搭积木最后的模块拼接过程。
 
-#### 易错点
-1. 链接静态链接库 != 静态链接生成的可执行目标文件
-2. 链接动态链接库 != 动态链接生成的可执行目标文件
+**说明**
 
-- 静态链接库(libadd.a)的文件格式:
+Windows 下的链接过程涉及的知识和 Linux 下并不完全相同，以下内容仅面向 Linux 下的链接过程
+
+#### 相关概念解析
+1. ELF格式文件分类
+
+|  文件类型    |   说明   |  实例    |
+| ---- | ---- | ---- |
+|  可重定位文件(Relocatable File)    |      |   Linux的.o； Windows的.obj   |
+|   共享目标文件(Shared Object File)   |      |   Linux的.so；Windows的.dll   |
+|   可执行文件(Executable File)   |      |   Linux的/bin目录下的程序；Windows的.exe   |
+|   核心转储文件(Core Dump File)   |   当进程意外终止时，系统将进程的地址空间的内容及终止时的信息转储到该文件中   |   Linux的core dump   |
+
+2. library分类
+
+- 静态链接库：static library, 一种文件归档(archive). relocatable Files + 索引(index) -> static library
+
+> 静态链接库(libadd.a)的文件格式:
+> 
 > libadd.a: current ar archive
 
-- 动态链接库(libadd.so)的文件格式：
+- 动态链接库：shared library(Linux) / dynamic link library(Windows)
+
+> 动态链接库(libadd.so)的文件格式：
+> 
 > libadd.so: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=644e95c7d3f9bd18796622c3041e7653e402d179, not stripped
 
-- 静态链接生成的可执行目标文件的文件格式：
+从本质上来说就是以上这两种，但是如果采用的链接方式是显示运行时链接，那么利用到的library又被称作dynamic loading library，使用的仍然是xxx.so文件，只是换了一种使用方式
+
+3. 链接方式
+
+- 静态链接：使用`-static`选项，仅使用静态链接器，在编译链接过程中就将其他模块装入可执行文件中
+
+> 静态链接生成的可执行目标文件的文件格式：
+> 
 > main: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, for GNU/Linux 3.2.0, BuildID[sha1]=65422291d167d002123191a5f63d9a5503d6d670, not stripped
 
-- 动态链接生成的可执行目标文件的文件格式：
+- 动态链接：默认的链接方式, 同时使用静态链接器和动态链接器，动态链接器在**运行前**将共享模块装载进内存并进行重定位操作
+
+> 动态链接生成的可执行目标文件的文件格式：
+> 
 > main: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=3e226365a1d11bf52e8c7f5b4b9a72bbecbd7007, not stripped
 
-在使用.a时，加或者不加-static，对于.a的处理方式似乎没有发生变化，都是将.a中的内容直接复制到了可执行目标文件中
-产生变化的实际是一些隐含使用的.so，即使在程序构建时没有添加任何`-l`，但是通过`ldd`可以查看到它也会使用一些动态链接库
-而不加-static，就是正常在运行时使用这些动态链接库，加上-static，就会将使用到的所有库都复制到可执行目标文件中
+- 显示运行时链接(Explicit Run-time Linking): 通过某些机制在运行时将共享模块装载进内存并进行重定位操作，让程序在运行时加载或卸载共享模块
 
-在实际的测试过程中发现：静态链接库可以静态链接，也可以动态链接。动态链接库只能动态链接，不能静态链接（如果尝试这样做了，那么会得到输出信息：/usr/bin/ld: attempted static link of dynamic object `./libadd.so' collect2: error: ld returned 1 exit status)
-但是对于一个不应用任何外部第三方库的（注意说的是第三方库，不代表不使用标准库），在编译时是可以添加-static选项的，但是不使用第三方库不代表不使用标准库，g++会隐含链接很多动态链接库，为何这些动态链接库就在使用-static时就不会出现问题呢？由于牵扯的知识面过广，此问题暂时搁置。
+**关于library种类和链接方式之间的关系，容易产生的一个误解**
+
+静态链接库，动态链接库 和 静态链接，动态链接，这些名称很容易带给人一种误解: 采用静态链接库时采用的就是静态链接，使用动态链接库时采用的就是动态链接。
+
+首先从链接方式的分类来说，静态还是动态链接是由编译选项`-static`决定的，并不是采用了静态链接库还是动态链接库决定的。
+
+但是它们之间并不是没有关系，从另一个角度来说，根据GNU文档[Options for Linking - static](https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#index-static)对于static选项的描述
+> prevents linking with the shared libraries
+
+可以看出，当我们使用static选项进行静态链接时，使用的只能是静态链接库。
+
+所以，关于库和链接方式的对应关系，需要从两个方向进行讲述：
+
+- 使用静态链接库时，进行的可以是静态链接 或 动态链接； 使用动态链接库，只能进行动态链接
+- 进行静态链接时，只能使用静态链接库；进行动态链接时，可以使用静态链接库或动态链接库
+
+i.e. **使用静态链接库是进行静态链接的必要不充分条件, 使用动态链接库是进行动态链接的充分不必要条件**
+
+> 注：后半句的表述并不是非常准确，因为在现行系统下，进行动态链接都会利用到一个特殊的动态链接库-动态链接器，同时C/C++程序无论是否调用一些函数，都会链接libc.so(这一点判断还没有寻找确切的证据，仅是根据实际测试结果)，从这个角度来说，使用动态链接库是进行动态链接的充要条件，而上面的表述仅仅是为了表述库和链接方式的那2点对应关系，所以给出的是充分不必要条件
+
+重新分析上述给出的那种误解，采用静态链接库时，如果没有给出`-static`选项，那么这时候进行的是动态链接，这正验证了使用静态链接库对于进行静态链接的不充分性
+
+除了上述提出的各类问题，还会涉及到一个比较隐含的问题。上面提到使用静态链接库可以进行静态链接，但是在注中又提到一个事实，即虽然我们人为仅仅指定了一些静态链接库，但是背后会隐含利用一些特殊的动态链接库。动态链接库是不可以进行静态链接的，但是为何在进行静态链接时，这些特殊的动态链接库并没有报错。
+
+事实上，这些动态链接库，都存在着与之对应的静态链接库，在我们添加`-static`选项后，链接使用的就是这些静态链接库。e.g. libc.so就存在一个libc.a的静态链接库（可通过命令`find /usr/lib /usr/local/lib -name "libc.a"`查找到）
+
+4. 链接到底在完成一件什么事情？
+
+简单来说就是重定向。
+
+- 静态链接 -> 静态地址重定位， 地址在编译时就已经确定
+- 动态链接 -> 装载时地址重定位，地址在编译时是相对地址，具体的绝对地址在加载时由装载器（Loader）进行计算和修改
+- 显示运行时链接 -> 运行时地址重定位
 
 #### 静态链接库
 静态链接是可执行目标文件在构建过程中完成的，使用链接器将多个.o可重定位目标文件结合（实际上也可以将.so动态链接库结合进来，在动态链接部分详细说明），生成可执行目标文件。
@@ -259,8 +314,24 @@ g++ main.cpp -L. -ladd
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311091009376.png)
 > 注：从图中也可以看出.a文件本身只是.o文件的一个容器，实际参与链接过程的仍然是.o可重定位目标文件
 
+**静态链接的缺点**
+静态链接是将所需的所有库文件内容进行整合，全部装入到可执行文件中，这种方式会带来以下两种问题：
+1. 内存和磁盘空间浪费严重：共用相同库文件的，不同的可执行程序中都存在着相同的库文件，如下图所示
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202401011609985.png)
+
+2. 程序更新不便：更新可执行程序所用的其中一个库文件需要重新下载整个可执行程序
+
 #### 动态链接库
-动态链接库：Windows平台.dll (dynamic link library)，Linux平台.so (shared object)
+**动态链接的动态指的是哪个环节是动态的？/ 什么是动态链接库？**
+
+所谓动态链接，这里有两种不同的描述，在《程序员的自我修养-链接、装载与库》中的说法大概描述是：不在编译链接环节对那些组成程序的目标文件进行链接，而是等到程序运行时才进行链接“。但是根据下面的动态链接流程图，动态链接大致可以理解为：动态链接 = 编译链接环节的部分链接 + 程序运行时的完全链接。
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202401011657893.png)
+
+我目前对这一点的理解是，编译链接环节的输出结果只是保存了程序需要使用到哪些库（也就是`ldd`能够查询到的那些），然后在程序运行过程中由动态链接器来完成实际的链接过程。所以说以上两种说法其实都没什么问题，真实链接的过程确实是在运行阶段由动态链接器完成的，但是编译链接环节确实也使用到链接器经历了一次链接环节，所以说成部分链接倒是也合理
+
+动态链接库：Windows平台动态链接库.dll (dynamic link library)，Linux平台共享对象文件.so (shared object file)
 
 仍然采用静态链接库的场景，构建动态链接库。
 ```
@@ -294,6 +365,8 @@ g++ add.cpp -fpic -shared -o libadd.so
 g++ main.cpp -L. -ladd
 ```
 
+**动态链接包含2个链接过程**
+
 使用动态链接库和静态链接库的一个显著区别在于：使用静态链接库时，程序构建完成了就可以直接执行了，但是使用动态链接库，程序构建完成并不一定表示可以正常执行。
 In other words, 程序构建和程序执行是两个显著分离的过程。
 
@@ -302,6 +375,7 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
 > ./main: error while loading shared libraries: libadd.so: cannot open shared object file: No such file or directory
 
 通过`ldd`命令检查可执行目标文件所需的动态链接库：
+
         linux-vdso.so.1 (0x00007ffe113c2000)
         **libadd.so => not found**
         libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f4aa5de5000)
@@ -311,12 +385,20 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
         libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f4aa543e000)
 可以发现，程序找不到libadd.so这一动态链接库。
 
-在编译时已经通过`-L.`指定了库的搜索路径，为何此时仍然找不到？
-原因在于，`-L. -ladd`这是告知链接器ld的内容，只能保证在链接过程中ld可以正确找到库所在目录，正确将库同其他模块进行“拼接”（这个拼接和静态链接库提到的本质上应当是不同的，因为具体的内容实际在运行过程中才会获知，所以似乎只是到了符号层面，具体细节涉及内容过多，暂时不深入）。
-也就是说编译选项只能负责确保链接器可以正确找到所需的库，但是运行阶段的执行部件还并不清楚。
-想说的就是区分好程序构建和程序执行这两个阶段
+**在编译时已经通过`-L.`指定了库的搜索路径，为何此时仍然找不到？**
 
-解决这个问题目前有几种方法：
+原因在于，`-L. -ladd`这是告知静态链接器ld的内容，只能保证在第一个链接过程中ld可以正确找到库所在目录。而第2个链接过程的工作主体是动态链接器，`-L.` 并没有作用到它。
+
+> 这里会引申出另外2个问题
+>
+> 1. 静态链接器和动态链接器都分别完成了哪些工作 / 从动态链接的流程图中可以看出，xxx.so文件同时参与静态链接库和动态链接库两个链接过程，在这两个过程中这个library分别起到了什么作用
+> 2. 既然没有告知动态链接器library的路径，那么它又是如何找到所用的library的
+
+对于问题1，假设程序P.cpp使用到了一个其他库中定义的函数fun()。当程序P.cpp被编译为P.o之后，编译器是不知道fun()函数的地址的。如果fun()是static library中的函数，那么静态链接器会根据所用的static library，直接将P.o中的fun()函数的地址进行重定位。如果fun()是shared library中的，那么静态链接器会将其标记为动态链接的符号，等到装载时由动态链接器完成重定位。可见，xxx.so需要被用到两次。
+
+对于问题2，由于目前还未遇到必须深入理解的场景，暂时不深入，后续了解可参考文章[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)
+
+简述解决这个问题目前有几种方法：
 1. 把生成的libadd.so移动到/usr/local/lib等默认搜索路径
 2. 修改环境变量`LD_LIBRARY_PATH`，将libadd.so所在路径添加到环境变量中
 3. 修改编译命令`g++ main.cpp ./libadd.so -o main`，此时在和libadd.so相同路径下即可正常执行可执行目标文件。通过`ldd`命令可以发现内容有所改变
@@ -331,7 +413,9 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
 
 
 动态链接库在构建和执行过程中的参与情况示意图：
-![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311091147037.png)
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202401011657893.png)
+
 > 注：从图上也可以验证上述的说法，相较于静态链接库，动态链接库在构建过程和执行过程中都会发挥作用
 
 ## Reference
@@ -341,3 +425,4 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
 > - [4] [gcc Optimize Options](https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
 > - [5] [Linux下编译Opencv](https://blog.csdn.net/weixin_44966641/article/details/120659285)([备份](https://www.cnblogs.com/hongyugao/p/17822192.html))
 > - [6] [ELF文件格式解析](https://blog.csdn.net/weixin_44966641/article/details/120631079?spm=1001.2014.3001.5501)([备份](https://www.cnblogs.com/hongyugao/p/17822204.html))
+> - [7] [How to create and use program libraries on Linux](https://tldp.org/HOWTO/Program-Library-HOWTO/index.html)
