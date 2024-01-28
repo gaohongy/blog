@@ -1,9 +1,9 @@
 ---
 categories:
-  - 并行计算
+  - HPC
 comment: false
 date: '2023-05-31T11:17:35+08:00'
-lastmod: 2023-12-30T22:12:45+08:00
+lastmod: 2024-01-28T17:54:15+08:00
 description: null
 draft: false
 fontawesome: true
