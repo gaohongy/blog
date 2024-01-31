@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-31T21:54:31+08:00
-lastmod: 2024-01-01T22:07:17+08:00
+lastmod: 2024-01-31T10:24:55+08:00
 tags:
 categories:
   - Compile_Link
@@ -125,6 +125,7 @@ More details can be found in [CMake Knowledges Summary](https://gaohongy.github.
 > 集成开发环境一键式完成的过程，将编译和链接进行合并，此过程称为构建（Build）
 
 ![](https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301191738098.png)
+
 > 关于编译选项的详细解释见 [GCC online documentation](https://gcc.gnu.org/onlinedocs/) -> GCC <version number> Manual -> GCC Command Options
 
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202308241020458.png)
@@ -311,7 +312,9 @@ g++ main.cpp -L. -ladd
 > libadd.a: POSIX tar archive (GNU)
 
 静态链接库在构建过程中的参与情况示意图：
+
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202311091009376.png)
+
 > 注：从图中也可以看出.a文件本身只是.o文件的一个容器，实际参与链接过程的仍然是.o可重定位目标文件
 
 **静态链接的缺点**
@@ -399,7 +402,7 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
 对于问题2，由于目前还未遇到必须深入理解的场景，暂时不深入，后续了解可参考文章[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)
 
 简述解决这个问题目前有几种方法：
-1. 把生成的libadd.so移动到/usr/local/lib等默认搜索路径
+1. 把生成的libadd.so移动到/usr/local/lib等默认搜索路径 (???-现存疑问：在[头文件的搜索路径](https://gaohongy.github.io/blog/posts/compile_link/cmake/#search-path)中，我们给出了如何确定头文件的默认搜索路径，但是截止到这里，还不知道如何确定链接时以及装载时静态库和动态库的默认搜索路径)
 2. 修改环境变量`LD_LIBRARY_PATH`，将libadd.so所在路径添加到环境变量中
 3. 修改编译命令`g++ main.cpp ./libadd.so -o main`，此时在和libadd.so相同路径下即可正常执行可执行目标文件。通过`ldd`命令可以发现内容有所改变
         linux-vdso.so.1 (0x00007fff8a570000)

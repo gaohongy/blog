@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-6-16T23:23:00+08:00
-lastmod: 2023-12-30T22:30:32+08:00
+lastmod: 2024-01-31T10:24:55+08:00
 tags:
 categories:
   - Compile_Link
@@ -591,6 +591,16 @@ cmake .. -DCMAKE_BUILD_TYPE=debug
 1. `<>`是只在系统目录中搜索
 2. `""`是优先在当前目录搜索，未找到则进入系统目录搜索
 
+### Search Path
+We can use `g++ -xc++ -E -v -` command to get the processing flow of the preprocess, which contains the search paths of the header file.
+
+> - `-x language` is used to specify explicitly the language for the following input files (rather than letting the compiler choose a default based on the file name suffix). In my opinion, now, we want to get the processing flow of the c++ file's proprocess with no input file, so we must specify the input file type manually.
+> - `-E` is the option for prepocessing
+> - `-v` is used to output detail information
+> - `-` 表示接受来自标准输入的输入。此处，未提供实际的源文件，只关心获取编译器信息。
+
+> Refer to the [official document](https://gcc.gnu.org/onlinedocs/gcc-13.2.0/cpp/Include-Syntax.html) for detailed information.
+
 ### 效果
 由于include头文件的实际效果是把头文件的内容插入到文件中，因此
 1. 在不支持重载机制的c语言中，当头文件中的声明语句和.cpp中实现语句不同时会报错，可以在编译时就发现错误
@@ -599,7 +609,7 @@ cmake .. -DCMAKE_BUILD_TYPE=debug
 > 引入可以使用相对路径
 
 ## 引入第三方库
-cmake不过是一个构建工具，其仍然需要完成[程序的编译链接过程](https://www.cnblogs.com/hongyugao/p/15499494.html#%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B)。
+cmake不过是一个构建工具，其仍然需要完成[程序的编译链接过程](https://gaohongy.github.io/blog/posts/compile_link/c-c++-compile-link/#%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B)。
 因此这里涉及到的所有函数的作用或者意义都会对应着程序的编译链接中的某一个过程。
 
 因为程序的编译链接无非是要解决头文件和链接库的问题，所以下面讨论的这些情况也都离不开这两个问题。
