@@ -39,7 +39,7 @@ resources:
 1. Environment/Global Variables 
 2. Shell/Local Variables
 
-The difference between these two variables is that environment variables can be interviewed by child processes but Shell variables can only be interviewed by current process.
+The difference between these two variables is that environment variables can be interviewed by child processes, i.e. the so-called global variables are only shared within the process hierarchy of the current process（进程链）, existing only between the current process and its child processes. Environment variables of other processes and those of the current process are not shared. But Shell variables can only be interviewed by current process.
 
 ## Related commands
 1. `env`

@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-09-10T22:06:00+08:00
-lastmod: 2024-01-28T17:54:15+08:00
+lastmod: 2024-01-31T18:26:04+08:00
 tags:
 categories:
   - C++
@@ -225,6 +225,7 @@ int main() {
 ```
 
 **Which operators does atomic support ?**
+
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202309251315078.png)
 
 Another two important functions are `compare_exchange_weak` and `compare_exchange_strong`, which are abbreviated as CAS(Compare And Swap) in many places. We can use them to implement above any one fetch_xxx functions.

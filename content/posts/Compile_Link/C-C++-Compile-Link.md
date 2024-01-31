@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-31T21:54:31+08:00
-lastmod: 2024-01-31T10:24:55+08:00
+lastmod: 2024-01-31T18:26:04+08:00
 tags:
 categories:
   - Compile_Link
@@ -377,41 +377,57 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
 同样的，在使用动态链接库时也一样可以使用这一条命令，程序可以正常构建。但是一旦执行程序，会报以下错误：
 > ./main: error while loading shared libraries: libadd.so: cannot open shared object file: No such file or directory
 
-通过`ldd`命令检查可执行目标文件所需的动态链接库：
+通过`ldd`命令(MacOS下可以使用`otool -L`)检查可执行目标文件所需的动态链接库：
 
-        linux-vdso.so.1 (0x00007ffe113c2000)
-        **libadd.so => not found**
-        libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f4aa5de5000)
-        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f4aa59f4000)
-        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f4aa5656000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007f4aa6370000)
-        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f4aa543e000)
+> linux-vdso.so.1 (0x00007ffe113c2000) 
+> 
+> **libadd.so => not found**
+> 
+> libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f4aa5de5000)
+> 
+> libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f4aa59f4000)
+> 
+> libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f4aa5656000)
+> 
+> /lib64/ld-linux-x86-64.so.2 (0x00007f4aa6370000)
+>
+> libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f4aa543e000)
+
 可以发现，程序找不到libadd.so这一动态链接库。
 
-**在编译时已经通过`-L.`指定了库的搜索路径，为何此时仍然找不到？**
+**在编译时已经通过`-L.`指定了库的搜索路径，为何此时仍然找不到以及如何找到？**
 
-原因在于，`-L. -ladd`这是告知静态链接器ld的内容，只能保证在第一个链接过程中ld可以正确找到库所在目录。而第2个链接过程的工作主体是动态链接器，`-L.` 并没有作用到它。
+- 静态链接器寻找所需的库文件是通过编译命令中的`-L. -ladd`选项
+- Linux下的动态链接器，可以通过`LD_LIBRARY_PATH`变量包含的路径找到所需的库文件（macOS下的动态链接器则通过`DYLD_LIBRARY_PATH`变量）
 
-> 这里会引申出另外2个问题
->
-> 1. 静态链接器和动态链接器都分别完成了哪些工作 / 从动态链接的流程图中可以看出，xxx.so文件同时参与静态链接库和动态链接库两个链接过程，在这两个过程中这个library分别起到了什么作用
-> 2. 既然没有告知动态链接器library的路径，那么它又是如何找到所用的library的
 
-对于问题1，假设程序P.cpp使用到了一个其他库中定义的函数fun()。当程序P.cpp被编译为P.o之后，编译器是不知道fun()函数的地址的。如果fun()是static library中的函数，那么静态链接器会根据所用的static library，直接将P.o中的fun()函数的地址进行重定位。如果fun()是shared library中的，那么静态链接器会将其标记为动态链接的符号，等到装载时由动态链接器完成重定位。可见，xxx.so需要被用到两次。
 
-对于问题2，由于目前还未遇到必须深入理解的场景，暂时不深入，后续了解可参考文章[一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)
+上述案例中可以正常编译，这是因为添加了`-L. -ladd`选项，使用静态链接器的第一个链接过程是可以正常完成的。但是我们并没有进行其他操作，所以使用动态链接器的第二个链接过程会提示找不到库，即运行时会报错。
 
-简述解决这个问题目前有几种方法：
-1. 把生成的libadd.so移动到/usr/local/lib等默认搜索路径 (???-现存疑问：在[头文件的搜索路径](https://gaohongy.github.io/blog/posts/compile_link/cmake/#search-path)中，我们给出了如何确定头文件的默认搜索路径，但是截止到这里，还不知道如何确定链接时以及装载时静态库和动态库的默认搜索路径)
-2. 修改环境变量`LD_LIBRARY_PATH`，将libadd.so所在路径添加到环境变量中
+**上述提到了通过环境变量为动态链接器指示库文件搜索路径来解决运行时报错的问题，接下来会总结给出几种确保程序执行或者说让动态链接器能够找到动态链接库的几种方法：**
+
+1. 把生成的libadd.so移动到/usr/local/lib等默认搜索路径（根据现有理解，`make install`所做的工作就是将相关文件复制到这些默认的搜索路径当中，但是个人并不是很推荐这种做法，因为直接采用默认搜索路径就类似黑盒，在不同设备中默认设置并不一定相同，显式给出各种信息会使得编译链接过程更加清晰明了）
+
+2. 修改环境变量`LD_LIBRARY_PATH`（macOS下为`DYLD_LIBRARY_PATH`），将libadd.so所在路径添加到环境变量中
+
+> 需要注意的一点是，根据[Comparison of Shell Script Execution Modes](https://gaohongy.github.io/blog/posts/linux/comparison-of-shell-script-execution-modes/)的知识，可执行文件的执行会在子进程中进行，因此此处的变量需要设置为[Environment/Global Variables](https://gaohongy.github.io/blog/posts/linux/variables-in-linux/)以便子进程可以访问到。
+
 3. 修改编译命令`g++ main.cpp ./libadd.so -o main`，此时在和libadd.so相同路径下即可正常执行可执行目标文件。通过`ldd`命令可以发现内容有所改变
-        linux-vdso.so.1 (0x00007fff8a570000)
-        **./libadd_dynamic.so (0x00007f5421cea000)**
-        libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f5421961000)
-        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f5421570000)
-        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f54211d2000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007f54220ee000)
-        libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f5420fba000)
+
+> linux-vdso.so.1 (0x00007fff8a570000)
+> 
+> **./libadd_dynamic.so (0x00007f5421cea000)**
+> 
+> libstdc++.so.6 => /usr/lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f5421961000)
+> 
+> libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f5421570000)
+> 
+> libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f54211d2000)
+> 
+> /lib64/ld-linux-x86-64.so.2 (0x00007f54220ee000)
+> 
+> libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f5420fba000)
+
 > 关于第3点引发出的疑问还需要了解更多的关于动态链接库的知识才能解决，暂时不深入
 
 
@@ -420,6 +436,10 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202401011657893.png)
 
 > 注：从图上也可以验证上述的说法，相较于静态链接库，动态链接库在构建过程和执行过程中都会发挥作用
+> 
+> 静态链接器和动态链接器都分别完成了哪些工作 / 从动态链接的流程图中可以看出，xxx.so文件同时参与静态链接库和动态链接库两个链接过程，在这两个过程中这个library分别起到了什么作用?
+>
+> 答：假设程序P.cpp使用到了一个其他库中定义的函数fun()。当程序P.cpp被编译为P.o之后，编译器是不知道fun()函数的地址的。如果fun()是static library中的函数，那么静态链接器会根据所用的static library，直接将P.o中的fun()函数的地址进行重定位。如果fun()是shared library中的，那么静态链接器会将其标记为动态链接的符号，等到装载时由动态链接器完成重定位。可见，xxx.so需要被用到两次
 
 ## Reference
 > - [1] [Clang vs Other Open Source Compilers](https://opensource.apple.com/source/clang/clang-23/clang/tools/clang/www/comparison.html)
@@ -429,3 +449,4 @@ In other words, 程序构建和程序执行是两个显著分离的过程。
 > - [5] [Linux下编译Opencv](https://blog.csdn.net/weixin_44966641/article/details/120659285)([备份](https://www.cnblogs.com/hongyugao/p/17822192.html))
 > - [6] [ELF文件格式解析](https://blog.csdn.net/weixin_44966641/article/details/120631079?spm=1001.2014.3001.5501)([备份](https://www.cnblogs.com/hongyugao/p/17822204.html))
 > - [7] [How to create and use program libraries on Linux](https://tldp.org/HOWTO/Program-Library-HOWTO/index.html)
+> - [8] [一文读懂Linux下动态链接库版本管理及查找加载方式](https://blog.ideawand.com/2020/02/15/how-does-linux-shared-library-versioning-works/)
