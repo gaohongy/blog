@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-01-18T23:51:41+08:00
-lastmod: 2023-12-01T12:04:22+08:00
+lastmod: 2024-02-14T21:06:37+08:00
 tags:
 categories:
   - Linux
@@ -283,7 +283,7 @@ prw-rw----  0 root  staff  0  7 30 22:50 /dev/fd/11
 > 2. /dev/fd 是一个特殊的目录，用于表示进程的文件描述符（File Descriptors），后面的11并不是固定值，只是在执行命令时获得的临时文件描述符为11
 
 
-## 流
+## 流及其重定向
 在了解具体的流重定向方法之前，我们需要首先了解Linux下3种特殊的设备：`stdin`, `stdout`, `stderr`。它们都位于`/dev/`目录下，详细信息如下：
 ```
 lr-xr-xr-x  1 root  wheel     0B Nov 26 08:20 stderr -> fd/2
@@ -294,7 +294,7 @@ lr-xr-xr-x  1 root  wheel     0B Nov 26 08:20 stdout -> fd/1
 
 更详细的内容请见[3.6 Redirections | Linux manual](https://www.gnu.org/software/bash/manual/html_node/Redirections.html), 以下只是部分内容。
 
-1. 输入流重定向`<`
+### 输入流重定向`<`
 ```
 % cat < hello.txt
 hello
@@ -303,8 +303,15 @@ hello
 ```
 > - 0<表示将`cat`命令的标准输入（stdin）从名为hello.txt的文件中读取数据，默认情况下，直接使用`<`实现输入流重定向。之所以用0表示，是因为stdin实质上是一个链接文件/dev/stdin，其指向/dev/fd/0这个字符设备文件
 
-2. 输出流重定向`>`
-```
+### 输出流重定向`>`
+
+- `1>`表示将 **标准输出(stdout)** 从终端重定向至文件，由于被重定向因此终端不再显示结果。之所以用1表示是因为stdout->链接文件/dev/stdout->字符设备文件/dev/fd/1
+- `2>`表示将 **标准错误输出(stderr)** 从终端重定向至文件。`echo hello`的stdout结果是hello，stderr结果是空。stdout未发生重定向，因此终端显示hello，stderr的空结果被重定向至hello.txt。在一般情况下，stdout和stderr都是定向到终端的，通过`1>`和`2>`可以区分二者。之所以用2表示是因为stderr->链接文件/dev/stderr->字符设备文件/dev/fd/2
+- `&>` 和 `>&`表示将 **标准输出和标准错误输出** 统一重定向至文件
+
+> 在不加数字时，即`>`则默认表示对 **标准输出(stdout)** 进行重定向
+
+```bash
 % echo hello > hello.txt
 % cat hello.txt
 hello
@@ -317,29 +324,19 @@ hello
 hello
 % cat hello.txt
 ```
-> - `1>`表示将**标准输出（stdout）**从终端重定向至文件，由于被重定向因此终端不再显示结果。之所以用1表示是因为stdout->链接文件/dev/stdout->字符设备文件/dev/fd/1
-> - `2>`表示将**标准错误输出（stderr）**从终端重定向至文件。`echo hello`的stdout结果是hello，stderr结果是空。stdout未发生重定向，因此终端显示hello，stderr的空结果被重定向至hello.txt。在一般情况下，stdout和stderr都是定向到终端的，通过`1>`和`2>`可以区分二者。之所以用2表示是因为stderr->链接文件/dev/stderr->字符设备文件/dev/fd/2
-> - `&>` 和 `>&`表示将**标准输出和标准错误输出**统一重定向至文件
 
-以上的`>`、`1>`和`2>`都是将命令看为黑盒，将命令执行结果划分开
+以上描述的都是将内容重定向至文件，如果想要重定向到管道(stdout / stderr)需要添加`&`符号，以便于区分普通文件名和管道名称
 
-如果考虑命令内部，期望将不同结果输出到stdout或stderr，通过使用`>&1`和`>&2`实现这一点
-> - `>&1`表示将结果重定向至标准输出（stdout）
-> - `>&2`表示将结果重定向至标准错误（stderr）
+> - `2>&1`表示将标准错误重定向至标准输出（stdout）
+> - `1>&2`表示将标准输出重定向至标准错误（stderr）
 
-通过以下例子，更好地理解以上4种重定向方式
+结合重定向至文件和重定向至管道，可以把所有输出内容全部重定向至文件，如以下代码所示
+
+```bash
+% xxx 1>output.txt 2>&1
 ```
-# 将以下内容写入script.sh
-echo "right" >&1
-echo "error" >&2
 
-% ./script.sh 1> right_res 2> error_res
-% cat right_res
-right
-% cat error_res
-error
-```
- 简单来理解，`>&1`和`>&2`用于内部，`1>`和`2>`用于外部
+> 需要注意的是，上述重定向的顺序不能更改。大致可以理解为shell在重定向时是顺序处理的，如果标准错误的重定向先于标准输出的重定向，那么结果将是标准错误仍然会到达标准输出原有的输出端，并不会到达文件
 
 输入流和输出流合用
 ```
@@ -348,7 +345,7 @@ error
 hello
 ```
 
-3. 向文件追加内容`>>`
+### 向文件追加内容`>>`
 > 与输出流重定向类似，存在`1>>`和`2>>`，表示以追加的形式进行stdout和stderr的重定向
 
 ```
