@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-12T21:49:28+08:00
-lastmod: 2024-02-20T00:19:38+08:00
+lastmod: 2024-02-21T00:44:11+08:00
 tags:
 categories:
   - HPC
@@ -136,7 +136,64 @@ if (world_rank == 0) {
 ```
 ## Dynamic Receiving
 利用MPI_Recv的最后一个 MPI_Status 参数来获取接受到的消息的信息，以便应对动态长度的传输数据
-MPI_Recv的问题在于只能提前开辟尽可能大的store buffer，在接受完消息后再通过status得知消息长度。替代方案是首先使用 MPI_Probe 获取消息长度，然后根据消息长度开辟存储空间，再使用 MPI_Recv 接收消息，避免空间浪费（不过这只是逻辑说法，实际连接起这些概念的都是status，MPI_Probe也是将即将接收到的消息状态存储到status数据结构中）
+
+The data structure of MPI_Status:
+
+```c
+typedef struct MPI_Status {
+    int count_lo;
+    int count_hi_and_cancelled;
+    int MPI_SOURCE;
+    int MPI_TAG;
+    int MPI_ERROR;
+} MPI_Status;
+```
+
+An example of using status, but MPI_Recv的问题在于只能提前开辟尽可能大的store buffer，在接受完消息后再通过status得知消息长度
+
+```c
+#define MAX_NUMBERS 100
+
+int numbers[MAX_NUMBERS];
+
+if (world_rank == 0) {
+    MPI_Send(numbers, 3, MPI_INT, 1, 0, MPI_COMM_WORLD);
+} else {
+    int number_amount;
+    MPI_Status status;
+
+    MPI_Recv(numbers, MAX_NUMBERS, MPI_INT, 0, 0, MPI_COMM_WORLD, &status);
+
+    MPI_Get_count(&status, MPI_INT, &number_amount);
+
+    printf("%d\n%d\n%d\n%d\n", number_amount, status.MPI_SOURCE, status. MPI_TAG, status.MPI_ERROR);
+}
+```
+
+替代方案是首先使用 MPI_Probe 获取消息长度，然后根据消息长度开辟存储空间，再使用 MPI_Recv 接收消息，避免空间浪费（不过这只是逻辑说法，实际连接起这些概念的都是status，MPI_Probe也是将即将接收到的消息状态存储到status数据结构中）
+
+```c
+#define MAX_NUMBERS 100
+
+int numbers[MAX_NUMBERS];
+
+if (world_rank == 0) {
+    MPI_Send(numbers, 3, MPI_INT, 1, 0, MPI_COMM_WORLD);
+} else {
+    int number_count;
+    MPI_Status status;
+
+    MPI_Probe(0, 0, MPI_COMM_WORLD, &status);
+    MPI_Get_count(&status, MPI_INT, &number_count);
+
+    int *number_buf = (int *)malloc(sizeof(int) * number_count);
+    MPI_Recv(number_buf, number_count, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    printf("%d\n%d\n%d\n%d\n", number_count, status.MPI_SOURCE, status. MPI_TAG, status.MPI_ERROR);
+
+    free(number_buf);
+}
+```
 
 ## CUDA-Aware MPI
 [An Introduction to CUDA-Aware MPI](https://developer.nvidia.com/blog/introduction-cuda-aware-mpi/)
