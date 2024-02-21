@@ -27,8 +27,10 @@ theme = "FixIt"
     [params.header.title]
       # LOGO 的 URL
       logo = "https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png"
+      # logo = ""
       # 标题名称
-      name = "ghy's blog"
+      # name = "ghy"
+      name = ""
       # 你可以在名称（允许 HTML 格式）之前添加其他信息，例如图标
       pre = ""
       # 你可以在名称（允许 HTML 格式）之后添加其他信息，例如图标
@@ -54,11 +56,14 @@ theme = "FixIt"
     [params.home.profile]
       enable = true
       # 主页显示头像的 URL
-      avatarURL = "https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202205161528792.jpg"
+      # avatarURL = "https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202205161528792.jpg"
+      avatarURL = ""
       #更改主页显示的网站标题（支持 HTML 格式）
-      title = "ghy"
+      # title = "ghy"
+      title = ""
       # 主页显示的网站副标题
-      subtitle = "夜色难免黑凉，前行必有曙光"
+      # subtitle = "夜色难免黑凉，前行必有曙光"
+      subtitle = ""
       # 是否为副标题显示打字机动画
       typeit = true
       # 是否显示社交账号
