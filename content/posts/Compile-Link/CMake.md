@@ -6,10 +6,10 @@ keywords:
 summary:
 license:
 date: 2023-06-16T23:23:00+08:00
-lastmod: 2024-02-21T22:23:58+08:00
+lastmod: 2024-02-26T09:20:16+08:00
 tags:
 categories:
-  - Compile_Link
+  - Compile-Link
 weight: 0
 
 password:
@@ -880,8 +880,27 @@ MESSAGE( STATUS "OpenCV_LIBS = ${OpenCV_LIBS}.")
 
 ## 示例
 ### 构建流程
-1.配置项目：`cmake -S . -B build` 或 `ctrl + shift + p` > `cmake configure`
-2.构建项目：`cmake --build build` 或 `ctrl + shift + p` > `cmake build`
+
+A simple but typical use of cmake(1) with a fresh copy of software source code is to create a build directory and invoke cmake there:[^cmake-build-flow]
+
+[^cmake-build-flow]: [Command Line cmake tool](https://cmake.org/cmake/help/latest/guide/user-interaction/index.html#command-line-cmake-tool)
+
+```bash
+cd some_software-1.4.2
+mkdir build
+cd build
+
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/the/prefix
+cmake --build . # It is equivalent to make
+cmake --build . --target install # It is equivalent to make install
+```
+
+> The role of cmake is just generate Makefile for make, it doesn't compile the project truely. e.g. `cmake .. -DCMAKE_INSTALL_PREFIX=/opt/the/prefix`.
+> 
+> `cmake --build` or `make` compile the project. This step will invoke some compiler and linker.
+> 
+> `cmake --build . --target install` or `make install`. A popular understanding of installing is that move the executable file, header files and libraries to the path which is specified by `-DCMAKE_INSTALL_PREFIX` option.
+
 ```
 // cmake最低版本
 cmake_minimum_required(VERSION 3.0.0)

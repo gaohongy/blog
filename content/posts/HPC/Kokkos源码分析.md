@@ -1,12 +1,12 @@
 ---
-title: Kokk源码分析
+title: Kokkos源码分析
 subtitle:
 description:
 keywords:
 summary:
 license:
 date: 2024-01-05T17:39:32+08:00
-lastmod: 2024-01-28T17:54:15+08:00
+lastmod: 2024-02-26T09:20:16+08:00
 tags:
 categories:
   - HPC

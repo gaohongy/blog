@@ -1,15 +1,15 @@
 ---
-title: Make_Makefile
+title: Make Makefile
 subtitle:
 description:
 keywords:
 summary:
 license:
 date: 2023-09-16T17:49:00+08:00
-lastmod: 2023-12-30T22:30:32+08:00
+lastmod: 2024-02-26T09:20:16+08:00
 tags:
 categories:
-  - Compile_Link
+  - Compile-Link
 weight: 0
 
 password:
