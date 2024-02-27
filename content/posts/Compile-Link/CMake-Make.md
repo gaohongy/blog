@@ -1,12 +1,12 @@
 ---
-title: CMake
+title: CMake Make
 subtitle:
 description:
 keywords:
 summary:
 license:
 date: 2023-06-16T23:23:00+08:00
-lastmod: 2024-02-26T09:20:16+08:00
+lastmod: 2024-02-27T09:27:10+08:00
 tags:
 categories:
   - Compile-Link
@@ -825,9 +825,12 @@ target_include_directories(funclib PUBLIC .)
 需要了解包(package)、库和组件的概念，包包含多个库/组件，库和组件的概念是相同的，例如TBB包提供了多个库(组件)
 
 为了便于描述，通过OpenCV的实际例子来解释如何利用cmake来引入第三方库。
-注：下方的讲述所处视角认为阅读者对[程序的编译链接过程](https://www.cnblogs.com/hongyugao/p/15499494.html#%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B)有了一定了解，所以对部分内容不再做进一步解释。
 
-在使用OpenCV之前，需要首先进行安装。而OpenCV的安装同样需要使用cmake。参照[OpenCV: Installation in Linux](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)官方站点给出的安装流程进行安装。安装结束后，OpenCV的头文件和库（静态/动态链接库）将分为位于`/usr/local/`下的`include/`和`lib/`（关于这一点，涉及到make install的另一方面内容)。
+> 注：下方的讲述所处视角认为阅读者对[程序的编译链接过程](https://www.cnblogs.com/hongyugao/p/15499494.html#%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B)有了一定了解，所以对部分内容不再做进一步解释。
+
+在使用OpenCV之前，需要首先进行安装。而OpenCV的安装同样需要使用cmake。参照[OpenCV: Installation in Linux](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)官方站点给出的安装流程进行安装。
+
+安装结束后，OpenCV的头文件和库（静态/动态链接库）将分为位于`/usr/local/`下的`include/`和`lib/`（关于这一点，涉及到make install的另一方面内容)。
 
 程序的编译链接过程，无非就是处理头文件和依赖库的问题。使用cmake也是完成程序的编译链接工作，它也需要调用gcc/g++。那么在理论上，通过cmake可以完成的工作，人工操作都能够完成，只不过在一些大型复杂项目中，需要做的工作太多，使用cmake可以简化这个过程。
 所以我们不妨首先考虑在一个小例子中，人工操作和cmake操作的对应关系，以便推导到大型项目下的cmake是如何处理的。

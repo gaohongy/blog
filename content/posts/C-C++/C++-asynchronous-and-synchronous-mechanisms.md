@@ -6,10 +6,10 @@ keywords:
 summary:
 license:
 date: 2023-09-10T22:06:00+08:00
-lastmod: 2024-01-31T18:26:04+08:00
+lastmod: 2024-02-27T09:27:10+08:00
 tags:
 categories:
-  - C++
+  - C-C++
   - HPC
 weight: 0
 

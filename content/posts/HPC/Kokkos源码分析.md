@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-01-05T17:39:32+08:00
-lastmod: 2024-02-26T09:20:16+08:00
+lastmod: 2024-02-27T09:27:10+08:00
 tags:
 categories:
   - HPC
@@ -26,6 +26,34 @@ hiddenFromSearch: false
 comment: false
 lightgallery: force
 ---
+
+## Usage
+
+### Install & CMake
+```bash
+cd some_software-1.4.2
+mkdir build
+cd build
+
+cmake .. 
+cmake --build . # It is equivalent to make
+cmake --build . --target install # It is equivalent to make install
+```
+
+After the above flow, we can use Kokkos by CMake directly.
+
+### Source Code & Raw Makefile
+
+There is a confused point: How to chose the right backend? If we use the makefile which is provided by Kokkos-tutorials we can edit the `KOKKOS_DEVICES`. But we don't know what does this option do. When we use `g++ -I -L -l` to compile code, even though we can get the executable file, but we can't get the ideal execute performance.
+
+
+目前对于 Kokkos 是如何调用 backend 的接口这件事情存有疑问，尚不明确 kokkos-tutorials/Exercises 中给出的各个示例中的 Makefile 具体都做了哪些工作，从而使得可以正常使用各种 hetetogenous backends. 因为直接使用 `g++` 进行编译似乎无法达到这种效果。
+
+## Initialization
+
+An important thing which initialization progress does is initializing `Kokkos::DefaultExecutionSpace;` and `Kokkos::DefaultHostExecutionSpace;`. [^initialization]
+
+[^initialization]: [initialization aliases](https://kokkos.org/kokkos-core-wiki/ProgrammingGuide/Initialization.html#:~:text=During%20initialization%2C%20one%20or%20more%20execution%20spaces%20will%20be%20initialized%20and%20assigned%20to%20one%20of%20the%20following%20aliases.)
 
 ## 对于Kokkos-core源代码结构的理解
 注意只是对core这一部分的理解，从项目结构上可以看出，除了core这一部分外，还存在着例如algorithm, containers 和 simd等其他部分，其他部分也存在相关的代码。
@@ -92,18 +120,11 @@ using DefaultExecutionSpace KOKKOS_IMPL_DEFAULT_EXEC_SPACE_ANNOTATION = Serial;
 Kokkos_Core_fwd.hpp的fwd解释：
 "Fwd" 在这里通常是"forward"的缩写，用于表示前向声明（forward declaration）。在C++中，前向声明是一种声明但不定义实体的技术。这通常用于避免引入完整的定义，从而提高编译速度和减少依赖关系。
 
-## KOKKOS_LAMBDA
-Use the KOKKOS_LAMBDA macro to replace a lambda’s capture clause when giving the lambda to Kokkos for parallel execution.
+## Parallel Loop Body
 
-KOKKOS_LAMBDA is the same as [=] 体现在Kokkos_Macros.hpp 中
+### Functor
+A functor is one way to define the body of a parallel loop. It is a class or struct1 with a public operator() instance method.
 
-```cpp
-#if !defined(KOKKOS_LAMBDA)
-#define KOKKOS_LAMBDA [=]
-#endif
-```
-
-## KOKKOS_INLINE_FUNCTION
 Use the KOKKOS_INLINE_FUNCTION macro to mark a functor’s methods that Kokkos will call in parallel
 
 在Kokkos_Macros.hpp中
@@ -116,14 +137,49 @@ Use the KOKKOS_INLINE_FUNCTION macro to mark a functor’s methods that Kokkos w
 #endif
 ```
 在KokkosTutorial_02_ViewsAndSpaces.pdf中有一点介绍，上面的代码找的应该是不全，实际会根据其他宏的内容还存在修改
+
 ![](https://img2024.cnblogs.com/blog/1898659/202401/1898659-20240106163903443-652671311.png)
 
+### Lambda
 
-## 为何只采用value-copy
- In particular, the functor might need to be copied to a different execution space than the host. For this reason, it is generally not valid to have any pointer or reference members in the functor. 
+Use the KOKKOS_LAMBDA macro to replace a lambda’s capture clause when giving the lambda to Kokkos for parallel execution.
 
-## Functors
- A functor is one way to define the body of a parallel loop. It is a class or struct1 with a public operator() instance method.
+KOKKOS_LAMBDA is the same as [=] 体现在Kokkos_Macros.hpp 中
+
+```cpp
+#if !defined(KOKKOS_LAMBDA)
+#define KOKKOS_LAMBDA [=]
+#endif
+```
+
+
+### Lambda 为何采用 value-copy[^lambda-value-copy]
+
+[^lambda-value-copy]: [Kokkos semantics to capture by value [=]](https://kokkos.org/kokkos-core-wiki/ProgrammingGuide/ParallelDispatch.html#functors:~:text=It%20is%20a%20violation%20of%20Kokkos%20semantics%20to%20capture%20by%20reference%20%5B%26%5D%20for%20two%20reasons.)
+
+1. portability
+
+In particular, the functor might need to be copied to a different execution space than the host. For this reason, it is generally not valid to have any pointer or reference members in the functor. 
+
+2. correctness
+- Capturing by reference allows the programmer to violate the const semantics of the lambda.
+
+
+
+- Capturing by reference enables many more possibilities of writing non-threads-safe code
+
+```cpp
+int val = 0;
+
+Kokkos::parallel_for("for", 10, [&](const int i) -> void {
+    val += i;
+});
+
+std::cout << val << std::endl;
+```
+
+The right result is $55$, because `parallel_for` is asynchronous, so the `val += i` is non-thread-safe.
+
 
 ## 疑惑/可能的改进点
 Kokkos代码中存在着大量的例如`#ifdef`这类的预处指令，Kokkos本身的可移植恰恰是通过这一点实现的（想要做到可移植，抽象是必须的，要在多种不同的硬件之上构建起一个逻辑层，在抽象层之下，需要解决的就是编译问题，例如使用Openmp和使用Cuda，编译器和编译选项显然是存在区别的，Kokkos解决这个问题的方法就是通过各种宏，首先通过配置项生成宏，然后宏会渗入到cpp代码当中，根据宏对类型等内容进行选择）。问题在于很多代码的宏定义之间甚至存在逻辑关系，这这给代码带来的极大的不易读性，因为代码的真实执行逻辑取决于宏的定义，在没有执行的情况下想要理清逻辑，甚至需要手动推导宏。

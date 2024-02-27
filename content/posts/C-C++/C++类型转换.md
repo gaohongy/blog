@@ -4,7 +4,7 @@ subtitle:
 date: 2023-06-18T19:35:22+08:00
 tags:
 categories:
-  - C++
+  - C-C++
 draft: false
 description:
 keywords:

@@ -8,7 +8,7 @@ license:
 date: 2023-06-18T17:18:40+08:00
 tags:
 categories:
-  - C++
+  - C-C++
 weight: 0
 
 password:

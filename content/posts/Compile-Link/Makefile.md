@@ -1,12 +1,12 @@
 ---
-title: Make Makefile
+title: Makefile
 subtitle:
 description:
 keywords:
 summary:
 license:
 date: 2023-09-16T17:49:00+08:00
-lastmod: 2024-02-26T09:20:16+08:00
+lastmod: 2024-02-27T09:27:10+08:00
 tags:
 categories:
   - Compile-Link
@@ -180,7 +180,7 @@ i.e. the difference between `$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp` and `$(OBJS): $
 
 Although we know the `$<` is the name of the first prerequisite and `$^` is the names of all the prerequisites, if we don't know the difference of the above expression of `target: prerequisites`, we can't understand the result of the `g++ $(CFLAGS) -c $< -o $@`.
 
-In short, if we still use the above file structure, when using `$(OBJS): $(SRCS)`, the `$(OBJS)` is the 'build/funcs.o build/main.o`, they are one expression, but using 
+In short, if we still use the above file structure, when using `$(OBJS): $(SRCS)`, the `$(OBJS)` is the `build/funcs.o build/main.o`, they are one expression, but using 
 `$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp`, the `$(BUILD_DIR)/%.o` is `build/funcs.o` and `build/main.o`, they are two expressions, it looks like a enumation, so we can use this to generate the corresponding .o object file and .c source file.
 
 ## Reference
