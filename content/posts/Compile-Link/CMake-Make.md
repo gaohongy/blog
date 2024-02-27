@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-06-16T23:23:00+08:00
-lastmod: 2024-02-27T09:27:10+08:00
+lastmod: 2024-02-27T21:53:31+08:00
 tags:
 categories:
   - Compile-Link
@@ -826,18 +826,13 @@ target_include_directories(funclib PUBLIC .)
 
 为了便于描述，通过OpenCV的实际例子来解释如何利用cmake来引入第三方库。
 
-> 注：下方的讲述所处视角认为阅读者对[程序的编译链接过程](https://www.cnblogs.com/hongyugao/p/15499494.html#%E7%BC%96%E8%AF%91%E6%B5%81%E7%A8%8B)有了一定了解，所以对部分内容不再做进一步解释。
+在使用OpenCV之前，需要首先进行安装。而OpenCV的安装同样需要使用cmake。参照[OpenCV: Installation in Linux](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)官方站点给出的安装流程进行安装。When we finish installing the opencv, we will get [some files](https://pastebin.ubuntu.com/p/X6qZN6kZhJ/).
 
-在使用OpenCV之前，需要首先进行安装。而OpenCV的安装同样需要使用cmake。参照[OpenCV: Installation in Linux](https://docs.opencv.org/4.x/d7/d9f/tutorial_linux_install.html)官方站点给出的安装流程进行安装。
+程序的编译链接过程，无非就是处理头文件和依赖库的问题。使用cmake也是完成程序的编译链接工作，它也需要调用gcc/g++。那么在理论上，通过cmake可以完成的工作，人工操作都能够完成，只不过在一些大型复杂项目中，需要做的工作太多，使用cmake可以简化这个过程。所以我们不妨首先考虑在一个小例子中，人工操作和cmake操作的对应关系，以便推导到大型项目下的cmake是如何处理的。
 
-安装结束后，OpenCV的头文件和库（静态/动态链接库）将分为位于`/usr/local/`下的`include/`和`lib/`（关于这一点，涉及到make install的另一方面内容)。
+假设现在需要编译一个RGB图像转灰度图像的单程序。人工操作只需要在编译时候指明头文件的搜索路径，以及所需库的搜索路径及所需要链接的库。
 
-程序的编译链接过程，无非就是处理头文件和依赖库的问题。使用cmake也是完成程序的编译链接工作，它也需要调用gcc/g++。那么在理论上，通过cmake可以完成的工作，人工操作都能够完成，只不过在一些大型复杂项目中，需要做的工作太多，使用cmake可以简化这个过程。
-所以我们不妨首先考虑在一个小例子中，人工操作和cmake操作的对应关系，以便推导到大型项目下的cmake是如何处理的。
-
-假设现在需要编译一个RGB图像转灰度图像的单程序。
-人工操作只需要在编译时候指明头文件的搜索路径，以及所需库的搜索路径及所需要链接的库。
-```
+```bash
 g++ xxx.cpp -o yyy -I/usr/local/include/opencv4 \
                     -L/usr/local/lib\
                     -lopencv_calib3d \
@@ -856,17 +851,20 @@ g++ xxx.cpp -o yyy -I/usr/local/include/opencv4 \
                     -lopencv_video \
                     -lopencv_videoio
 ```
-使用上述命令即可正常完成编译。
 
-但是产生的一个问题就是，指明的头文件的搜索路径还比较简单，但是下方的这些`-l`所要链接的库过多比较麻烦。
+使用上述命令即可正常完成编译。但是产生的一个问题就是，指明的头文件的搜索路径还比较简单，但是下方的这些`-l`所要链接的库过多比较麻烦。
+
 cmake就通过以下命令可以解决这个问题
-```
+
+```cmake
 find_package( OpenCV REQUIRED )
 include_directories(${OpenCV_INCLUDE_DIRS})
 target_link_libraries(<project name> ${OpenCV_LIBS})
 ```
+
 其中`target_include_directories`负责指定头文件搜索路径，也就对应着`-I/usr/local/include/opencv4`；`target_link_libraries`负责指定所要链接的库，对应着上述g++选项中众多的`-l`选项。关于这一点，通过以下两条命令即可验证
-```
+
+```cmake
 MESSAGE( STATUS "OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}.")
 MESSAGE( STATUS "OpenCV_LIBS = ${OpenCV_LIBS}.")
 
@@ -874,17 +872,24 @@ MESSAGE( STATUS "OpenCV_LIBS = ${OpenCV_LIBS}.")
 -- OpenCV_LIBS = opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_gapi;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio.
 ```
 
-我们虽然理解`target_include_directories`和`target_link_libraries`的作用，但是`${OpenCV_INCLUDE_DIRS}`和`${OpenCV_LIBS}`又是从何而来，`find_package`又起到了什么作用？
+- **我们虽然理解`target_include_directories`和`target_link_libraries`的作用，但是`${OpenCV_INCLUDE_DIRS}`和`${OpenCV_LIBS}`又是从何而来，`find_package`又起到了什么作用？**
+
 `${OpenCV_INCLUDE_DIRS}`和`${OpenCV_LIBS}`显然是两个环境变量，但是在cmake之前找到环境变量，是没有这两个值的，那么可以猜想`find_package`所做的工作就是设置这两个环境变量，实际也正是如此。
 
-也就是说`find_package`需要找到第三方库的头文件和库的路径。但是第三方库的数量众多，是如何能够做到这一点的？
-这就涉及到两种文件：1. Find<LibaryName>.cmake 2.<LibraryName>Config.cmake
-`find_package`根据这两种文件实现环境变量的设置，同时关于函数的参数内容，文件中也有说明。由于涉及内容过多，需要时不妨直接看[find_package官方文档](https://cmake.org/cmake/help/latest/command/find_package.html)，这里不再赘述。
+**也就是说`find_package`需要找到第三方库的头文件和库的路径。但是第三方库的数量众多，是如何能够做到这一点的？**
+
+这就涉及到`find_package`搜索文件的两种模式和对应的两种文件：[^find_package-official-documentation]
+[^find_package-official-documentation]: [find_package官方文档](https://cmake.org/cmake/help/latest/command/find_package.html)
+
+1. Module mode: Find<LibaryName>.cmake，(CMake官方预定义的一些依赖包所对应的查找文件，所处路径为: `/usr/share/cmake-<version>/Modules`)
+2. Config mode: <LibraryName>Config.cmake，(通过CMake编译安装的第三方库，所处路径和构建 CMakeLists.txt 时的选项相关，如果给定了`-DCMAKE_INSTALL_PREFIX`选项，那么就会在该路径下的`lib/cmake`，如果没有给定该选项，那么就会在`/usr/local/lib/cmake`下)
+
+`find_package`根据这两种文件实现环境变量的设置。
 
 ## 示例
 ### 构建流程
 
-A simple but typical use of cmake(1) with a fresh copy of software source code is to create a build directory and invoke cmake there:[^cmake-build-flow]
+A simple but typical use of cmake with a fresh copy of software source code is to create a build directory and invoke cmake there:[^cmake-build-flow]
 
 [^cmake-build-flow]: [Command Line cmake tool](https://cmake.org/cmake/help/latest/guide/user-interaction/index.html#command-line-cmake-tool)
 
@@ -902,7 +907,7 @@ cmake --build . --target install # It is equivalent to make install
 > 
 > `cmake --build` or `make` compile the project. This step will invoke some compiler and linker.
 > 
-> `cmake --build . --target install` or `make install`. A popular understanding of installing is that move the executable file, header files and libraries to the path which is specified by `-DCMAKE_INSTALL_PREFIX` option.
+> `cmake --build . --target install` or `make install`. A popular understanding of installing is that move the executable file, header files and libraries to the path which is specified by `-DCMAKE_INSTALL_PREFIX` option, if we don't use this option, in general, the default intall prefix is `/usr/local/`. In general, it will generate some directories: **bin**, **include**, **lib** and **share**.
 
 ```
 // cmake最低版本
@@ -981,3 +986,4 @@ add_executable(${CMAKE_PROJECT_NAME} ${SRC_FILES})
 > - [1] [CMake Reference Documentation](https://cmake.org/cmake/help/latest/)
 > - [2] [CMake FAQ](https://gitlab.kitware.com/cmake/community/-/wikis/FAQ)
 > - [3] [理解find_package()](https://zhuanlan.zhihu.com/p/97369704)
+> - [4] [Cmake中文实战教程](https://brightxiaohan.github.io/CMakeTutorial/)

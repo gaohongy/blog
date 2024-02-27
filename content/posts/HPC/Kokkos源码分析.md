@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-01-05T17:39:32+08:00
-lastmod: 2024-02-27T09:27:10+08:00
+lastmod: 2024-02-27T21:53:31+08:00
 tags:
 categories:
   - HPC
@@ -42,12 +42,48 @@ cmake --build . --target install # It is equivalent to make install
 
 After the above flow, we can use Kokkos by CMake directly.
 
+### Source Code & CMake[^Using-Kokkos-in-tree-build]
+[^Using-Kokkos-in-tree-build]: [Using Kokkos in-tree build](https://kokkos.org/kokkos-core-wiki/ProgrammingGuide/Compiling.html#using-kokkos-in-tree-build)
+
+file sturcture:
+```bash
+.
+├── CMakeLists.txt
+├── kokkos-4.1.2
+├── main.cpp
+└── Makefile
+```
+
+```cmake
+# CMakeLists.txt 内容
+
+cmake_minimum_required(VERSION 3.16)
+project(Example CXX)
+
+# add_subdirectory(/home/hongyu_gao2001/kokkos/kokkos-tutorials/Exercises/01/My/kokkos /home/hongyu_gao2001/kokkos/kokkos-tutorials/Exercises/01/My/build/kokkos)
+add_subdirectory(/home/hongyu_gao2001/kokkos/kokkos-tutorials/Exercises/01/My/kokkos-4.1.2)
+
+add_executable(example main.cpp)
+
+target_link_libraries(example kokkos)
+```
+
+有几个注意事项：
+
+1. `add_subdirectory`有两个形式。这两个形式有两个关键的不同点，一是第一个参数不同，二是是否存在第二个参数。第二个参数的作用是指明输出的路径，如果没有此参数，则输出的名称和第一个参数相同。关于这个名称，我以为会和target_link_libraries的第2个参数相关，但是即使不同也可以正常编译
+
+2. 正如上面所提到的，target_link_libraries的第2个参数，目前不知道是和什么相关的，不知道是写明在项目哪里的
+
+3. 在[官方](https://kokkos.org/kokkos-core-wiki/ProgrammingGuide/Compiling.html#using-kokkos-in-tree-build)给出的指示中，提到了另一个语句`include_directories(${Kokkos_INCLUDE_DIRS_RET})`，但是我通过`MESSAGE( STATUS "${Kokkos_INCLUDE_DIRS_RET}")`发现此变量为空，但是编译并没有报错，在一篇博客中发现一个可能的原因是target_link_directories链接的库包含了头文件，所以这里不添加也可以[^no-Kokkos_INCLUDE_DIRS_RET]
+
+[^no-Kokkos_INCLUDE_DIRS_RET]: [为何不用显示调用target_include_directories](https://brightxiaohan.github.io/CMakeTutorial/FindPackage/#:~:text=%23%20%E7%94%B1%E4%BA%8Eglog%E5%9C%A8%E8%BF%9E%E6%8E%A5%E6%97%B6%E5%B0%86%E5%A4%B4%E6%96%87%E4%BB%B6%E7%9B%B4%E6%8E%A5%E9%93%BE%E6%8E%A5%E5%88%B0%E4%BA%86%E5%BA%93%E9%87%8C%E9%9D%A2%EF%BC%8C%E6%89%80%E4%BB%A5%E8%BF%99%E9%87%8C%E4%B8%8D%E7%94%A8%E6%98%BE%E7%A4%BA%E8%B0%83%E7%94%A8target_include_directories)
+
 ### Source Code & Raw Makefile
 
 There is a confused point: How to chose the right backend? If we use the makefile which is provided by Kokkos-tutorials we can edit the `KOKKOS_DEVICES`. But we don't know what does this option do. When we use `g++ -I -L -l` to compile code, even though we can get the executable file, but we can't get the ideal execute performance.
 
 
-目前对于 Kokkos 是如何调用 backend 的接口这件事情存有疑问，尚不明确 kokkos-tutorials/Exercises 中给出的各个示例中的 Makefile 具体都做了哪些工作，从而使得可以正常使用各种 hetetogenous backends. 因为直接使用 `g++` 进行编译似乎无法达到这种效果。
+目前对于 Kokkos 是如何调用 backend 的接口这件事情存有疑问，尚不明确 kokkos-tutorials/Exercises 中给出的各个示例中的 Makefile 具体都做了哪些工作，从而使得可以正常使用各种 hetetogenous backends(因为他们都包含一个`include $(KOKKOS_PATH)/Makefile.kokkos`, 目前还不太清楚这个文件具体都完成了什么工作). 因为直接使用 `g++` 进行编译似乎无法达到这种效果。
 
 ## Initialization
 
@@ -125,7 +161,7 @@ Kokkos_Core_fwd.hpp的fwd解释：
 ### Functor
 A functor is one way to define the body of a parallel loop. It is a class or struct1 with a public operator() instance method.
 
-Use the KOKKOS_INLINE_FUNCTION macro to mark a functor’s methods that Kokkos will call in parallel
+Use the `KOKKOS_INLINE_FUNCTION` or `KOKKOS_INLINE` macro to mark a functor’s methods that Kokkos will call in parallel
 
 在Kokkos_Macros.hpp中
 
@@ -142,7 +178,7 @@ Use the KOKKOS_INLINE_FUNCTION macro to mark a functor’s methods that Kokkos w
 
 ### Lambda
 
-Use the KOKKOS_LAMBDA macro to replace a lambda’s capture clause when giving the lambda to Kokkos for parallel execution.
+Use the `KOKKOS_LAMBDA` macro to replace a lambda’s capture clause when giving the lambda to Kokkos for parallel execution.
 
 KOKKOS_LAMBDA is the same as [=] 体现在Kokkos_Macros.hpp 中
 
@@ -151,7 +187,6 @@ KOKKOS_LAMBDA is the same as [=] 体现在Kokkos_Macros.hpp 中
 #define KOKKOS_LAMBDA [=]
 #endif
 ```
-
 
 ### Lambda 为何采用 value-copy[^lambda-value-copy]
 
@@ -164,7 +199,8 @@ In particular, the functor might need to be copied to a different execution spac
 2. correctness
 - Capturing by reference allows the programmer to violate the const semantics of the lambda.
 
-
+// TODO
+// 如何理解?
 
 - Capturing by reference enables many more possibilities of writing non-threads-safe code
 
@@ -180,10 +216,8 @@ std::cout << val << std::endl;
 
 The right result is $55$, because `parallel_for` is asynchronous, so the `val += i` is non-thread-safe.
 
-
 ## 疑惑/可能的改进点
 Kokkos代码中存在着大量的例如`#ifdef`这类的预处指令，Kokkos本身的可移植恰恰是通过这一点实现的（想要做到可移植，抽象是必须的，要在多种不同的硬件之上构建起一个逻辑层，在抽象层之下，需要解决的就是编译问题，例如使用Openmp和使用Cuda，编译器和编译选项显然是存在区别的，Kokkos解决这个问题的方法就是通过各种宏，首先通过配置项生成宏，然后宏会渗入到cpp代码当中，根据宏对类型等内容进行选择）。问题在于很多代码的宏定义之间甚至存在逻辑关系，这这给代码带来的极大的不易读性，因为代码的真实执行逻辑取决于宏的定义，在没有执行的情况下想要理清逻辑，甚至需要手动推导宏。
-
 
 ## 关于异步机制的疑问
 遇到问题的场景是这样的：
