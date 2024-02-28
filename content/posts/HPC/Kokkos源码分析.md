@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-01-05T17:39:32+08:00
-lastmod: 2024-02-27T21:53:31+08:00
+lastmod: 2024-02-28T21:51:29+08:00
 tags:
 categories:
   - HPC
@@ -97,11 +97,15 @@ An important thing which initialization progress does is initializing `Kokkos::D
 在core/src下有一部分独立的文件，其中包含了最核心的Kokkos_Core，我们目前主要的关注点是当前目录下那些文件夹
 
 这些文件夹，每个都对应了一个目标平台，起点是fwd文件夹，里面包含了涉及到不同目标平台的一些声明内容，主要是不同目标平台类的声明，以Kokkos::Serial为例
+
+> "Fwd" 在这里通常是"forward"的缩写，用于表示前向声明（forward declaration）。在C++中，前向声明是一种声明但不定义实体的技术。这通常用于避免引入完整的定义，从而提高编译速度和减少依赖关系。 
+
 ```cpp
 namespace Kokkos {
 class Serial;  ///< Execution space main process on CPU.
 }  // namespace Kokkos
 ```
+
 然后各个同名文件夹的则是对不同目标平台下涉及到的内容的具体定义
 
 
@@ -153,8 +157,6 @@ using DefaultExecutionSpace KOKKOS_IMPL_DEFAULT_EXEC_SPACE_ANNOTATION = Serial;
 
 所以只是影响了链接过程，但是头文件的问题是如何解决的
 
-Kokkos_Core_fwd.hpp的fwd解释：
-"Fwd" 在这里通常是"forward"的缩写，用于表示前向声明（forward declaration）。在C++中，前向声明是一种声明但不定义实体的技术。这通常用于避免引入完整的定义，从而提高编译速度和减少依赖关系。
 
 ## Parallel Loop Body
 
@@ -215,6 +217,129 @@ std::cout << val << std::endl;
 ```
 
 The right result is $55$, because `parallel_for` is asynchronous, so the `val += i` is non-thread-safe.
+
+## parallel_reduce
+
+根据目前的理解，`parallel_reduce`可以解决在`parallel_for`中需要使用 capture-by-reference 但是又存在 non-thread-safe 的问题。
+
+核心执行方式为：each iteration produces a value and these iteration values are accumulated into a single value with a user-specified associative binary operation[^Parallel_reduce-execution-way]
+
+[^Parallel_reduce-execution-way]: [Parallel_reduce执行方式](https://kokkos.org/kokkos-core-wiki/ProgrammingGuide/ParallelDispatch.html#parallel-reduce:~:text=each%20iteration%20produces%20a%20value%20and%20these%20iteration%20values%20are%20accumulated%20into%20a%20single%20value%20with%20a%20user%2Dspecified%20associative%20binary%20operation.)
+
+这句话中有两个重点：
+
+1. "a single value"，这代表着 `parallel_reduce` 参数中的 result，也就是最后结果存储的位置
+2. "a user-specified associative binary operation"，这代表着 `parallel_reduce` 参数中的 reducer，目前理解就是表示执行方式
+
+相较于 `paralle_for`，lambda 中参数发生了变化:[^lambda-operator-content]
+
+[^lambda-operator-content]: [two arguments of lambda](https://kokkos.org/kokkos-core-wiki/ProgrammingGuide/ParallelDispatch.html#parallel-reduce:~:text=The%20lambda%20or%20the%20operator()%20method%20of%20the%20functor%20takes%20two%20arguments.)
+
+- The first argument is the parallel loop “index”，这点没变化
+- The second argument is a **non-const reference** to a **thread-local variable** of the same type as the reduction result. （其中的重点已经加粗）
+
+这是一段计算$A*x*y$的代码，其中A是N*M的矩阵，x是M*1的矩阵，y是长度为N的系数矩阵
+```cpp
+for ( int i = 0; i < N; ++i ) {
+  double temp2 = 0;
+
+  for ( int j = 0; j < M; ++j ) {
+    temp2 += A[ i * M + j ] * x[ j ];
+  }
+
+  result += y[ i ] * temp2;
+}
+```
+
+当采用 `parallel_for` 时，需要采用 capture-by-reference，这将会导致 non-thread-safe问题，最终的结果会出现错误，代码如下所示
+
+```cpp
+Kokkos::parallel_for("compute", N, [&](const int j) -> void {
+  double temp2 = 0;
+  
+  for (int i = 0; i < M; i++) {
+    temp2 += A[j * M + i] * x[i];
+  }
+
+  result += y[j] * temp2;
+});
+```
+
+得到正确结果的方案是采用 `parallel_reduce`，代码如下所示
+
+```cpp
+Kokkos::parallel_reduce("matrix multiplication", N, KOKKOS_LAMBDA (const int j, double &update) -> void {
+  double temp2 = 0.0;
+
+  for (int i = 0; i < M; i++) {
+    temp2 += A[j * M + i] * x[i];
+  }
+  
+  update += y[j] * temp2;
+}, result);
+```
+
+### `parallel_reduce` thread-safe 的实现机理
+
+The source code is located in `core/src/Kokkos_Parallel_Reduce.hpp`
+
+`ParallelReduceReturnValue`相关声明和定义（为了便于区分不同类型，将结构体内容删除，仅留下模版参数）：
+
+```cpp
+template <class T, class ReturnType, class ValueTraits>
+struct ParallelReduceReturnValue;
+
+template <class ReturnType, class FunctorType>
+struct ParallelReduceReturnValue<
+    std::enable_if_t<Kokkos::is_view<ReturnType>::value>, 
+    ReturnType,
+    FunctorType> 
+    {};
+
+template <class ReturnType, class FunctorType>
+struct ParallelReduceReturnValue<
+    std::enable_if_t<!Kokkos::is_view<ReturnType>::value &&
+                     (!std::is_array<ReturnType>::value &&
+                      !std::is_pointer<ReturnType>::value) &&
+                     !Kokkos::is_reducer<ReturnType>::value>,
+    ReturnType, 
+    FunctorType> 
+    {};
+
+template <class ReturnType, class FunctorType>
+struct ParallelReduceReturnValue<
+    std::enable_if_t<(std::is_array<ReturnType>::value ||
+                      std::is_pointer<ReturnType>::value)>,
+    ReturnType, 
+    FunctorType> 
+    {};
+
+template <class ReturnType, class FunctorType>
+struct ParallelReduceReturnValue<
+    std::enable_if_t<Kokkos::is_reducer<ReturnType>::value>,
+    ReturnType,
+    FunctorType> 
+    {};
+```
+
+从后续模版函数`parallel_reduce`的实现中，不难看出，`parallel_reduce`去调用了两个函数:
+
+1. `Impl::ParallelReduceAdaptor<policy_type, FunctorType, ReturnType>::execute()`
+
+`Impl::ParallelReduceAdaptor`是一个`struct`,其中包含了
+
+```cpp
+template <typename Dummy = ReturnType>
+static inline std::enable_if_t<!(is_array_reduction &&
+                                 std::is_pointer<Dummy>::value)>
+execute(const std::string& label, const PolicyType& policy,
+        const FunctorType& functor, ReturnType& return_value) {
+  execute_impl(label, policy, functor, return_value);
+}
+```
+2. `Impl::ParallelReduceFence<typename policy_type::execution_space, ReturnType>::fence()`
+
+
 
 ## 疑惑/可能的改进点
 Kokkos代码中存在着大量的例如`#ifdef`这类的预处指令，Kokkos本身的可移植恰恰是通过这一点实现的（想要做到可移植，抽象是必须的，要在多种不同的硬件之上构建起一个逻辑层，在抽象层之下，需要解决的就是编译问题，例如使用Openmp和使用Cuda，编译器和编译选项显然是存在区别的，Kokkos解决这个问题的方法就是通过各种宏，首先通过配置项生成宏，然后宏会渗入到cpp代码当中，根据宏对类型等内容进行选择）。问题在于很多代码的宏定义之间甚至存在逻辑关系，这这给代码带来的极大的不易读性，因为代码的真实执行逻辑取决于宏的定义，在没有执行的情况下想要理清逻辑，甚至需要手动推导宏。
@@ -297,3 +422,4 @@ DeepCopy似乎是一个struct，可查询`struct DeepCopy`
 
 此结构体的声明和定义出现在Kokkos_Core_fwd.hpp以及不同目标平台文件夹下的xxx_DeepCopy.hpp中
 
+## Reference
