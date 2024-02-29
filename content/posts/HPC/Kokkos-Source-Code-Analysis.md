@@ -1,12 +1,12 @@
 ---
-title: Kokkos源码分析
+title: Kokkos Source Code Analysis
 subtitle:
 description:
 keywords:
 summary:
 license:
 date: 2024-01-05T17:39:32+08:00
-lastmod: 2024-02-28T21:51:29+08:00
+lastmod: 2024-02-29T15:48:06+08:00
 tags:
 categories:
   - HPC
@@ -94,11 +94,13 @@ An important thing which initialization progress does is initializing `Kokkos::D
 ## 对于Kokkos-core源代码结构的理解
 注意只是对core这一部分的理解，从项目结构上可以看出，除了core这一部分外，还存在着例如algorithm, containers 和 simd等其他部分，其他部分也存在相关的代码。
 
-在core/src下有一部分独立的文件，其中包含了最核心的Kokkos_Core，我们目前主要的关注点是当前目录下那些文件夹
+在core/src下有一部分独立的文件，其中包含了最核心的Kokkos_Core
 
-这些文件夹，每个都对应了一个目标平台，起点是fwd文件夹，里面包含了涉及到不同目标平台的一些声明内容，主要是不同目标平台类的声明，以Kokkos::Serial为例
+core/src下的文件夹，每个都对应了一个目标平台，起点是core/src/fwd文件夹，里面包含了涉及到不同目标平台的一些前向声明内容，主要是不同目标平台类的声明
 
 > "Fwd" 在这里通常是"forward"的缩写，用于表示前向声明（forward declaration）。在C++中，前向声明是一种声明但不定义实体的技术。这通常用于避免引入完整的定义，从而提高编译速度和减少依赖关系。 
+
+以Kokkos::Serial为例, 前向声明内容为：
 
 ```cpp
 namespace Kokkos {
@@ -238,7 +240,7 @@ The right result is $55$, because `parallel_for` is asynchronous, so the `val +=
 - The first argument is the parallel loop “index”，这点没变化
 - The second argument is a **non-const reference** to a **thread-local variable** of the same type as the reduction result. （其中的重点已经加粗）
 
-这是一段计算$A*x*y$的代码，其中A是N*M的矩阵，x是M*1的矩阵，y是长度为N的系数矩阵
+这是一段计算 $A \* x \* y$ 的代码，其中 $A$ 是 $N \* M$ 的矩阵，$x$ 是 $M \* 1$ 的矩阵，$y$ 是长度为 $N$ 的系数矩阵
 ```cpp
 for ( int i = 0; i < N; ++i ) {
   double temp2 = 0;
@@ -281,7 +283,7 @@ Kokkos::parallel_reduce("matrix multiplication", N, KOKKOS_LAMBDA (const int j, 
 
 ### `parallel_reduce` thread-safe 的实现机理
 
-The source code is located in `core/src/Kokkos_Parallel_Reduce.hpp`
+> The source code is located in `core/src/Kokkos_Parallel_Reduce.hpp`
 
 `ParallelReduceReturnValue`相关声明和定义（为了便于区分不同类型，将结构体内容删除，仅留下模版参数）：
 
@@ -322,7 +324,7 @@ struct ParallelReduceReturnValue<
     {};
 ```
 
-从后续模版函数`parallel_reduce`的实现中，不难看出，`parallel_reduce`去调用了两个函数:
+从后续函数模版`parallel_reduce`的实现中，不难看出，`parallel_reduce`去调用了两个函数:
 
 1. `Impl::ParallelReduceAdaptor<policy_type, FunctorType, ReturnType>::execute()`
 
@@ -337,9 +339,36 @@ execute(const std::string& label, const PolicyType& policy,
   execute_impl(label, policy, functor, return_value);
 }
 ```
+
+> `std:;enable_if_t`作用为条件编译，大致可以理解为只有在满足条件时才会示例化此函数模版，主要用于为函数重载提供便利
+
+从`execute_impl`会导向具体 backend 的 Impl::ParallelReduce 的实现
+
+以上整体的调用流程如下：
+
+1. Kokkos_Parallel_Reduce.hpp 的 parallel_reduce （入口）
+2. Kokkos_Parallel_Reduce.hpp 的 Impl::ParallelReduceAdaptor::execute() (看为execute的声明)
+    2.1 Kokkos_Parallel_Reduce.hpp 的 Impl::ParallelReduceAdaptor::execute_impl() (看为execute的定义)
+        2.1.1 不同 backend 下的 Impl::ParallelReduce (从 execute_impl 到不同的 backend 实现机理？依靠模版类中模版参数不同对应到不同的模版类中？)
+3. Impl::ParallelReduceFence::fence()
+
+从 Impl::ParallelReduceAdaptor::execute_impl() 转到正确 backend 下的 Impl::ParallelReduce，在模版参数上有一个关键点是 Impl::FunctorPolicyExecutionSpace<FunctorType, PolicyType>::execution_space
+这一内容位于 Kokkos_Parallel.hpp 中的 struct FunctorPolicyExecutionSpace，其中包含对于 execution_space 的下述表述
+
+```cpp
+using execution_space = detected_or_t<
+    detected_or_t<
+        std::conditional_t<
+            is_detected<device_type_t, Functor>::value,
+            detected_t<execution_space_t, detected_t<device_type_t, Functor>>,
+            Kokkos::DefaultExecutionSpace>,
+        execution_space_t, Functor>,
+    execution_space_t, Policy>;
+```
+
+我们最后可以得到一个结论：kokkos的规范侧重于声明和定义分离。parallel_reduce的实现中包含一个 ParallelReduceAdaptor 和 ParallelReduce，之所以叫为 Adaptor，现在看来是实现了一个任务分发的工作，先把任务集中于此，然后派发到不同的 backend 下
+
 2. `Impl::ParallelReduceFence<typename policy_type::execution_space, ReturnType>::fence()`
-
-
 
 ## 疑惑/可能的改进点
 Kokkos代码中存在着大量的例如`#ifdef`这类的预处指令，Kokkos本身的可移植恰恰是通过这一点实现的（想要做到可移植，抽象是必须的，要在多种不同的硬件之上构建起一个逻辑层，在抽象层之下，需要解决的就是编译问题，例如使用Openmp和使用Cuda，编译器和编译选项显然是存在区别的，Kokkos解决这个问题的方法就是通过各种宏，首先通过配置项生成宏，然后宏会渗入到cpp代码当中，根据宏对类型等内容进行选择）。问题在于很多代码的宏定义之间甚至存在逻辑关系，这这给代码带来的极大的不易读性，因为代码的真实执行逻辑取决于宏的定义，在没有执行的情况下想要理清逻辑，甚至需要手动推导宏。
