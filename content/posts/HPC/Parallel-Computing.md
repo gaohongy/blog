@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-01-29T23:41:59+08:00
-lastmod: 2024-02-28T21:51:29+08:00
+lastmod: 2024-03-08T16:35:12+08:00
 tags:
 categories:
   - HPC
@@ -46,7 +46,7 @@ The reason for the discrepancy between the speed up predictions by the two laws 
 
 假设基准工作量是 1，并行比例是 f，串行比例是 1-f，则加速前并行部分工作量为 f，串行部分工作量为 1-f，加速后并行部分工作量为 f * p（p是处理器数量，因为是并行，所以不同处理器可以同时完成工作），串行部分工作量不变仍为 1-f（由于是串行，即使处理器增多也需要逐一执行，所以完成的工作量不变）
 
-因此 Gustafson 定律得出的加速比为 $speedup = \frac{(1-f) + f \times p}{{1 -f) + f}$
+因此 Gustafson 定律得出的加速比为 $speedup = \frac{(1-f) + f \times p}{(1 -f) + f}$
 
 ### Contradiction
 

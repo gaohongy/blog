@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-31T21:54:31+08:00
-lastmod: 2024-02-26T09:20:16+08:00
+lastmod: 2024-03-08T16:35:12+08:00
 tags:
 categories:
   - Compile-Link
@@ -100,10 +100,10 @@ LLVM最初是指Low Level Virtual Machine，是类似但不同于jvm的一种虚
 是LLVM项目中的一个子项目，是基于LLVM架构的轻量级编译器，属于整个LLVM架构中的[编译器前端](https://www.cnblogs.com/G-H-Y/p/17061801.html)(由LLVM架构图可得知)
 创造目的是为了替代GCC，提供更快的编译速度
 
-### make
+### Make
 `make`工具可以看成是一个智能的批处理工具，它本身并没有编译和链接的功能，而是用类似于批处理的方式—通过调用makefile文件中用户指定的命令利用`gcc(或g++)`来进行编译和链接。当程序只有一个源文件时，可以直接使用用`gcc(或g++)`命令进行编译。但当程序包含多个源文件时，逐文件去编译，编译顺序可能出现混乱同时工作量较大
 
-### cmake
+### CMake
 makefile在一些简单的工程中可以人工书写，但当工程较大时，手写makefile较为麻烦，同时更换平台需要修改makefile,cmake工具可以根据CMakeLists.txt文件去生成makefile，过程如下图所示
 ![](https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/20211102161633.png)
 
@@ -119,6 +119,12 @@ More details can be found in [CMake Knowledges Summary](https://gaohongy.github.
 > - [7] [区分gnu的gcc/g++, mingw/msvc, llvm的clang/clang++, make,cmake](https://zhuanlan.zhihu.com/p/448884264)
 > - [8] [LLVM架构](https://b23.tv/pdhEbrN)([相关资料](https://github.com/chenzomi12/DeepLearningSystem/tree/main/Compiler/AICompiler))
 > - [9] [CMake入门](https://www.bilibili.com/video/BV1bg411p7oS/?vd_source=98d46c524d240bd89f118ad90be17aef)
+
+### Ninja
+
+Ninja 同 Make 一样都属于构建系统，最大的特点是构建速度快。同时其也可与CMake结合使用，使用流程如下图所示:
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403081626149.png)
 
 ## 编译流程
 > 以gcc为例
