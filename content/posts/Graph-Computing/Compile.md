@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-09T21:55:18+08:00
+lastmod: 2024-03-10T22:23:23+08:00
 tags:
 categories:
   - Graph-Computing
@@ -58,9 +58,42 @@ gpm:
 
 编译层的作用可能是实现高层次代码转换为中间表达IR，逐层下降逐层优化
 
+根据项目结构图，我对于目前任务的理解是，有三项任务，一是实现统一编程框架、二是实现dgl到统一编程框架的用户无感转换、三是实现统一编程框架的编译层。
+对于前两项任务的理解，在项目图中，图学习部分在应用层和框架层之间的联系有两点，一是直接利用统一编程框架，二是首先利用dgl，然后dgl转换到统一编程框架。
+
+所以说我的疑问就是：
+1. 在统一编程框架中，和图学习相关的组件应当有哪些，采用什么样的项目模式（对图学习本身就不太清楚，都还不知道图学习都包含什么部分）
+2. dgl到统一编程框架的用户无感转换，这个转换依据的是什么，或者说这种转换机制是什么
+3. 从框架层到编译层，MLIR是如何发挥的作用，编译层的设计目标是什么
+
 ## 如何理解 MLIR
 MLIR 用于解决编程语言、编译器和硬件之间的交互问题，它的出现是为了应对日益复杂的编程语言和硬件架构
 
 MLIR提供了一个统一的中间表示（IR），可以作为不同编程语言编译器和LLVM后端之间的桥梁。
 
 通过自定义 dialect，可以实现语言扩充 和 实现特定领域的编译优化
+
+## CGA_Framework Project Structure
+
+Graph Generalization:
+
+|   组件   |   包含   |   功能   |
+| ---- | ---- | ---- |
+|   gc(graph computing)   |   GcComp(graph convolution component), GcProg(graph convolution program), GraphC(graph convolution)   |      |
+|   gnn(graph neural network)   |      |   图神经网络   |
+|   gpm(graph partitioning method)   |      |   图划分   |
+|   mat(matrix)   |      |   各种矩阵格式表示以及矩阵运算   |
+|   utils   |      |   小工具   |
+|   vec   |      |   像是容器类，会管理实际的数据   |
+|   converter.h   |   -   |   数据加载   |
+
+
+GNN:
+
+共给出了3种图神经网络模型：
+
+- GAT（Graph Attention Network）
+- GCN（Graph Convolutional Network）：
+- GIN（Graph Isomorphism Network）
+
+在具体的实现上，三种神经网络模型都实现了2个类，分别继承 GnnComp 和 GnnProg
