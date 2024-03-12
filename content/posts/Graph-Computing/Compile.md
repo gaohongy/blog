@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-10T22:23:23+08:00
+lastmod: 2024-03-12T21:55:25+08:00
 tags:
 categories:
   - Graph-Computing
@@ -42,6 +42,57 @@ gpm:
 
 在了解 MLIR 过程中发现使用到了一个名为 TableGen 的工具，有一种说法是它是 一种声明式编程语言。似乎通过相关工具，可以将.td文件生成C++代码。粗浅理解似乎是为了能够运用某些公共组件
 
+## 编译原理
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403122106578.png)
+
+### 词法分析（Lexical Analysis）：
+将源代码转换为标记（token）序列，识别出代码中的基本单位（如关键字、标识符、常量、运算符等），并移除注释和不必要的空白字符。
+
+### 语法分析（Syntax Analysis）：
+根据语法规则检查标记序列是否符合编程语言的语法结构。将标记序列转换为语法树（Parse Tree）或者抽象语法树（Abstract Syntax Tree），以便后续阶段的处理。
+
+### 语义分析（Semantic Analysis）：
+检查代码中的语义是否合法，即代码是否符合语言的语义规则。这包括类型检查、作用域检查、语义错误检查等，以确保代码在逻辑上是正确的。
+
+## 对于 MLIR 的理解
+
+1. 背景：在当前编译结构中，各种IR之间转换的效率和可迁移性不高
+![](https://pic2.zhimg.com/80/v2-b6e62260b0faf1085f972d1eda6e4bb1_1440w.webp)
+
+2. 引入 MLIR 所期望做到的：使用一种一致性强的方式，为各种DSL提供一种中间表达形式，将他们集成为一套生态系统，编译到特定硬件平台的汇编语言上
+![](https://pic2.zhimg.com/80/v2-4b2fa235edc4387378a84b8a3587efd9_1440w.webp)
+
+
+MLIR 表达式组成:
+![](https://pic4.zhimg.com/80/v2-6d75286d07a53555437f2c436f718083_1440w.webp)
+
+## MLIR Tutorials
+
+### Chapter 1: Toy Language and AST
+这一部分主要内容就是创造了一种新的语言，叫做Toy，然后实现了一个简易的语法分析器，仅仅能够获得toy源程序对应的抽象语法树。所以说这一节的重点就是抽象语法树
+
+### Chapter 2: Emitting Basic MLIR
+在第一节中已经生成了 Toy 语言源程序的 AST，这一节就是要根据 AST 结合 Dialect 来生成 MLIR表达式
+
+![](https://mmbiz.qpic.cn/mmbiz_png/SdQCib1UzF3tN9fRfXZhWRgL2OLr400ESibMbgibPJfUrSLDicq855g64h5cz6CHn4lstoRPJ2KjGbG2q43ANqSPmg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+
+### 生成 MLIR 表达式 所需的模块：[^MLIR-Mode]
+
+[^MLIR-Mode]: [MLIR的生产线](https://zhuanlan.zhihu.com/p/102565792)
+
+1. TableGen模块(生产线的零件): 通过.td文件定义了各种操作的类（这部分也叫做Operation Definition Specification (ODS)框架）
+2. Dialect模块(生产线的机械臂): 负责定义各种操作和分析，为操作添加相应的类型和操作数的值
+3. MLIRGen模块(生产线履带): 遍历抽象语法树(AST)，构造 MLIR 节点
+
+> TableGen模块在编译时向Dialect模块提供支持
+
+我理解着上述这 3 个模块之间的关系，或者说作用流程，大概是 TableGen 模块生成的是一种类似模版的东西，然后 Dialect 像是具体的适配器，为模版添加不同的属性，这样两阶段分离的设计可以做到 模版 和 数据 解耦合，同时做到 模版 的复用，最后再通过 MLIRGen 将添加了具体属性的模版 生成为 MLIR 节点
+
+![](https://pic4.zhimg.com/80/v2-95f6bf7b8482ab5a4d8541d16ba6cf7b_1440w.webp)
+
+关注图中TransposeOp的指向
+
 ## 对于项目的理解
 从关键技术那张图上，能够了解到CGA_Framework就是那个统一编程框架
 
@@ -67,6 +118,16 @@ gpm:
 3. 从框架层到编译层，MLIR是如何发挥的作用，编译层的设计目标是什么
 
 ## 如何理解 MLIR
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403110950934.png)
+
+中间表达的意义在于逐层解析，逐层降低抽象而偏向硬件。高级语言的 AST 到 IR 之间存在较大差距，通过在中间架设 IR 可以对高级抽象进行渐进式变换和递降，降低这种差距变化的梯度，降低阶段转换的难度，同时只要提供 IR 就相当于我们可以为任何领域的代码实现设计特定的编译器。
+
+但是带来的一个问题就是，每当增加一种实现时都会出现一种全新的 IR，而实际上可能这些 IR 之间存在一些共性的东西，通过增设 MLIR 这一层类似标准化的层次，可以使得中间的转化流程变得更加规范
+
+根据High Performance GPU Code Generation for Matrix-Matrix Multiplication using MLIR: Some Early Results[^MLIR-Usage]的说法，原有的IR基础设施并不能有效地解决自动生成特定领域库的问题。特别是，很难使用单个IR来表示和转换高，中，低级别的抽象。
+
+[^MLIR-Usage]: [High Performance GPU Code Generation for Matrix-Matrix Multiplication using MLIR: Some Early Results](https://arxiv.org/abs/2108.13191)
+
 MLIR 用于解决编程语言、编译器和硬件之间的交互问题，它的出现是为了应对日益复杂的编程语言和硬件架构
 
 MLIR提供了一个统一的中间表示（IR），可以作为不同编程语言编译器和LLVM后端之间的桥梁。
@@ -97,3 +158,9 @@ GNN:
 - GIN（Graph Isomorphism Network）
 
 在具体的实现上，三种神经网络模型都实现了2个类，分别继承 GnnComp 和 GnnProg
+
+
+SSA 意为静态单赋值（Static Single Assignment）。SSA 是一种中间表示（IR）的形式，常用于编译器优化和静态分析中。在 SSA 中，每个变量在其定义处只能被赋值一次，并且每个变量必须在使用之前被明确地赋值。这意味着在 SSA 中，变量的赋值是静态的，因此称为“静态单赋值”。
+
+## Reference
+> [从零开始学习深度学习编译器](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA4MjY4NTk0NQ==&action=getalbum&album_id=2099721001268740096&scene=173&subscene=&sessionid=svr_76259f2a30f&enterid=1709891420&from_msgid=2247499828&from_itemidx=1&count=3&nolastread=1#wechat_redirect)
