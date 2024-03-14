@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-06-16T23:23:00+08:00
-lastmod: 2024-02-27T21:53:31+08:00
+lastmod: 2024-03-14T08:47:51+08:00
 tags:
 categories:
   - Compile-Link
@@ -881,10 +881,28 @@ MESSAGE( STATUS "OpenCV_LIBS = ${OpenCV_LIBS}.")
 这就涉及到`find_package`搜索文件的两种模式和对应的两种文件：[^find_package-official-documentation]
 [^find_package-official-documentation]: [find_package官方文档](https://cmake.org/cmake/help/latest/command/find_package.html)
 
-1. Module mode: Find<LibaryName>.cmake，(CMake官方预定义的一些依赖包所对应的查找文件，所处路径为: `/usr/share/cmake-<version>/Modules`)
-2. Config mode: <LibraryName>Config.cmake，(通过CMake编译安装的第三方库，所处路径和构建 CMakeLists.txt 时的选项相关，如果给定了`-DCMAKE_INSTALL_PREFIX`选项，那么就会在该路径下的`lib/cmake`，如果没有给定该选项，那么就会在`/usr/local/lib/cmake`下)
+1. Module mode: Find<LibaryName>.cmake，(CMake官方预定义的一些依赖包所对应的查找文件，Linux下通过`apt`安装的CMake的路径为: `/usr/share/cmake-<version>/Modules`，Mac下通过`brew`安装的CMake的路径为：`/opt/homebrew/Cellar/cmake/<version>/share/cmake/Modules`，具体的路径取决于CMake的安装路径)
+2. Config mode: <LibraryName>Config.cmake，(通过CMake编译安装的第三方库，所处路径和构建 CMakeLists.txt 时的选项相关，如果给定了`-DCMAKE_INSTALL_PREFIX`选项，那么就会在该路径下的`lib/cmake`，如果没有给定该选项，那么就会在`/usr/local/lib/cmake`下)。
 
 `find_package`根据这两种文件实现环境变量的设置。
+
+Module mode 有默认的路径，但是 Config mode 下我们可能是通过 系统包管理器 或者 pip 安装的一些包，cmake 又该如何寻找这些包的 <LibraryName>Config.cmake 文件呢? 
+
+根据[Config Mode Search Procedure](https://cmake.org/cmake/help/latest/command/find_package.html#search-procedure)，可以发现一个cmake variable `CMAKE_PREFIX_PATH`。根据[官方文档](https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html#variable:CMAKE_PREFIX_PATH)对于该变量的解释，其可用于帮助`find_package()`来查找一些包。
+
+> 需要注意的是，这一变量不仅仅可以通过 `set(CMAKE_PREFIX_PATH "<path>")`在项目中被设置，其同时是一个环境变量，我们也可以通过环境变量来设置
+
+关于更多的cmake variables，可见[cmake-variables](https://cmake.org/cmake/help/latest/manual/cmake-variables.7.html)
+
+下面给出使用Config mode的一个示例:
+
+假设当前使用`conda`创建了一个env，名称为test，其路径为`$HOME/miniconda3/envs/test`.
+
+通过此环境下的`pip`安装了`pybind11`，其路径为`$HOME/miniconda3/envs/test/lib/python<edition>/site-packages/pybind11`
+
+可以发现其路径下的`share/cmake/pybind11`中就存放着诸多`*.cmake`文件，根据[Config Mode Search Procedure 官方文档](https://cmake.org/cmake/help/latest/variable/CMAKE_PREFIX_PATH.html#variable:CMAKE_PREFIX_PATH)给出的搜索路径，刚好对应到`<prefix>/<name>*/(lib/<arch>|lib*|share)/cmake/<name>*/`这一条匹配规则，所以我们只需设置`CMAKE_PREFIX_PATH`和`<prefix>`匹配即可，即`$HOME/miniconda3/envs/test/lib/python<edition>/site-packages`
+
+当我们完成此环境变量的设置后，CMakeLists.txt 中出现`find_package(pybind11 <edition> CONFIG REQUIRED)`就不会再报错了
 
 ## 示例
 ### 构建流程

@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-12T21:55:25+08:00
+lastmod: 2024-03-14T08:47:51+08:00
 tags:
 categories:
   - Graph-Computing
@@ -68,6 +68,11 @@ MLIR 表达式组成:
 
 ## MLIR Tutorials
 
+在 llvm 的项目源码中，同MLIR Tutorials相关的需要关注的是两个路径下的文件:
+
+- `/Users/gaohongyu/llvm/mlir/test/Examples/Toy`：存放的是 toy 语言的源程序
+- `/Users/gaohongyu/llvm/mlir/examples/toy`：存放的是实现 toy 语言获取 AST，MLIR 表达式等工具的源代码 (产生的工具可执行文件在`build/bin`目录中)
+
 ### Chapter 1: Toy Language and AST
 这一部分主要内容就是创造了一种新的语言，叫做Toy，然后实现了一个简易的语法分析器，仅仅能够获得toy源程序对应的抽象语法树。所以说这一节的重点就是抽象语法树
 
@@ -76,12 +81,180 @@ MLIR 表达式组成:
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/SdQCib1UzF3tN9fRfXZhWRgL2OLr400ESibMbgibPJfUrSLDicq855g64h5cz6CHn4lstoRPJ2KjGbG2q43ANqSPmg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
 
+如何理解 Dialect？
+
+Dialects provide a grouping mechanism for abstraction under a unique namespace
+
+MLIR is designed to allow all IR elements, such as attributes, operations, and types,
+
+自定义 Dialect 同 MLIR 结合的方式：
+
+C++实现Dialect：
+
+```cpp
+class ToyDialect : public mlir::Dialect {
+public:
+  explicit ToyDialect(mlir::MLIRContext *ctx);
+
+  static llvm::StringRef getDialectNamespace() { return "toy"; }
+
+  void initialize();
+};
+```
+
+借助tablegen工具实现Dialect：
+
+```
+def Toy_Dialect : Dialect {
+  let name = "toy";
+
+  let summary = "A high-level dialect for analyzing and optimizing the "
+                "Toy language";
+
+  let description = [{
+  }];
+
+  let cppNamespace = "toy";
+}
+```
+
+因为这一节的内容的主要目的就是探索从 抽象语法树AST 转为 MLIR表达式 的过程，所以说 Ch2 相较于 Ch1 增加的从模块上来将，就将增加 生成MLIR表达式所需的3个模块
+
+具体模块对应的文件是：
+
+- MLIRGen模块：`mlil/MLIRGen.cpp` 和 `include/toy/MLIRGen.h`
+- Dialect模块：`mlir/Dialect.cpp` 和 `include/toy/Dialect.h`
+- TableGen模块：`include/toy/Ops.td`
+
+
+1. 从抽象语法树 生成 MLIR表达式
+
+```
+# AST 中 toy源程序中 transpose(a) 语句对应的内容
+
+Call 'transpose' [ @codegen.toy:5:10
+  var: a @codegen.toy:5:20
+]
+```
+
+经过 MLIRGen 以下代码的加工处理，将 AST 转变为了 MLIR 表达式，其中的关键在于`if (callee == "transpose")`，即当程序扫描到`transpose`关键词时，就会返回构造出的 transpose 的 MLIR表达式中的节点，即第一步的内容
+
+```cpp
+mlir::Value mlirGen(CallExprAST &call) {
+  llvm::StringRef callee = call.getCallee();
+  auto location = loc(call.loc());
+
+  // Codegen the operands first.
+  SmallVector<mlir::Value, 4> operands;
+  for (auto &expr : call.getArgs()) {
+    auto arg = mlirGen(*expr);
+    if (!arg)
+      return nullptr;
+    operands.push_back(arg);
+  }
+
+  // Builtin calls have their custom operation, meaning this is a
+  // straightforward emission.
+  if (callee == "transpose") {
+    if (call.getArgs().size() != 1) {
+      emitError(location, "MLIR codegen encountered an error: toy.transpose "
+                          "does not accept multiple arguments");
+      return nullptr;
+    }
+    return builder.create<TransposeOp>(location, operands[0]);
+  }
+
+  // Otherwise this is a call to a user-defined function. Calls to
+  // user-defined functions are mapped to a custom call that takes the callee
+  // name as an attribute.
+  return builder.create<GenericCallOp>(location, callee, operands);
+}
+```
+
+不过存在一个问题是 在构造MLIR表达式节点时，利用到了一个 `TransposeOp`类，它应当表示的是源程序和MLIR表达式中的 `transpose`操作，这个类从何而来？
+
+我目前的理解是，所有数据类型都是在td文件中以一种声明式语法来说明的，后续需要用到哪些类型的文件则通过`mlir-tblgen`工具来生成。那么如何理解Dialect模块，我的理解是TableGen模块提供的只是一些基本原料，但是这些原料究竟怎么用到项目中，是由Dialect模块来决定的或者说设置的。所以说我们需要通过td文件对于源程序中涉及到的结构进行抽象。
+
+实际上，从 `mlir-tblgen` 的 help 信息可以看出，tb文件可以生成很多格式的信息文件
+
+```bash
+--gen-attr-interface-decls                        - Generate attribute interface declarations
+--gen-attr-interface-defs                         - Generate attribute interface definitions
+--gen-attr-interface-docs                         - Generate attribute interface documentation
+
+--gen-attrdef-decls                               - Generate AttrDef declarations
+--gen-attrdef-defs                                - Generate AttrDef definitions
+--gen-attrdef-doc                                 - Generate dialect attribute documentation
+
+--gen-avail-interface-decls                       - Generate availability interface declarations
+--gen-avail-interface-defs                        - Generate op interface definitions
+
+--gen-bytecode                                    - Generate dialect bytecode readers/writers
+
+--gen-convertible-llvmir-intrinsics               - Generate list of convertible LLVM IR intrinsics
+
+--gen-dialect-decls                               - Generate dialect declarations
+--gen-dialect-defs                                - Generate dialect definitions
+--gen-dialect-doc                                 - Generate dialect documentation
+
+--gen-directive-decl                              - Generate declarations for directives (OpenMP/OpenACC etc.)
+
+--gen-enum-decls                                  - Generate enum utility declarations
+--gen-enum-defs                                   - Generate enum utility definitions
+--gen-enum-from-llvmir-conversions                - Generate conversions of EnumAttrs from LLVM IR
+--gen-enum-to-llvmir-conversions                  - Generate conversions of EnumAttrs to LLVM IR
+
+--gen-intr-from-llvmir-conversions                - Generate conversions of intrinsics from LLVM IR
+
+--gen-llvmir-conversions                          - Generate LLVM IR conversions
+--gen-llvmir-intrinsics                           - Generate LLVM IR intrinsics
+
+--gen-op-decls                                    - Generate op declarations
+--gen-op-defs                                     - Generate op definitions
+--gen-op-doc                                      - Generate dialect documentation
+--gen-op-from-llvmir-conversions                  - Generate conversions of operations from LLVM IR
+--gen-op-interface-decls                          - Generate op interface declarations
+--gen-op-interface-defs                           - Generate op interface definitions
+--gen-op-interface-docs                           - Generate op interface documentation
+
+--gen-pass-capi-header                            - Generate pass C API header
+--gen-pass-capi-impl                              - Generate pass C API implementation
+--gen-pass-decls                                  - Generate pass declarations
+--gen-pass-doc                                    - Generate pass documentation
+
+--gen-python-enum-bindings                        - Generate Python bindings for enum attributes
+--gen-python-op-bindings                          - Generate Python bindings for MLIR Ops
+
+--gen-rewriters                                   - Generate pattern rewriters
+
+--gen-spirv-attr-utils                            - Generate SPIR-V attribute utility definitions
+--gen-spirv-avail-impls                           - Generate SPIR-V operation utility definitions
+--gen-spirv-capability-implication                - Generate utility function to return implied capabilities for a given capability
+--gen-spirv-enum-avail-decls                      - Generate SPIR-V enum availability declarations
+--gen-spirv-enum-avail-defs                       - Generate SPIR-V enum availability definitions
+--gen-spirv-serialization                         - Generate SPIR-V (de)serialization utilities and functions
+
+--gen-type-interface-decls                        - Generate type interface declarations
+--gen-type-interface-defs                         - Generate type interface definitions
+--gen-type-interface-docs                         - Generate type interface documentation
+
+--gen-typedef-decls                               - Generate TypeDef declarations
+--gen-typedef-defs                                - Generate TypeDef definitions
+--gen-typedef-doc                                 - Generate dialect type documentation
+```
+
+
+怎么理解这个方言？我目前的看法就是适配器，方言也同时说明了不同的人有不同的说法，同样的对于transpose来说，细节可能也不同，所以才被称之为方言
+
+但是说通过多层IR逐步降级，这个降级是怎么表现的还是不太明白
+
+根据[This is the C++ definition of a dialect, but MLIR also supports defining dialects declaratively via tablegen.](https://mlir.llvm.org/docs/Tutorials/Toy/Ch-2/#:~:text=This%20is%20the%20C%2B%2B%20definition%20of%20a%20dialect%2C%20but%20MLIR%20also%20supports%20defining%20dialects%20declaratively%20via%20tablegen.)的说法，td文件写的其实就是dialect，这个dialect可以直接通过C++代码进行定义，同时也可以使用tablegen结合td文件生成
 
 ### 生成 MLIR 表达式 所需的模块：[^MLIR-Mode]
 
 [^MLIR-Mode]: [MLIR的生产线](https://zhuanlan.zhihu.com/p/102565792)
 
-1. TableGen模块(生产线的零件): 通过.td文件定义了各种操作的类（这部分也叫做Operation Definition Specification (ODS)框架）
+1. TableGen模块(生产线的零件): 通过.td文件定义了各种操作的类（这部分也叫做Operation Definition Specification (ODS)框架）(我理解这部分也可以通过手动编写C++代码实现，只是说可能写起来比较繁琐，同时在不同的场景下可能存在类似的需求，如果总是手动编写会带来很大的重复工作量，所以说一般通过td文件结合TableGen工具来生成)
 2. Dialect模块(生产线的机械臂): 负责定义各种操作和分析，为操作添加相应的类型和操作数的值
 3. MLIRGen模块(生产线履带): 遍历抽象语法树(AST)，构造 MLIR 节点
 
