@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-06-16T23:23:00+08:00
-lastmod: 2024-03-14T08:47:51+08:00
+lastmod: 2024-03-14T21:53:43+08:00
 tags:
 categories:
   - Compile-Link
@@ -881,10 +881,20 @@ MESSAGE( STATUS "OpenCV_LIBS = ${OpenCV_LIBS}.")
 这就涉及到`find_package`搜索文件的两种模式和对应的两种文件：[^find_package-official-documentation]
 [^find_package-official-documentation]: [find_package官方文档](https://cmake.org/cmake/help/latest/command/find_package.html)
 
-1. Module mode: Find<LibaryName>.cmake，(CMake官方预定义的一些依赖包所对应的查找文件，Linux下通过`apt`安装的CMake的路径为: `/usr/share/cmake-<version>/Modules`，Mac下通过`brew`安装的CMake的路径为：`/opt/homebrew/Cellar/cmake/<version>/share/cmake/Modules`，具体的路径取决于CMake的安装路径)
-2. Config mode: <LibraryName>Config.cmake，(通过CMake编译安装的第三方库，所处路径和构建 CMakeLists.txt 时的选项相关，如果给定了`-DCMAKE_INSTALL_PREFIX`选项，那么就会在该路径下的`lib/cmake`，如果没有给定该选项，那么就会在`/usr/local/lib/cmake`下)。
+#### Module Mode
+
+Module mode: Find<LibraryName>.cmake，(CMake官方预定义的一些依赖包所对应的查找文件，Linux下通过`apt`安装的CMake的路径为: `/usr/share/cmake-<version>/Modules`，Mac下通过`brew`安装的CMake的路径为：`/opt/homebrew/Cellar/cmake/<version>/share/cmake/Modules`，具体的路径取决于CMake的安装路径)
+
+#### Config Mode
+
+Config mode: <LibraryName>Config.cmake，(通过CMake编译安装的第三方库，所处路径和构建 CMakeLists.txt 时的选项相关，如果给定了`-DCMAKE_INSTALL_PREFIX`选项，那么就会在该路径下的`lib/cmake`，如果没有给定该选项，那么就会在`/usr/local/lib/cmake`下)。
 
 `find_package`根据这两种文件实现环境变量的设置。
+
+#### 关于两种模式下的cmake文件搜索路径问题
+
+在Module mode 下，一般CMake会根据自身的安装路径自行查找，如果CMake和后续的库都是统一通过系统包管理器来安装的，那么Find<LibraryName>.cmake文件的所处位置一般都是正确的。不过在官方文档中看到了[CMAKE_MODULE_PATH](https://cmake.org/cmake/help/latest/variable/CMAKE_MODULE_PATH.html#variable:CMAKE_MODULE_PATH)这一变量，其可用于指定`include()`和`find_package()`对于CMake modules的搜索路径，若确实无法找到相关文件，也可尝试设置此变量。
+
 
 Module mode 有默认的路径，但是 Config mode 下我们可能是通过 系统包管理器 或者 pip 安装的一些包，cmake 又该如何寻找这些包的 <LibraryName>Config.cmake 文件呢? 
 

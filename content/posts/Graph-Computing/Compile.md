@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-14T08:47:51+08:00
+lastmod: 2024-03-14T21:53:43+08:00
 tags:
 categories:
   - Graph-Computing
@@ -65,6 +65,34 @@ gpm:
 
 MLIR 表达式组成:
 ![](https://pic4.zhimg.com/80/v2-6d75286d07a53555437f2c436f718083_1440w.webp)
+
+MLIR 并不是一个端到端（从计算图到最后可执行程序这个全流程）的框架，只是一个基础架构
+
+## MLIR 编译
+
+1. 如果需要用到[Python Bindings](https://mlir.llvm.org/docs/Bindings/Python/#building)，在[MLIR Getting Started](https://mlir.llvm.org/getting_started/)给出的编译命令之外是需要添加额外的编译选项的，完整示例如下所示：
+
+同时需要注意文档中提到的对于部分python包的依赖，这部分需要在编译之前进行安装
+
+```bash
+cmake -G Ninja ../llvm \
+    -DLLVM_ENABLE_PROJECTS=mlir \
+    -DLLVM_BUILD_EXAMPLES=ON \
+    -DLLVM_TARGETS_TO_BUILD="Native" \
+	-DCMAKE_BUILD_TYPE=Debug \
+	-DLLVM_USE_SPLIT_DWARF=ON \
+	-DLLVM_ENABLE_ASSERTIONS=ON \
+	-DCMAKE_C_COMPILER=clang \
+	-DCMAKE_CXX_COMPILER=clang++ \
+	-DLLVM_ENABLE_LLD=ON \
+	-DMLIR_ENABLE_BINDINGS_PYTHON=ON \
+	-DPython3_EXECUTABLE="/opt/homebrew/bin/python3"
+```
+
+2. compiler这个项目所包含的CMakeLists.txt中写死了一些路径，这些都需要进行修改
+
+3. compiler项目在CMakeLists.txt中使用到了一些`find_package()`，涉及到numpy和pybind11，需要通过`CMAKE_PREFIX_PATH`手动指定路径
+
 
 ## MLIR Tutorials
 
