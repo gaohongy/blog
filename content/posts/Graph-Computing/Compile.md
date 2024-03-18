@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-14T21:53:43+08:00
+lastmod: 2024-03-18T23:49:51+08:00
 tags:
 categories:
   - Graph-Computing
@@ -104,10 +104,54 @@ cmake -G Ninja ../llvm \
 ### Chapter 1: Toy Language and AST
 这一部分主要内容就是创造了一种新的语言，叫做Toy，然后实现了一个简易的语法分析器，仅仅能够获得toy源程序对应的抽象语法树。所以说这一节的重点就是抽象语法树
 
+需要使用到的命令：`~/llvm/build/bin/toyc-ch1 /Users/gaohongyu/llvm/mlir/test/Examples/Toy/Ch1/ast.toy --emit=ast`
+
+意思是通过`toyc-ch1`程序生成`ast.toy`程序的抽象语法树
+
 ### Chapter 2: Emitting Basic MLIR
 在第一节中已经生成了 Toy 语言源程序的 AST，这一节就是要根据 AST 结合 Dialect 来生成 MLIR表达式
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/SdQCib1UzF3tN9fRfXZhWRgL2OLr400ESibMbgibPJfUrSLDicq855g64h5cz6CHn4lstoRPJ2KjGbG2q43ANqSPmg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+Ch2/toyc.cpp 相较于 Ch1/toy.cpp相比，有一个区别就是程序接收的参数多了一个：
+
+这是Ch1/toy.cpp中和程序参数相关的内容：
+```cpp
+static cl::opt<enum Action>
+    emitAction("emit", cl::desc("Select the kind of output desired"),
+               cl::values(clEnumValN(DumpAST, "ast", "output the AST dump")));
+```
+
+这是Ch2/toy.cpp中和程序参数相关的内容：
+```cpp
+static cl::opt<enum Action> emitAction(
+    "emit", cl::desc("Select the kind of output desired"),
+    cl::values(clEnumValN(DumpAST, "ast", "output the AST dump")),
+    cl::values(clEnumValN(DumpMLIR, "mlir", "output the MLIR dump")));
+```
+
+区别就在于编译生成的toyc-ch2不仅能够生成toy源程序的抽象语法树，还能够生成对应的mlir表达式
+
+
+一直在思考，toy tutorial 给出的这个示例到底对于实际的应用场景有何启发作用？
+
+实际上toy是一门新创造出的语言，是为了展示MLIR的各项特点而出现的，获取抽象语法树，获取MLIR表达式的工具都是项目自行实现的。
+
+如果考虑真实的场景，例如用C++实现的代码，哪怕是框架，通过cmake都可以完成编译，引入MLIR难道就是为了替换掉整个编译流程中的前端和中端，用人工实现MLIR的方式逐层降级？首先编译层的上层是框架层，在我的理解中，我们可以把这个框架和Tensorflow或者Pytorch等价来看，但是在我看来，无论是不是新的框架，只要不是新的语言，理论上都可以用现有的编译工具完成编译，非要做这个编译层，非要用MLIR逐层降级只是为了提高性能，优化性能，使得每一层的优化都能够做到极致，而不是仅仅依靠现有编译器采用的那些优化。
+
+那么有一个问题是：我们要站在哪个起点来分析这件事。toy是一门新的语言，所以说最基础的解析器都需要全新实现，也就是说面对toy这个场景就应当是一无所有的。但是现有项目是用C++实现的，MLIRGen这个工具对于现在的场景是存在的，肯定需要做的是写Dialect，那结合Dialect生成MLIR表达式这个过程是谁负责的？
+
+突然感觉我们的重点就是写Dialect，结合编程框架中的一些数据结构，在Dialect中把需要完成的内容完成，考虑一层一层是怎么降级的。我觉得像：
+
+1.是怎么从源程序解析得到的AST？(这个问题不考虑，暂时不重要）
+2.MLIRGen是怎么结合Dialect生成的一层表达（每一次Dialect的加入都会形成一层中间层），主要是类和类之间是怎么关联起来的
+3. .td文件通过tablegen能生成很多东西，这些东西都怎么用？ 
+4. .td结合tablegen生成的一大堆东西 和 Dialect.cpp又是什么关系，或者说Dialect.cpp到底负责干什么的？
+
+1. 我现在比较纠结的就是各个部分的联动关系，我不知道要写的内容到底要怎么发挥出它的作用
+2. 不太理解如果想要完成一层降级都需要做些什么，只知道要写dialect，但是这dialect是怎么对降级起到作用的？通过生成MLIR表达式或许是，所以说就是让dialect为生成MLIR表达式做出贡献
+
+如果对toy ch2这个内容来说，是否可以假设现在有MLIRGen的工具，但是还没有相关的dialect，任务就是编写dialect实现MLIR表达式的生成。（因为后续教程的内容是例如表达式优化和降级的内容，如果让dialect在生成MLIR表达式这个过程中发挥作用我觉得是整个任务的基础）
 
 如何理解 Dialect？
 

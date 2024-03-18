@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-12-31T21:54:31+08:00
-lastmod: 2024-03-08T16:35:12+08:00
+lastmod: 2024-03-18T23:49:51+08:00
 tags:
 categories:
   - Compile-Link
@@ -457,7 +457,15 @@ It is similar to the first method, because it affects the dynamic linker also wi
 
 修改环境变量`LD_LIBRARY_PATH`（macOS下为`DYLD_LIBRARY_PATH`），将libadd.so所在路径添加到环境变量中
 
-> 需要注意的一点是，根据[Comparison of Shell Script Execution Modes](https://gaohongy.github.io/blog/posts/linux/comparison-of-shell-script-execution-modes/)的知识，可执行文件的执行会在子进程中进行，因此此处的变量需要设置为[Environment/Global Variables](https://gaohongy.github.io/blog/posts/linux/variables-in-linux/)以便子进程可以访问到。
+有几点注意事项：
+
+1. 根据[Comparison of Shell Script Execution Modes](https://gaohongy.github.io/blog/posts/linux/comparison-of-shell-script-execution-modes/)的知识，可执行文件的执行会在子进程中进行，因此此处的变量需要设置为[Environment/Global Variables](https://gaohongy.github.io/blog/posts/linux/variables-in-linux/)以便子进程可以访问到。
+2. 在 macOS 下，`DYLD_LIBRARY_PATH` 无法被设置为环境变量，即执行`env | grep DYLD_LIBRARY_PATH`结果为空。对于这个奇怪的现象，在`man dyld`中有下面一则提示
+
+> Note: If System Integrity Protection is enabled, these environment variables are ignored when executing binaries protected by System Integrity Protection.
+
+截止到更新此处内容时，还并没有尝试关闭 System Integrity Protection 来测试是否是这种安全机制导致的这种奇怪现象，目前暂且认为是如此。
+
 
 **4. 使用 `DT_RUNPATH` 中指定的目录**
 

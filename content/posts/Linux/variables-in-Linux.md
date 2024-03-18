@@ -52,6 +52,8 @@ The difference between these two variables is that environment variables can be 
 2. `set`/`declare` is used to print the **Shell Variables and Environment**.
 3. `echo $<variable name>` is used to print **any single variables**.
 
+> There is a fallible point, set is only used to view the variables, if we want to create a variable, we can use `export <variable-name>=<variable-value>`, `declare -x <variable-name>=<variable-value>` or use  `<variable-name>=<variable-value>` directly.
+
 ### Edit variables
 1. `export` is used to transform a Shell Variable to a Environment Variable so that child processes can inhert the environment of parent process.
 2. `declare -x` is used to transform a Shell Variable to a Environment Variable, it is like `export` command.
