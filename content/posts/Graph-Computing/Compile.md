@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-18T23:49:51+08:00
+lastmod: 2024-03-19T21:54:35+08:00
 tags:
 categories:
   - Graph-Computing
@@ -101,6 +101,8 @@ cmake -G Ninja ../llvm \
 - `/Users/gaohongyu/llvm/mlir/test/Examples/Toy`：存放的是 toy 语言的源程序
 - `/Users/gaohongyu/llvm/mlir/examples/toy`：存放的是实现 toy 语言获取 AST，MLIR 表达式等工具的源代码 (产生的工具可执行文件在`build/bin`目录中)
 
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403191134543.png)
+
 ### Chapter 1: Toy Language and AST
 这一部分主要内容就是创造了一种新的语言，叫做Toy，然后实现了一个简易的语法分析器，仅仅能够获得toy源程序对应的抽象语法树。所以说这一节的重点就是抽象语法树
 
@@ -109,6 +111,7 @@ cmake -G Ninja ../llvm \
 意思是通过`toyc-ch1`程序生成`ast.toy`程序的抽象语法树
 
 ### Chapter 2: Emitting Basic MLIR
+
 在第一节中已经生成了 Toy 语言源程序的 AST，这一节就是要根据 AST 结合 Dialect 来生成 MLIR表达式
 
 ![](https://mmbiz.qpic.cn/mmbiz_png/SdQCib1UzF3tN9fRfXZhWRgL2OLr400ESibMbgibPJfUrSLDicq855g64h5cz6CHn4lstoRPJ2KjGbG2q43ANqSPmg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
@@ -132,7 +135,80 @@ static cl::opt<enum Action> emitAction(
 
 区别就在于编译生成的toyc-ch2不仅能够生成toy源程序的抽象语法树，还能够生成对应的mlir表达式
 
+#### 关于 Ops.td 是如何同 Dialect模块（Dialect.h，Dialect.cpp）相结合的？**
 
+通过Ops.td可以生成以下这些.inc文件:
+
+1. Dialect.h.inc: Dialect Declarations
+2. Dialect.cpp.inc: Dialect Definitions
+3. Ops.h.inc: Op Declarations 
+4. Ops.cpp.inc: Op Definitions
+
+而 Dialect 模块则使用到了这些文件：
+
+1. Dialect.h 负责引入 .h.inc，即 Declarations, 包括 Dialect.h.inc 和 Ops.h.inc
+2. Dialect.cpp 负责引入 .cpp.inc，即 Definitions，包括 Dialect.cpp.inc 和 Ops.cpp.inc
+
+所以说，关于 dialect 本身 和 其 操作 等内容，都是在.td文件中说明，然后通过 tablegen 工具结合选项生成所需要的内容
+
+Dialect.h 负责引入头文件这件事情并不难理解，那么如何理解 Dialect.cpp 和 Ops.cpp.inc 都具备的对于 Op Definition 功能这件事情？
+
+以 `TransposeOp::build` 为例:
+
+Ops.cpp.inc 中的相关内容为：
+
+```cpp
+void TransposeOp::build(::mlir::OpBuilder &odsBuilder, ::mlir::OperationState &odsState, ::mlir::Type resultType0, ::mlir::Value input) {
+  odsState.addOperands(input);
+  odsState.addTypes(resultType0);
+}
+
+void TransposeOp::build(::mlir::OpBuilder &odsBuilder, ::mlir::OperationState &odsState, ::mlir::TypeRange resultTypes, ::mlir::Value input) {
+  odsState.addOperands(input);
+  assert(resultTypes.size() == 1u && "mismatched number of results");
+  odsState.addTypes(resultTypes);
+}
+
+void TransposeOp::build(::mlir::OpBuilder &, ::mlir::OperationState &odsState, ::mlir::TypeRange resultTypes, ::mlir::ValueRange operands, ::llvm::ArrayRef<::mlir::NamedAttribute> attributes) {
+  assert(operands.size() == 1u && "mismatched number of parameters");
+  odsState.addOperands(operands);
+  odsState.addAttributes(attributes);
+  assert(resultTypes.size() == 1u && "mismatched number of return types");
+  odsState.addTypes(resultTypes);
+}
+```
+
+Dialect.cpp 中的相关内容为：
+
+```cpp
+void TransposeOp::build(mlir::OpBuilder &builder, mlir::OperationState &state,
+                        mlir::Value value) {
+  state.addTypes(UnrankedTensorType::get(builder.getF64Type()));
+  state.addOperands(value);
+}
+```
+
+目前还未搞懂这两者之间有何关联，不过 Ops.cpp.inc 还有额外的工作，就是在 Dialect.cpp 最开始的 dialect 初始化时为 dialect 指定操作：
+
+```cpp
+void ToyDialect::initialize() {
+  addOperations<
+#define GET_OP_LIST
+#include "toy/Ops.cpp.inc"
+      >();
+}
+```
+
+#### 关于创建一个 Op 所需要用到的类
+
+以 Transpose Op 为例，根据 Ops.cpp.inc 的内容，和 transpose op 相关的有以下内容: 
+
+1. TransposeOpGenericAdaptorBase
+2. TransposeOpGenericAdaptor
+3. TransposeOpAdaptor
+4. TransposeOp
+
+#### 随想疑问
 一直在思考，toy tutorial 给出的这个示例到底对于实际的应用场景有何启发作用？
 
 实际上toy是一门新创造出的语言，是为了展示MLIR的各项特点而出现的，获取抽象语法树，获取MLIR表达式的工具都是项目自行实现的。
@@ -321,6 +397,104 @@ mlir::Value mlirGen(CallExprAST &call) {
 但是说通过多层IR逐步降级，这个降级是怎么表现的还是不太明白
 
 根据[This is the C++ definition of a dialect, but MLIR also supports defining dialects declaratively via tablegen.](https://mlir.llvm.org/docs/Tutorials/Toy/Ch-2/#:~:text=This%20is%20the%20C%2B%2B%20definition%20of%20a%20dialect%2C%20but%20MLIR%20also%20supports%20defining%20dialects%20declaratively%20via%20tablegen.)的说法，td文件写的其实就是dialect，这个dialect可以直接通过C++代码进行定义，同时也可以使用tablegen结合td文件生成
+
+#### Chapter 2 展现出的问题
+以下是通过 `toyc-ch2 codegen.toy --emit=mlir`生成的 mlir表达式
+
+```
+module {
+  toy.func @multiply_transpose(%arg0: tensor<*xf64> loc("codegen.toy":4:1), %arg1: tensor<*xf64> loc("codegen.toy":4:1)) -> tensor<*xf64> {
+    %0 = toy.transpose(%arg0 : tensor<*xf64>) to tensor<*xf64> loc("codegen.toy":5:10)
+    %1 = toy.transpose(%arg1 : tensor<*xf64>) to tensor<*xf64> loc("codegen.toy":5:25)
+    %2 = toy.mul %0, %1 : tensor<*xf64> loc("codegen.toy":5:25)
+    toy.return %2 : tensor<*xf64> loc("codegen.toy":5:3)
+  } loc("codegen.toy":4:1)
+  toy.func @main() {
+    %0 = toy.constant dense<[[1.000000e+00, 2.000000e+00, 3.000000e+00], [4.000000e+00, 5.000000e+00, 6.000000e+00]]> : tensor<2x3xf64> loc("codegen.toy":9:17)
+    %1 = toy.reshape(%0 : tensor<2x3xf64>) to tensor<2x3xf64> loc("codegen.toy":9:3)
+    %2 = toy.constant dense<[1.000000e+00, 2.000000e+00, 3.000000e+00, 4.000000e+00, 5.000000e+00, 6.000000e+00]> : tensor<6xf64> loc("codegen.toy":10:17)
+    %3 = toy.reshape(%2 : tensor<6xf64>) to tensor<2x3xf64> loc("codegen.toy":10:3)
+    %4 = toy.generic_call @multiply_transpose(%1, %3) : (tensor<2x3xf64>, tensor<2x3xf64>) -> tensor<*xf64> loc("codegen.toy":11:11)
+    %5 = toy.generic_call @multiply_transpose(%3, %1) : (tensor<2x3xf64>, tensor<2x3xf64>) -> tensor<*xf64> loc("codegen.toy":12:11)
+    toy.print %5 : tensor<*xf64> loc("codegen.toy":13:3)
+    toy.return loc("codegen.toy":8:1)
+  } loc("codegen.toy":8:1)
+} loc(unknown)
+```
+
+可以看出这个层次下的 mlir表达式 是严格按照代码逐句翻译后的结果，例如下面两句是 源代码 和 对应的mlir表达式，实际上从 tensor<*xf64> transpose到 tensor<*xf64> 显然是没有意义的，这是一步冗余的操作，所以 Chapter 3 就着手通过 表达式优化 来解决这个问题
+
+```
+var a<2, 3> = [[1, 2, 3], [4, 5, 6]];
+
+%0 = toy.transpose(%arg0 : tensor<*xf64>) to tensor<*xf64> loc("codegen.toy":5:10)
+```
+
+### Chapter 3: High-level Language-Specific Analysis and Transformation
+
+关于表达式变形消除冗余在整个流程中的位置：
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403191137970.png)
+
+Chapter 3 的展开逻辑本质上是遵循了 Chapter 2 遗留下来的问题，不过其重新提出了一个 `transpose(transpose(X)) -> X` 的问题，讲述如何解决这个问题。需要注意的是本节一共举了为两个操作添加优化方法的示例，它们采用了不同的方法， transpose操作 采用了 C++ 实现(对应ToyCombine.cpp)，reshape操作 采用了 DRR模块(对应ToyCombine.td)
+
+#### C++ 实现 transformation
+
+表达式的变形优化 在 MLIR 的场景下被称为 rewrite
+
+想要实现 rewrite 需要进行以下几点：
+
+1. 实现一个 RewritePattern，即一个继承了`mlir::OpRewritePattern<>`的类
+
+```cpp
+struct SimplifyRedundantTranspose : public mlir::OpRewritePattern<TransposeOp>
+```
+
+2. rewrite能够被应用，需要通过 canonicalization pass。需要做的工作一方面是让 规范化器知道有这个 rewrite 的存在，另一方面就是让其运用上这一 rewrite。所以这一步就是实现注册工作
+
+```cpp
+void TransposeOp::getCanonicalizationPatterns(RewritePatternSet &results,
+                                              MLIRContext *context) {
+  results.add<SimplifyRedundantTranspose>(context);
+}
+```
+
+不过有一点疑问是，这里只是类方法的定义，并没有找到对此方法的调用，那么是什么时候真正执行的注册?
+
+关于这个问题，官方文档中有提到一个 canonicalization framework，虽然在第2点中说注册是为了让 规范化器 知道有这个rewrite的存在，但是本质上可能是为了让这个 优化框架 了解到这个rewrite的存在。有一种可能就是只要我们为一个操作定义了`getCanonicalizationPatterns`方法，那么 MLIR 在面对这个操作类的时候，就一定能检测到它是具备这个优化方法的，那么在下一步就能够真正实现这种优化。
+
+> 真实的实现机制需要去看 MLIR 实现的源码是怎么处理的，我们暂且可以认为这样做就是满足 MLIR对于实现一个方法的优化 所做出的规定，也就是说 MLIR 提供了一种标准化的模版，我们只需要按照模版的要求去做，那么就可以为这个操作实现这种优化
+
+3. 规范化器 的 代码原型 就是 `mlir::PassManager`，即我们需要利用它来真正运用上第一步实现的 rewrite
+
+```cpp
+mlir::PassManager pm(module.get()->getName());
+pm.addNestedPass<mlir::toy::FuncOp>(mlir::createCanonicalizerPass());
+```
+
+#### 使用 DRR模块 实现 transformation
+
+
+#### 对 Chapter 3 的理解和感悟
+
+这样来说，是不是可以理解为 rewrite 就是一种 pass
+
+通过这一部分内容，更加加深了对于 MLIR 似乎就和 SpringBoot 那种东西一样，我们似乎完全可以把他们当作普通的框架，为操作添加优化就是必须要为操作类定义`getCanonicalizationPatterns`方法，这就好像在其他那些框架中所要求做的类似
+
+
+#### compiler pattern-match transformations 分类
+1. local
+
+有两种方法用于实现transformation：
+
+- Imperative, C++ pattern-match and rewrite
+- Declarative, rule-based pattern-match and rewrite(Declarative Rewrite Rules (DRR)模块)(此时要求之前的op定义是通过ods模块实现的，否则只能采用C++代码手动实现transformation了)
+
+到这里，架构图中涉及到的两个模块就都出现了
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403191146250.png)
+
+2. global
 
 ### 生成 MLIR 表达式 所需的模块：[^MLIR-Mode]
 
