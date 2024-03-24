@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-23T21:08:23+08:00
-lastmod: 2024-03-24T00:11:46+08:00
+lastmod: 2024-03-24T23:16:53+08:00
 tags:
 categories:
   - HPC
@@ -79,3 +79,50 @@ std::cout << sizeof(XYZ16) << std::endl; // 32
 
 正如前面所提到的，这个示例也仅仅能够说明内存对齐在数值上的影响，并没有体现出对齐后会对性能产生哪些影响
 
+通过上述分析，其实不难想到，理解为什么要进行内存对齐是很重要的一个点。
+
+其实内存对齐只是表面行为，内在机理在于局部性原理。举一个简单例子
+
+```cpp
+struct A {
+	char x1;
+	double y1;
+	char x2;
+	double y2;
+	char x3;
+	double y3;
+	char x4;
+	double y4;
+	char x5;
+};
+```
+
+## 内存对齐
+
+### 内部对齐
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403241522536.png)
+
+对于上述结构，1B 的 char 变量后面会 padding 7B 的空间，以便和 8B 的 double 对齐
+
+然而通过一种很简单的方式，只需要将结构体中的 char 变量聚集到一起，在内存布局上它们自然也都时相邻的了
+
+调整后的好处在于，读取一个 char 变量时，也会将其他 char变量 一同读入 cache，充分利用局部性，从而减少了访存次数
+
+这种顺序的调整，仅仅是对于结构体进行的内部调整，因此称之为内部对齐
+
+### 外部对齐
+外部对齐需要解决的是跨 cache line 的问题
+
+如果一个结构的大小并非 cache line 的整数倍，那么中间的结构就一定会跨 cache line，那么访问这部分数据就需要发生两次 cache事务，我们可以通过padding，使其变为 cache line 的整数倍，从而避免跨 cache line 的情况发生
+
+可以通过查询 `/sys/devices/system/cpu/cpu*/cache/index*/coherency_line_size` 文件获取 cache line 的大小
+
+## AoS 和 SoA 结构转换性能优化原理
+
+无论是 AoS结构 还是 SoA结构，通过结构转换来实现性能优化的底层逻辑都是局部性原理，只是 AoS结构 和 SoA结构 局部性原理发挥作用的单位是不同的
+
+AoS结构 局部性原理发挥作用的单位在于整个结构体，如果在实际问题中，需要访问到整个结构体的全部字段，那么更适合采用 AoS结构
+
+如果仅需要访问一个结构体中的部分字段，并且需要频繁切换结构体，那么就更适合采用 SoA结构
+
+采用 AoS结构 还是 SoA结构，取决于实际的访存模式，在特定的访存模式下，采用何种存储结构更能够充分利用局部性那么哪种结构的性能就更优

@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-24T00:11:46+08:00
+lastmod: 2024-03-24T23:16:53+08:00
 tags:
 categories:
   - Graph-Computing
@@ -713,6 +713,26 @@ GNN:
 
 
 SSA 意为静态单赋值（Static Single Assignment）。SSA 是一种中间表示（IR）的形式，常用于编译器优化和静态分析中。在 SSA 中，每个变量在其定义处只能被赋值一次，并且每个变量必须在使用之前被明确地赋值。这意味着在 SSA 中，变量的赋值是静态的，因此称为“静态单赋值”。
+
+## buddy-mlir
+
+### Build
+
+在第一步构建过程中遇到几个坑点：
+
+1. The target building platform of MLIR is uncompleted，because [MLIR Getting Started](https://mlir.llvm.org/getting_started/) asks that we can use the build option `-DLLVM_TARGETS_TO_BUILD="Native;NVPTX;AMDGPU"`, but the buddy-mlir needs the `RISCV` platform data, so we need to recompile the MLIR
+
+2. I learn about the process of building buddy-compiler needs the mlir compiling data from the option `-DMLIR_DIR=$PWD/../llvm/build/lib/cmake/mlir` and `-DLLVM_DIR=$PWD/../llvm/build/lib/cmake/llvm`, so I think a idea that create a soft link of llvm project for the buddy-compiler. But when I build the buddy-compiler, I get the error message that cmake cannot find some files about RISCV, until I get some tips from the slack 
+
+![](https://img2024.cnblogs.com/blog/1898659/202403/1898659-20240324100837179-389572672.png)
+
+执行之后就能够正常build了，但是里面不确定的因素有二，其一是 我手动创建软链接确实也起到了增加submodule的功能，因为执行 git submodule update --init 之后并没有重复 git clone llvm- project，但是不太清楚执行之后到底产生了什么其他的额外影响(主要怀疑会不会执行后修改了什么变量），使得 cmake 就能够找到相关文件了；其二是 submodule 并不仅仅只有 llvm 这一个，还存在另外一个，不确定是不是因为之前缺少这个子模块从而导致build失败（不过这一点是可以验证的，只需要注释掉这部分，只 git submodule llvm-project 那部分，查看是否可以完成 build 就可以，按理说应该不太行）
+
+### Structure
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403241200921.png)
+
+目前的困惑在于 buddy-mlir 是否可以看为是对 mlir 的一种封装，如果是的话，封装了啥，如果不是，那它相较于 mlir 又有何区别或者说设计的意义在哪里
 
 ## Reference
 > [从零开始学习深度学习编译器](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA4MjY4NTk0NQ==&action=getalbum&album_id=2099721001268740096&scene=173&subscene=&sessionid=svr_76259f2a30f&enterid=1709891420&from_msgid=2247499828&from_itemidx=1&count=3&nolastread=1#wechat_redirect)
