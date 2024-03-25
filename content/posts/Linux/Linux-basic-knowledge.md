@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-01-18T23:51:41+08:00
-lastmod: 2024-02-14T21:06:37+08:00
+lastmod: 2024-03-25T14:32:56+08:00
 tags:
 categories:
   - Linux
@@ -168,7 +168,7 @@ drwxr-xr-x 10 yzh yzh  4096 Sep 10 19:51 .. --> 父目录
 - $@ - 把所有命令行参数看为一个个独立的字符串
 
 ## 替换技术
-1. 参数替换 `${}`
+### 参数替换 `${}`
 在`${}`中，通过`#`、`%`和`/`符号能够实现字符串处理
 ```
 % var="hello"
@@ -215,7 +215,8 @@ ${string:start:length}
 - start: Represents the starting position of the slice (inclusive). If not specified, it defaults to 0.
 - length: Repersents the length of substring what you want to get.
 
-2. 算术替换 `(())` 和 `$(())`  
+### 算术替换 `(())` 和 `$(())`  
+
 ```
 % res=$((3+5))
 % echo res
@@ -226,7 +227,8 @@ ${string:start:length}
 15
 ```
 
-3. 文件名替换
+### 文件名替换
+
 通过通配符匹配文件名
 ```
 % ls
@@ -235,7 +237,8 @@ a.c		b.c		c.c		d.c		mkdir_script.sh
 a.c b.c c.c d.c
 ```
 
-4. 命令替换 \`\` 或 `$()`
+### 命令替换 \`\` 或 `$()`
+
 shell会首先执行反引号或`$()`包裹的内容，将执行结果作为整个替换部分的值
 ```
 % out=`ls`
@@ -251,7 +254,8 @@ mkdir_script.sh
 /tmp/missing/lecture2
 ```
 
-5. 进程替换 `<()` 和 `>()`
+### 进程替换 `<()` 和 `>()`
+
 进程替换在临时文件和管道操作符之外提供了一种新的方式，这种方式能够更加方便地处理命令之间的输入和输出关系
 小括号内包含着命令，进程替换会将小括号内命令的执行结果存入一个临时文件中，同时返回该临时文件的路径
 
@@ -265,6 +269,7 @@ mkdir_script.sh
 2a2
 > c.c
 ```
+
 > diff需要两个文件作为输入，因此需要两个ls命令首先将执行结果放入一个文件中，再把文件路径作为输入值传递给diff命令，这一执行顺序刚好符合进程替换的执行顺序
 
 **如何确定临时文件的位置？**
