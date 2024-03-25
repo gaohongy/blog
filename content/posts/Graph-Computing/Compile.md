@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-25T21:54:47+08:00
+lastmod: 2024-03-25T21:55:19+08:00
 tags:
 categories:
   - Graph-Computing
@@ -763,6 +763,9 @@ pass 机制，pattern rewrite机制，interface
 
 （这篇文章[如何在MLIR里面写Pass](https://mp.weixin.qq.com/s?__biz=MzA4MjY4NTk0NQ==&mid=2247499540&idx=1&sn=c88146d7f00d83d8671fe6214d4416d4&chksm=9f834582a8f4cc94ffda8d2b6b217d02ac0e7434579a8c3282813c6bfe89ff9644744bc2e968&scene=178&cur_album_id=2099721001268740096#rd)
 
+从 examples 下的 IR Level Examples 了解到了通过 MLIR tool chain 可以直接执行 MLIR 表达式
+
+才领悟到我们似乎可以将 MLIR 当作一门普通的语言，其同样具备相关的[语法](https://mlir.llvm.org/docs/LangRef/)
 
 ## work plan
 
