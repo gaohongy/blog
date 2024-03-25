@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-24T23:16:53+08:00
+lastmod: 2024-03-25T21:54:47+08:00
 tags:
 categories:
   - Graph-Computing
@@ -67,6 +67,8 @@ MLIR 表达式组成:
 ![](https://pic4.zhimg.com/80/v2-6d75286d07a53555437f2c436f718083_1440w.webp)
 
 MLIR 并不是一个端到端（从计算图到最后可执行程序这个全流程）的框架，只是一个基础架构
+
+多层次表达 是 MLIR 的优点，这有利于各种优化机制的实现（这并不难理解，中间过程越多，那么优化的入手点就越多），但是另一方面中间过程越多，出错的机会也同样越多，具体是指 compiler’s pass pipeline and toolchain are difficult to configure
 
 ## MLIR 编译
 
@@ -716,6 +718,17 @@ SSA 意为静态单赋值（Static Single Assignment）。SSA 是一种中间表
 
 ## buddy-mlir
 
+### introduction
+
+1. 同 MLIR 的关联：reuse the MLIR infrastructure and LLVM backend tools
+
+2. MLIR 之外的特点：
+
+- optimization tool
+- auto-config mechanism
+
+Buddy-MLIR 包含一些基于 MLIR infrastructure 实现的算法，需要利用到 MLIR Dialect 和 Op
+
 ### Build
 
 在第一步构建过程中遇到几个坑点：
@@ -733,6 +746,32 @@ SSA 意为静态单赋值（Static Single Assignment）。SSA 是一种中间表
 ![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403241200921.png)
 
 目前的困惑在于 buddy-mlir 是否可以看为是对 mlir 的一种封装，如果是的话，封装了啥，如果不是，那它相较于 mlir 又有何区别或者说设计的意义在哪里
+
+### source code structure
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403251627454.png)
+
+### understanding
+
+Bud Dialect 展示了自定义 Dialect，并降级到 MLIR提供的基础设施上（从代码来看就是一些 llvm 项目下的 Dialect）
+
+include目录下包含了.td，lib下的 conversion 中实现了降级的代码
+
+pass 机制，pattern rewrite机制，interface
+
+目前粗浅的理解就是 pattern rewrite 就是所谓表达式优化和降级的过程（即无论是表达式优化还是降级，都是通过rewrite实现的），这个过程中使用到的东西从概念上来讲就是各种 pass，而各种 pass 在实际命名上就是各种 dialect。而operation的概念在整个流程中是一直存在的。每一个 dialect 或许就可以看为是一个层次，每个层次下都有不同抽象级别的，与当前层次对应的 operation 表述
+
+（这篇文章[如何在MLIR里面写Pass](https://mp.weixin.qq.com/s?__biz=MzA4MjY4NTk0NQ==&mid=2247499540&idx=1&sn=c88146d7f00d83d8671fe6214d4416d4&chksm=9f834582a8f4cc94ffda8d2b6b217d02ac0e7434579a8c3282813c6bfe89ff9644744bc2e968&scene=178&cur_album_id=2099721001268740096#rd)
+
+
+## work plan
+
+我觉得有两方面的入手点吧，一是通过 IR Level Examples 来了解从最开始的 MLIR 表达式 是如何经过一层层的 pass，最终到达可执行程序的；二是仿照 Domain-specific Application Level Examples，自行实现一个矩阵乘法（因为我看它里面也是去实现了一些算法）；
+
+再进阶一点的就是去尝试做一下 
+[基于MLIR生成矩阵乘法的高性能GPU代码](https://mp.weixin.qq.com/s?__biz=MzA4MjY4NTk0NQ==&mid=2247502387&idx=1&sn=3931a608eca05db8de6ca76c1ea8e520&chksm=9f8370a5a8f4f9b32adcba9d2d529279216b60448de9a945eeabf2791673b70e5fdc9cb5e55d&scene=178&cur_album_id=2099721001268740096#rd) 
+
+这是一个相对完整的、具有具体应用场景的端到端编译示例，可以尝试复现一下
 
 ## Reference
 > [从零开始学习深度学习编译器](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA4MjY4NTk0NQ==&action=getalbum&album_id=2099721001268740096&scene=173&subscene=&sessionid=svr_76259f2a30f&enterid=1709891420&from_msgid=2247499828&from_itemidx=1&count=3&nolastread=1#wechat_redirect)

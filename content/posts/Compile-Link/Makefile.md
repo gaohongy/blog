@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2023-09-16T17:49:00+08:00
-lastmod: 2024-02-27T09:27:10+08:00
+lastmod: 2024-03-25T21:54:47+08:00
 tags:
 categories:
   - Compile-Link
@@ -26,6 +26,21 @@ hiddenFromSearch: false
 comment: false
 lightgallery: force
 ---
+
+## variables[^variable]
+[^variable]: [使用变量 | 跟我一起写Makefile](https://seisman.github.io/how-to-write-makefile/variables.html)
+
+It should be noted that the usage of site a variable in makefile is different from using it in shell.
+
+In makefile, we use `$()` to site a variable, which is means that command substitution in shll[^command-substitution-shell]
+
+[^command-substitution-shell]: [命令替换](https://gaohongy.github.io/blog/posts/linux/linux-basic-knowledge/#%E5%91%BD%E4%BB%A4%E6%9B%BF%E6%8D%A2--%E6%88%96-)
+
+There are three ways to assign for a variable:
+
+1. `=`: It allows that the subsquent variable uses the following variable.
+2. `:=`: It is same with the assignment symbol in programming language.
+3. `?=`: If the varible has value, it will do nothing.
 
 ## Wildcard
 The wildcard in makefile is similar with macro in C/C++, it isn't similar with wildcard in linux shell, so it doesn't expend automatically.
