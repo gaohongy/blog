@@ -6,7 +6,7 @@ keywords:
 summary:
 license:
 date: 2024-03-07T21:26:29+08:00
-lastmod: 2024-03-25T21:55:19+08:00
+lastmod: 2024-03-26T21:54:02+08:00
 tags:
 categories:
   - Graph-Computing
@@ -69,6 +69,51 @@ MLIR 表达式组成:
 MLIR 并不是一个端到端（从计算图到最后可执行程序这个全流程）的框架，只是一个基础架构
 
 多层次表达 是 MLIR 的优点，这有利于各种优化机制的实现（这并不难理解，中间过程越多，那么优化的入手点就越多），但是另一方面中间过程越多，出错的机会也同样越多，具体是指 compiler’s pass pipeline and toolchain are difficult to configure
+
+![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403110950934.png)
+
+中间表达的意义在于逐层解析，逐层降低抽象而偏向硬件。高级语言的 AST 到 IR 之间存在较大差距，通过在中间架设 IR 可以对高级抽象进行渐进式变换和递降，降低这种差距变化的梯度，降低阶段转换的难度，同时只要提供 IR 就相当于我们可以为任何领域的代码实现设计特定的编译器。
+
+但是带来的一个问题就是，每当增加一种实现时都会出现一种全新的 IR，而实际上可能这些 IR 之间存在一些共性的东西，通过增设 MLIR 这一层类似标准化的层次，可以使得中间的转化流程变得更加规范
+
+根据High Performance GPU Code Generation for Matrix-Matrix Multiplication using MLIR: Some Early Results[^MLIR-Usage]的说法，原有的IR基础设施并不能有效地解决自动生成特定领域库的问题。特别是，很难使用单个IR来表示和转换高，中，低级别的抽象。
+
+[^MLIR-Usage]: [High Performance GPU Code Generation for Matrix-Matrix Multiplication using MLIR: Some Early Results](https://arxiv.org/abs/2108.13191)
+
+MLIR 用于解决编程语言、编译器和硬件之间的交互问题，它的出现是为了应对日益复杂的编程语言和硬件架构
+
+MLIR提供了一个统一的中间表示（IR），可以作为不同编程语言编译器和LLVM后端之间的桥梁。
+
+通过自定义 dialect，可以实现语言扩充 和 实现特定领域的编译优化
+
+### MLIR 语法
+MLIR 采用类型后置表达，而且在需要用到的位置都需要注明常量或者变量的类型，例如:
+
+```mlir
+module {
+  func.func @main() {
+    %result = call @myfunc() : () -> index
+    vector.print %result : index
+    return
+  }
+
+  func.func @myfunc() -> index {
+    %c0 = arith.constant 1 : index
+    return %c0 : index
+  }
+}
+```
+
+注意看上述代码中的`@myfunc() : () -> index`（当然这里还用到了类似lambda中的后置返回值类型的表达方法），以及`%result : index`（虽然说目前还没有找到`index`代表常量的什么证据，但是可以姑且就这么认为）,以及`1:index`，它们都是将类型放置在了常量或者变量的后面，即类型后置表达
+
+MLIR 内置的数据类型：[Builtin Dialect](https://mlir.llvm.org/docs/Dialects/Builtin/#indextype)
+
+对于 `mlir-opt` 命令携带的选项中那些 `convert`，目前的理解是代码中使用到了哪些 Dialect，如果想要利用 `mlir-cpu-runner` 执行，那就需要添加一个从这个 Dialect low 到 LLVM Dialect 的选项，例如：
+
+如果代码中使用到了 vector Dialect 和 math Dialect，那么就需要添加两个选项：
+
+- `-convert-vector-to-llvm`
+- `-convert-math-to-llvm`
 
 ## MLIR 编译
 
@@ -670,24 +715,6 @@ class TransposeOp : public ::mlir::Op<> {
 1. 关于 统一编程框架 和 编译层 之间的联动关系，是谁决定谁，可以把编译层那个东西看为是一个第三方的库，为统一编程框架提供服务
 2. 之前疑问的是编译层需要对图操作进行描述，怎么知道图操作有什么，或者说编译层都需要写哪些东西？这个应该要和上一个问题联系一下，既然是实现第三方库，那么所实现的操作就应当是尽可能全面的，不是说统一编程框架需要什么编译层提供什么，而是说统一编程框架要跟着编译层走，所以我理解着就得尽可能多想一下有哪些需要的操作
 
-
-## 如何理解 MLIR
-![](https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202403110950934.png)
-
-中间表达的意义在于逐层解析，逐层降低抽象而偏向硬件。高级语言的 AST 到 IR 之间存在较大差距，通过在中间架设 IR 可以对高级抽象进行渐进式变换和递降，降低这种差距变化的梯度，降低阶段转换的难度，同时只要提供 IR 就相当于我们可以为任何领域的代码实现设计特定的编译器。
-
-但是带来的一个问题就是，每当增加一种实现时都会出现一种全新的 IR，而实际上可能这些 IR 之间存在一些共性的东西，通过增设 MLIR 这一层类似标准化的层次，可以使得中间的转化流程变得更加规范
-
-根据High Performance GPU Code Generation for Matrix-Matrix Multiplication using MLIR: Some Early Results[^MLIR-Usage]的说法，原有的IR基础设施并不能有效地解决自动生成特定领域库的问题。特别是，很难使用单个IR来表示和转换高，中，低级别的抽象。
-
-[^MLIR-Usage]: [High Performance GPU Code Generation for Matrix-Matrix Multiplication using MLIR: Some Early Results](https://arxiv.org/abs/2108.13191)
-
-MLIR 用于解决编程语言、编译器和硬件之间的交互问题，它的出现是为了应对日益复杂的编程语言和硬件架构
-
-MLIR提供了一个统一的中间表示（IR），可以作为不同编程语言编译器和LLVM后端之间的桥梁。
-
-通过自定义 dialect，可以实现语言扩充 和 实现特定领域的编译优化
-
 ## CGA_Framework Project Structure
 
 Graph Generalization:
@@ -765,11 +792,56 @@ pass 机制，pattern rewrite机制，interface
 
 从 examples 下的 IR Level Examples 了解到了通过 MLIR tool chain 可以直接执行 MLIR 表达式
 
-才领悟到我们似乎可以将 MLIR 当作一门普通的语言，其同样具备相关的[语法](https://mlir.llvm.org/docs/LangRef/)
+才领悟到我们似乎可以将 MLIR 当作一门普通的语言，其同样具备相关的[语法](https://mlir.llvm.org/docs/LangRef/)，我们可以借助它的语法实现一些算法，但是带来的疑问是如果仅仅通过 MLIR 就能够完成所有操作，那我们为什么不直接写 MLIR 了，而是还需要去写 C++ 代码，那些 operation 又要起到什么作用。
+
+关于这个疑问，我们大概可以从 `mlir-opt --help` 命令的输出结果中得到一点启发，其中 `--convert-vector-to-llvm` 选项的内容是
+
+> --convert-vector-to-llvm    -   Lower the operations from the vector dialect into the LLVM dialect
+
+注意上面提到两个 dialect：vector dialect 和 LLVM dialect
+
+同时在命令输出中还包含了以下内容：
+
+> Available Dialects: acc, affine, amdgpu, amx, arith, arm_neon, arm_sme, arm_sve, async, bufferization, builtin, cf, complex, dlti, emitc, func, gpu, index, irdl, linalg, llvm, math, memref, mesh, ml_program, mpi, nvgpu, nvvm, omp, pdl, pdl_interp, quant, rocdl, scf, shape, sparse_tensor, spirv, tensor, test, test_dyn, tosa, transform, ub, vector, x86vector, xegpu
+
+那么也就是说上面这些以及`mlir-opt`命令能够携带的参数中使用到的dialect，实际都是 MLIR 项目中自带的一些 dialect，或者说是原生的
+
+但是，在实际的应用场景下，我们所需要用到的 dialect 并不仅仅是这些，我们往往需要用到其他类型的，结合实际场景的，所以这就是我们为什么需要自己编写 dialect 的原因
+
+所以首先通过直接借用 mlir 的相关工具和原生的 dialect，直接编写 MLIR 代码，能够帮助我们了解
+
+Buddy-MLIR 提供的 IR Level Examples，主要包含三部分：
+
+- low
+- translate
+- run
+
+在降级环节(low)中，始终都是 MLIR，即便是 `mlir-opt` 应用了例如 `--convert-func-to-llvm` 这类选项，但是也只是说用 llvm dialect 进行了降级，但是其属于 MLIR 的本质并没有改变，证据可见
+
+> --convert-func-to-llvm               -   Convert from the Func dialect to the LLVM dialect
+
+然而在翻译环节(translate)，注意是translate而非transformation，才是真正完成从 MLIR 到 其他 IR 的转变，证据可见 `mlir-translate` 采用的选项 `--mlir-to-llvmir`
+
+> --mlir-to-llvmir                              - Translate MLIR to LLVMIR
+
+而在运行环节，由于 `mlir-cpu-runner` JIT 实际运行的是 MLIR，所以其只能处理
+
+这里给出的这些 example，利用到的 Dialect 都是 LLVM 项目，准确地说是 MLIR 中预置的，所以可以通过各种 mlir 工具来实现降级和翻译。如果想要实现自定义的Dialect，那就和创建一个例如 compiler 的项目相同了。
 
 ## work plan
 
-我觉得有两方面的入手点吧，一是通过 IR Level Examples 来了解从最开始的 MLIR 表达式 是如何经过一层层的 pass，最终到达可执行程序的；二是仿照 Domain-specific Application Level Examples，自行实现一个矩阵乘法（因为我看它里面也是去实现了一些算法）；
+我觉得有两方面的入手点吧:
+- 一是通过 IR Level Examples 来了解从最开始的 MLIR 表达式 是如何经过一层层的 pass，最终到达可执行程序的；
+
+关于了解 MLIR 语法的作用，我理解的是，因为无论是表达式优化，还是降级，都是基于 MLIR表达式的，所以了解一下终究是有好处的
+
+2024/03/26 进一步体会到这种好处具体体现在，因为我们自己实现无非就是实现各种 Dialect，实现其中的type，operation等，但是由于和 llvm 源码掺杂在一起，我们既需要了解它们自身的概念，同时还总是在纠结项目的组织结构。
+
+而实际上，MLIR 中是存在一定量的原生 Dialect、type 和 operation，我们在使用这些内置类型时并不需要纠结它们和项目结构之间有什么关联，我们完全可以把 MLIR 当作一门新的语言去学习，尝试去使用它提供的一些组件，实现我们想要实现的功能。在应用的过程中，你就会发现自己对于其中的各种概念就会熟悉起来，自然就会明白什么位置需要使用什么东西，然后再去结合现实场景，你会发现内置的这些东西不足以表达你想表达的，所以你就会去尝试自行创造一些东西，而这就是我们最终的目的。
+
+> 优先考虑前进方向固然是重要的，但是也要找准时机动手做起来，在大方向正确的前提下，细微之处是需要通过实践来确定的
+
+- 二是仿照 Domain-specific Application Level Examples，自行实现一个矩阵乘法（因为我看它里面也是去实现了一些算法）；
 
 再进阶一点的就是去尝试做一下 
 [基于MLIR生成矩阵乘法的高性能GPU代码](https://mp.weixin.qq.com/s?__biz=MzA4MjY4NTk0NQ==&mid=2247502387&idx=1&sn=3931a608eca05db8de6ca76c1ea8e520&chksm=9f8370a5a8f4f9b32adcba9d2d529279216b60448de9a945eeabf2791673b70e5fdc9cb5e55d&scene=178&cur_album_id=2099721001268740096#rd) 
