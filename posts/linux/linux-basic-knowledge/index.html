@@ -77,7 +77,7 @@
 <code>${var/dir/path}</code>：把左侧第一个dir替换为path，结果为/path1/dir2/dir3/my.file.txt
 <code>${var//pattern/replace}</code>：表示用replace替换字符串中的pattern，且替换全部匹配项
 <code>${var//dir/path}</code>：把全部的dir替换为path，结果为/path1/path2/path3/my.file.txt</p></li></ol><p><strong>String slicing is used to extract substrings from a string. Its syntax shows below:</strong></p><div class=highlight id=id-4><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>${string:start:length}</span></span></code></pre></td></tr></table></div></div><ul><li>start: Represents the starting position of the slice (inclusive). If not specified, it defaults to 0.</li><li>length: Repersents the length of substring what you want to get.</li></ul><h3 id=算术替换--和->算术替换 <code>(())</code> 和 <code>$(())</code></h3><div class=highlight id=id-5><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>${string:start:length}</span></span></code></pre></td></tr></table></div></div><ul><li>start: Represents the starting position of the slice (inclusive). If not specified, it defaults to 0.</li><li>length: Repersents the length of substring what you want to get.</li></ul><h3 id=算术替换--和->算术替换 <code>(())</code> 和 <code>$(())</code></h3><div class=highlight id=id-1><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -90,14 +90,14 @@
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>% ((res = 3 * 5))
 </span></span><span class=line><span class=cl>% echo $res
-</span></span><span class=line><span class=cl>15</span></span></code></pre></td></tr></table></div></div><h3 id=文件名替换>文件名替换</h3><p>通过通配符匹配文件名</p><div class=highlight id=id-6><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span><span class=line><span class=cl>15</span></span></code></pre></td></tr></table></div></div><h3 id=文件名替换>文件名替换</h3><p>通过通配符匹配文件名</p><div class=highlight id=id-2><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>% ls
 </span></span><span class=line><span class=cl>a.c		b.c		c.c		d.c		mkdir_script.sh
 </span></span><span class=line><span class=cl>% echo *.c
-</span></span><span class=line><span class=cl>a.c b.c c.c d.c</span></span></code></pre></td></tr></table></div></div><h3 id=命令替换--或->命令替换 `` 或 <code>$()</code></h3><p>shell会首先执行反引号或<code>$()</code>包裹的内容，将执行结果作为整个替换部分的值</p><div class=highlight id=id-7><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span><span class=line><span class=cl>a.c b.c c.c d.c</span></span></code></pre></td></tr></table></div></div><h3 id=命令替换--或->命令替换 `` 或 <code>$()</code></h3><p>shell会首先执行反引号或<code>$()</code>包裹的内容，将执行结果作为整个替换部分的值</p><div class=highlight id=id-3><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -119,7 +119,7 @@
 </span></span></span><span class=line><span class=cl><span class=w></span><span class=o>%</span><span class=w> </span><span class=k>out</span><span class=o>=</span><span class=err>$</span><span class=p>(</span><span class=n>pwd</span><span class=p>)</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w></span><span class=o>%</span><span class=p>.</span><span class=n>echo</span><span class=w> </span><span class=err>$</span><span class=k>out</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w></span><span class=o>/</span><span class=n>tmp</span><span class=o>/</span><span class=n>missing</span><span class=o>/</span><span class=n>lecture2</span></span></span></code></pre></td></tr></table></div></div><h3 id=进程替换--和->进程替换 <code>&lt;()</code> 和 <code>>()</code></h3><p>进程替换在临时文件和管道操作符之外提供了一种新的方式，这种方式能够更加方便地处理命令之间的输入和输出关系
-小括号内包含着命令，进程替换会将小括号内命令的执行结果存入一个临时文件中，同时返回该临时文件的路径</p><div class=highlight id=id-8><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+小括号内包含着命令，进程替换会将小括号内命令的执行结果存入一个临时文件中，同时返回该临时文件的路径</p><div class=highlight id=id-4><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -133,7 +133,7 @@
 </span></span><span class=line><span class=cl>&lt; a.c
 </span></span><span class=line><span class=cl>2a2
 </span></span><span class=line><span class=cl>&gt; c.c</span></span></code></pre></td></tr></table></div></div><blockquote><p>diff需要两个文件作为输入，因此需要两个ls命令首先将执行结果放入一个文件中，再把文件路径作为输入值传递给diff命令，这一执行顺序刚好符合进程替换的执行顺序</p></blockquote><p><strong>如何确定临时文件的位置？</strong>
-由于进程替换的返回值就是临时文件的路径，因此只需要在小括号内输入任意命令，通过<code>echo</code>命令输出进程替换的返回值即可显示临时文件的路径</p><div class=highlight id=id-9><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+由于进程替换的返回值就是临时文件的路径，因此只需要在小括号内输入任意命令，通过<code>echo</code>命令输出进程替换的返回值即可显示临时文件的路径</p><div class=highlight id=id-5><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -142,19 +142,19 @@
 </span></span><span class=line><span class=cl>/dev/fd/11
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>% ls -l &lt;(true)
-</span></span><span class=line><span class=cl>prw-rw----  0 root  staff  0  7 30 22:50 /dev/fd/11</span></span></code></pre></td></tr></table></div></div><blockquote><p>注：</p><ol><li>true也是一条命令，不进行操作只返回true值</li><li>/dev/fd 是一个特殊的目录，用于表示进程的文件描述符（File Descriptors），后面的11并不是固定值，只是在执行命令时获得的临时文件描述符为11</li></ol></blockquote><h2 id=流及其重定向>流及其重定向</h2><p>在了解具体的流重定向方法之前，我们需要首先了解Linux下3种特殊的设备：<code>stdin</code>, <code>stdout</code>, <code>stderr</code>。它们都位于<code>/dev/</code>目录下，详细信息如下：</p><div class=highlight id=id-10><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span><span class=line><span class=cl>prw-rw----  0 root  staff  0  7 30 22:50 /dev/fd/11</span></span></code></pre></td></tr></table></div></div><blockquote><p>注：</p><ol><li>true也是一条命令，不进行操作只返回true值</li><li>/dev/fd 是一个特殊的目录，用于表示进程的文件描述符（File Descriptors），后面的11并不是固定值，只是在执行命令时获得的临时文件描述符为11</li></ol></blockquote><h2 id=流及其重定向>流及其重定向</h2><p>在了解具体的流重定向方法之前，我们需要首先了解Linux下3种特殊的设备：<code>stdin</code>, <code>stdout</code>, <code>stderr</code>。它们都位于<code>/dev/</code>目录下，详细信息如下：</p><div class=highlight id=id-6><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>lr-xr-xr-x  1 root  wheel     0B Nov 26 08:20 stderr -&gt; fd/2
 </span></span><span class=line><span class=cl>lr-xr-xr-x  1 root  wheel     0B Nov 26 08:20 stdin -&gt; fd/0
-</span></span><span class=line><span class=cl>lr-xr-xr-x  1 root  wheel     0B Nov 26 08:20 stdout -&gt; fd/1</span></span></code></pre></td></tr></table></div></div><p>下面要使用的0，1，2实际指代的就是这3类设备</p><p>更详细的内容请见<a href=https://www.gnu.org/software/bash/manual/html_node/Redirections.html target=_blank rel="external nofollow noopener noreferrer">3.6 Redirections | Linux manual</a>, 以下只是部分内容。</p><h3 id=输入流重定向>输入流重定向<code>&lt;</code></h3><div class=highlight id=id-11><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span><span class=line><span class=cl>lr-xr-xr-x  1 root  wheel     0B Nov 26 08:20 stdout -&gt; fd/1</span></span></code></pre></td></tr></table></div></div><p>下面要使用的0，1，2实际指代的就是这3类设备</p><p>更详细的内容请见<a href=https://www.gnu.org/software/bash/manual/html_node/Redirections.html target=_blank rel="external nofollow noopener noreferrer">3.6 Redirections | Linux manual</a>, 以下只是部分内容。</p><h3 id=输入流重定向>输入流重定向<code>&lt;</code></h3><div class=highlight id=id-7><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl>% cat &lt; hello.txt
 </span></span><span class=line><span class=cl>hello
 </span></span><span class=line><span class=cl>
-</span></span><span class=line><span class=cl>% cat 0&lt; hello.txt</span></span></code></pre></td></tr></table></div></div><blockquote><ul><li>0&lt;表示将<code>cat</code>命令的标准输入（stdin）从名为hello.txt的文件中读取数据，默认情况下，直接使用<code>&lt;</code>实现输入流重定向。之所以用0表示，是因为stdin实质上是一个链接文件/dev/stdin，其指向/dev/fd/0这个字符设备文件</li></ul></blockquote><h3 id=输出流重定向>输出流重定向<code>></code></h3><ul><li><code>1></code>表示将 <strong>标准输出(stdout)</strong> 从终端重定向至文件，由于被重定向因此终端不再显示结果。之所以用1表示是因为stdout->链接文件/dev/stdout->字符设备文件/dev/fd/1</li><li><code>2></code>表示将 <strong>标准错误输出(stderr)</strong> 从终端重定向至文件。<code>echo hello</code>的stdout结果是hello，stderr结果是空。stdout未发生重定向，因此终端显示hello，stderr的空结果被重定向至hello.txt。在一般情况下，stdout和stderr都是定向到终端的，通过<code>1></code>和<code>2></code>可以区分二者。之所以用2表示是因为stderr->链接文件/dev/stderr->字符设备文件/dev/fd/2</li><li><code>&></code> 和 <code>>&</code>表示将 <strong>标准输出和标准错误输出</strong> 统一重定向至文件</li></ul><blockquote><p>在不加数字时，即<code>></code>则默认表示对 <strong>标准输出(stdout)</strong> 进行重定向</p></blockquote><div class=highlight id=id-12><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span><span class=line><span class=cl>% cat 0&lt; hello.txt</span></span></code></pre></td></tr></table></div></div><blockquote><ul><li>0&lt;表示将<code>cat</code>命令的标准输入（stdin）从名为hello.txt的文件中读取数据，默认情况下，直接使用<code>&lt;</code>实现输入流重定向。之所以用0表示，是因为stdin实质上是一个链接文件/dev/stdin，其指向/dev/fd/0这个字符设备文件</li></ul></blockquote><h3 id=输出流重定向>输出流重定向<code>></code></h3><ul><li><code>1></code>表示将 <strong>标准输出(stdout)</strong> 从终端重定向至文件，由于被重定向因此终端不再显示结果。之所以用1表示是因为stdout->链接文件/dev/stdout->字符设备文件/dev/fd/1</li><li><code>2></code>表示将 <strong>标准错误输出(stderr)</strong> 从终端重定向至文件。<code>echo hello</code>的stdout结果是hello，stderr结果是空。stdout未发生重定向，因此终端显示hello，stderr的空结果被重定向至hello.txt。在一般情况下，stdout和stderr都是定向到终端的，通过<code>1></code>和<code>2></code>可以区分二者。之所以用2表示是因为stderr->链接文件/dev/stderr->字符设备文件/dev/fd/2</li><li><code>&></code> 和 <code>>&</code>表示将 <strong>标准输出和标准错误输出</strong> 统一重定向至文件</li></ul><blockquote><p>在不加数字时，即<code>></code>则默认表示对 <strong>标准输出(stdout)</strong> 进行重定向</p></blockquote><div class=highlight id=id-8><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -175,13 +175,13 @@
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>% <span class=nb>echo</span> hello 2&gt; hello.txt
 </span></span><span class=line><span class=cl>hello
-</span></span><span class=line><span class=cl>% cat hello.txt</span></span></code></pre></td></tr></table></div></div><p>以上描述的都是将内容重定向至文件，如果想要重定向到管道(stdout / stderr)需要添加<code>&</code>符号，以便于区分普通文件名和管道名称</p><blockquote><ul><li><code>2>&amp;1</code>表示将标准错误重定向至标准输出（stdout）</li><li><code>1>&amp;2</code>表示将标准输出重定向至标准错误（stderr）</li></ul></blockquote><p>结合重定向至文件和重定向至管道，可以把所有输出内容全部重定向至文件，如以下代码所示</p><div class=highlight id=id-13><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
-</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>% xxx 1&gt;output.txt 2&gt;<span class=p>&amp;</span><span class=m>1</span></span></span></code></pre></td></tr></table></div></div><blockquote><p>需要注意的是，上述重定向的顺序不能更改。大致可以理解为shell在重定向时是顺序处理的，如果标准错误的重定向先于标准输出的重定向，那么结果将是标准错误仍然会到达标准输出原有的输出端，并不会到达文件</p></blockquote><p>输入流和输出流合用</p><div class=highlight id=id-14><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span><span class=line><span class=cl>% cat hello.txt</span></span></code></pre></td></tr></table></div></div><p>以上描述的都是将内容重定向至文件，如果想要重定向到管道(stdout / stderr)需要添加<code>&</code>符号，以便于区分普通文件名和管道名称</p><blockquote><ul><li><code>2>&amp;1</code>表示将标准错误重定向至标准输出（stdout）</li><li><code>1>&amp;2</code>表示将标准输出重定向至标准错误（stderr）</li></ul></blockquote><p>结合重定向至文件和重定向至管道，可以把所有输出内容全部重定向至文件，如以下代码所示</p><div class=highlight id=id-9><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>% xxx 1&gt;output.txt 2&gt;<span class=p>&amp;</span><span class=m>1</span></span></span></code></pre></td></tr></table></div></div><blockquote><p>需要注意的是，上述重定向的顺序不能更改。大致可以理解为shell在重定向时是顺序处理的，如果标准错误的重定向先于标准输出的重定向，那么结果将是标准错误仍然会到达标准输出原有的输出端，并不会到达文件</p></blockquote><p>输入流和输出流合用</p><div class=highlight id=id-10><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-fallback data-lang=fallback><span class=line><span class=cl># cat &lt; hello.txt &gt; hello2.txt
 </span></span><span class=line><span class=cl># cat hello2.txt
-</span></span><span class=line><span class=cl>hello</span></span></code></pre></td></tr></table></div></div><h3 id=向文件追加内容>向文件追加内容<code>>></code></h3><blockquote><p>与输出流重定向类似，存在<code>1>></code>和<code>2>></code>，表示以追加的形式进行stdout和stderr的重定向</p></blockquote><div class=highlight id=id-15><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span><span class=line><span class=cl>hello</span></span></code></pre></td></tr></table></div></div><h3 id=向文件追加内容>向文件追加内容<code>>></code></h3><blockquote><p>与输出流重定向类似，存在<code>1>></code>和<code>2>></code>，表示以追加的形式进行stdout和stderr的重定向</p></blockquote><div class=highlight id=id-11><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -206,7 +206,7 @@ file{a..d}.txt -> filea.txt fileb.txt filec.txt filed.txt</p></li></ul><blockquo
 用于强制终止进程的执行，当进程收到信号时，无论其当前状态如何，该进程都会立即被终止，并且没有机会进行任何清理或处理操作</p></li></ul><p>对于以上内容，难点在于如何理解后4种信号，他们都会让进程终结，但是会应用于不同场景，更加常用的是<code>SIGINT</code> 和 <code>SIGKILL</code></p><h2 id=process-control>process control</h2><h2 id=ssh>SSH</h2><p>If you want a remote mechine excute a command or a script , you have two ways.
 One is that you get a connection to the remote mechine firstly, and then excute a command or a script.
 The other is that you can use a special format command. The command which you want to excute follows the ssh command. It looks like <code>ssh user@hostnames &lt;command></code>.</p><p>More details can be found in <a href=https://www.cnblogs.com/hongyugao/p/17624929.html target=_blank rel="external nofollow noopener noreferrer">ssh 教程</a></p><p>The configuration file of ssh is the <code>~/.ssh/config</code>, in this file, you can use a hostname, which can simplies the connection sentence for every time.</p><h2 id=common-scenarios>Common scenarios</h2><ol><li>move files in this directory to an another directory
-<code>find . -type f -d 1 | xargs -I {} mv {} &lt;target directory></code></li></ol><h2 id=常见sheel脚本示例>常见sheel脚本示例</h2><ol><li>统计当前目录下各文件行数以及总行数</li></ol><div class=highlight id=id-16><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+<code>find . -type f -d 1 | xargs -I {} mv {} &lt;target directory></code></li></ol><h2 id=常见sheel脚本示例>常见sheel脚本示例</h2><ol><li>统计当前目录下各文件行数以及总行数</li></ol><div class=highlight id=id-12><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
