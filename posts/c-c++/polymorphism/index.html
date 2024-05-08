@@ -1,0 +1,162 @@
+<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>Polymorphism - </title><meta name=author content="ghy"><meta name=author-link content="https://github.com/gaohongy"><meta name=description content="谈及多态主要是在考虑具有继承关系的多个类型之间的关系。考虑多态的核心在于引用或指针的 静态类型 与 动态类型 是可能不同的 静态多态 和 动态多态 的一个明"><meta name=keywords content='Hugo,FixIt'><meta itemprop=name content="Polymorphism"><meta itemprop=description content="谈及多态主要是在考虑具有继承关系的多个类型之间的关系。考虑多态的核心在于引用或指针的 静态类型 与 动态类型 是可能不同的 静态多态 和 动态多态 的一个明"><meta itemprop=datePublished content="2024-04-15T11:54:10+08:00"><meta itemprop=dateModified content="2024-04-15T23:22:21+08:00"><meta itemprop=wordCount content="855"><meta itemprop=keywords content="C-C++"><meta property="og:url" content="https://gaohongy.github.io/blog/posts/c-c++/polymorphism/"><meta property="og:title" content="Polymorphism"><meta property="og:description" content="谈及多态主要是在考虑具有继承关系的多个类型之间的关系。考虑多态的核心在于引用或指针的 静态类型 与 动态类型 是可能不同的 静态多态 和 动态多态 的一个明"><meta property="og:locale" content="zh-CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-04-15T11:54:10+08:00"><meta property="article:modified_time" content="2024-04-15T23:22:21+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Polymorphism"><meta name=twitter:description content="谈及多态主要是在考虑具有继承关系的多个类型之间的关系。考虑多态的核心在于引用或指针的 静态类型 与 动态类型 是可能不同的 静态多态 和 动态多态 的一个明"><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=https://gaohongy.github.io/blog/posts/c-c++/polymorphism/><link rel=prev href=https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/><link rel=next href=https://gaohongy.github.io/blog/posts/project-experience/debugging-in-visual-studio-code/><link rel=stylesheet href=/blog/css/style.min.css><link rel=stylesheet href=/blog/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/blog/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Polymorphism","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/gaohongy.github.io\/blog\/posts\/c-c\u002b\u002b\/polymorphism\/"},"genre":"posts","wordcount":855,"url":"https:\/\/gaohongy.github.io\/blog\/posts\/c-c\u002b\u002b\/polymorphism\/","datePublished":"2024-04-15T11:54:10+08:00","dateModified":"2024-04-15T23:22:21+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"ghy"},"description":""}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容…… id=search-input-desktop>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fa-solid fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fa-solid fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-desktop><i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><header class="mobile animate__faster" id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><nav><ul class=menu id=menu-mobile><li class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容…… id=search-input-mobile>
+<a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fa-solid fa-search fa-fw" aria-hidden=true></i>
+</a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fa-solid fa-times-circle fa-fw" aria-hidden=true></i>
+</a><span class="search-button search-loading" id=search-loading-mobile><i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></li><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item menu-system"><span class="menu-system-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></span></li></ul></nav></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><nav aria-label=breadcrumb class=breadcrumb-container><ol class=breadcrumb><li class=breadcrumb-item><a href=/blog/ title>主页</a></li><li class=breadcrumb-item><a href=/blog/posts/ title=Posts>Posts</a></li><li class="breadcrumb-item active" aria-current=page>Polymorphism</li></ol></nav><main class=container><aside class=toc id=toc-auto><h2 class=toc-title>目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden=true></i></h2><div class="toc-content always-active" id=toc-content-auto></div></aside><aside class=aside-custom></aside><article class="page single"><div class=header><h1 class="single-title animate__animated animate__flipInX"><span>Polymorphism</span></h1></div><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://github.com/gaohongy title=作者 target=_blank rel="external nofollow noopener noreferrer author" class=author><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202205161528792.jpg data-title=ghy data-alt=ghy class=avatar style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'>&nbsp;ghy</a></span>
+<span class=post-category>收录于 <a href=/blog/categories/c-c++/><i class="fa-regular fa-folder fa-fw" aria-hidden=true></i> C-C++</a></span></div><div class=post-meta-line><span title="发布于 2024-04-15 11:54:10"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden=true></i><time datetime=2024-04-15>2024-04-15</time></span>&nbsp;<span title="更新于 2024-04-15 23:22:21"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=2024-04-15>2024-04-15</time></span>&nbsp;</div></div><div class="details toc" id=toc-static data-kept=false><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fa-solid fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#static-polymorphism>static polymorphism</a></li><li><a href=#dynamic-polymorphism>dynamic polymorphism</a></li><li><a href=#两种多态方式辨析>两种多态方式辨析</a></li></ul></nav></div></div><div class=content id=content data-end-flag=EOF><p>谈及多态主要是在考虑具有继承关系的多个类型之间的关系。考虑多态的核心在于引用或指针的 <strong>静态类型</strong> 与 <strong>动态类型</strong> 是可能不同的</p><p>静态多态 和 动态多态 的一个明显的区别是 <strong>是 编译时 还是 运行时 解析调用</strong></p><h2 id=static-polymorphism>static polymorphism</h2><p>CRTP 是 Curiously Recurring Template Pattern 的缩写，中文翻译为“奇特的递归模板模式”。它是一种 C++ 编程技术，通常用于实现静态多态性，即在编译期间确定调用的函数。</p><p>CRTP 的基本思想是，基类模板派生出一个子类，并将子类作为模板参数传递给基类模板。子类可以通过继承基类模板，并传递自身类型作为模板参数，从而在编译期间实现基类和子类之间的静态多态性。</p><p>下面是一个简单的示例来说明 CRTP 的使用方式：</p><div class=highlight id=id-1><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=k>template</span> <span class=o>&lt;</span><span class=k>typename</span> <span class=n>Derived</span><span class=o>&gt;</span>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Base</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=n>interface</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 调用派生类的实现
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>static_cast</span><span class=o>&lt;</span><span class=n>Derived</span><span class=o>*&gt;</span><span class=p>(</span><span class=k>this</span><span class=p>)</span><span class=o>-&gt;</span><span class=n>implementation</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 基类提供的默认实现
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>void</span> <span class=nf>implementation</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 默认实现
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Derived1</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span><span class=o>&lt;</span><span class=n>Derived1</span><span class=o>&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=n>implementation</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 派生类自定义的实现
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Derived2</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span><span class=o>&lt;</span><span class=n>Derived2</span><span class=o>&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// Derived2没有实现 implementation 函数，将使用基类提供的默认实现
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Derived1</span> <span class=n>d1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>Derived2</span> <span class=n>d2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>d1</span><span class=p>.</span><span class=n>interface</span><span class=p>();</span> <span class=c1>// 调用 Derived1 的实现
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>d2</span><span class=p>.</span><span class=n>interface</span><span class=p>();</span> <span class=c1>// 调用 Derived2 的默认实现
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=dynamic-polymorphism>dynamic polymorphism</h2><p>动态多态性是面向对象编程中的一个重要概念，通常通过虚函数和基类指针（或引用）实现。下面是一个简单的示例</p><div class=highlight id=id-2><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1>// 基类
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>class</span> <span class=nc>Base</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 虚函数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>virtual</span> <span class=kt>void</span> <span class=n>display</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Base::display()&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>std</span><span class=o>::</span><span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 派生类1
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>class</span> <span class=nc>Derived1</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 覆盖基类虚函数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>void</span> <span class=n>display</span><span class=p>()</span> <span class=k>override</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Derived1::display()&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>std</span><span class=o>::</span><span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 派生类2
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>class</span> <span class=nc>Derived2</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 覆盖基类虚函数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>void</span> <span class=n>display</span><span class=p>()</span> <span class=k>override</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Derived2::display()&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>std</span><span class=o>::</span><span class=n>endl</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 创建基类指针，并指向派生类对象
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>Base</span><span class=o>*</span> <span class=n>ptr1</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Derived1</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>Base</span><span class=o>*</span> <span class=n>ptr2</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Derived2</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 调用虚函数，实现动态多态
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>ptr1</span><span class=o>-&gt;</span><span class=n>display</span><span class=p>();</span> <span class=c1>// 输出 Derived1::display()
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>ptr2</span><span class=o>-&gt;</span><span class=n>display</span><span class=p>();</span> <span class=c1>// 输出 Derived2::display()
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 释放内存
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>delete</span> <span class=n>ptr1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>delete</span> <span class=n>ptr2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=两种多态方式辨析>两种多态方式辨析</h2><p>静态多态是通过编译期间的类型信息来决定调用哪个函数，通常是通过模板或函数重载来实现。在静态多态中，函数的重载解析发生在编译时期，因此调用的函数在编译时期就已经确定。</p><p>动态多态是通过运行时的类型信息来决定调用哪个函数，通常是通过虚函数来实现。在动态多态中，函数的解析发生在运行时期，通过基类指针或引用调用虚函数时，实际调用的函数在运行时期根据对象的类型动态确定。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 2024-04-15 23:22:21">更新于 2024-04-15&nbsp;</span></div></div><div class=post-info-line><div class=post-info-md><span><a href=https://github.com/gaohongy/blog/edit/main/content/posts/C-C++/Polymorphism.md title=编辑此页 target=_blank rel="external nofollow noopener noreferrer" class=link-to-edit>编辑此页</a></span></div><div class=post-info-share><span></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/blog/>主页</a></span></section></div><div class=post-nav><a href=/blog/posts/linux/principle-of-software-version-control-in-linux/ class=post-nav-item rel=prev title="Principle of Software Version Control in Linux"><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>Principle of Software Version Control in Linux</a>
+<a href=/blog/posts/project-experience/debugging-in-visual-studio-code/ class=post-nav-item rel=next title="Debugging in Visual Studio Code">Debugging in Visual Studio Code<i class="fa-solid fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></main></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class=variant-numeric>0%</span></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/blog/lib/lightgallery/css/lightgallery-bundle.min.css><link rel=stylesheet href=/blog/lib/katex/katex.min.css><link rel=stylesheet href=/blog/lib/cookieconsent/cookieconsent.min.css><script src=/blog/lib/autocomplete/autocomplete.min.js defer></script><script src=/blog/lib/fuse/fuse.min.js defer></script><script src=/blog/lib/twemoji/twemoji.min.js defer></script><script src=/blog/lib/lightgallery/lightgallery.min.js defer></script><script src=/blog/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js defer></script><script src=/blog/lib/lightgallery/plugins/zoom/lg-zoom.min.js defer></script><script src=/blog/lib/katex/katex.min.js defer></script><script src=/blog/lib/katex/auto-render.min.js defer></script><script src=/blog/lib/katex/copy-tex.min.js defer></script><script src=/blog/lib/katex/mhchem.min.js defer></script><script src=/blog/lib/cookieconsent/cookieconsent.min.js defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{enable:!1},cookieconsent:{content:{dismiss:"同意",link:"了解更多",message:"本网站使用 Cookies 来改善您的浏览体验。"},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},lightgallery:!0,math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{distance:100,findAllMatches:!1,fuseIndexURL:"/blog/index.json",highlightTag:"em",ignoreFieldNorm:!1,ignoreLocation:!1,isCaseSensitive:!1,location:0,maxResultLength:20,minMatchCharLength:2,noResultsFound:"没有找到结果",snippetLength:50,threshold:.3,type:"fuse",useExtendedSearch:!1},twemoji:!0}</script><script src=/blog/js/theme.min.js defer></script></body></html>
