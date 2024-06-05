@@ -1,12 +1,31 @@
-<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>OpenMP - </title><meta name=author content="ghy"><meta name=author-link content="https://github.com/gaohongy"><meta name=description content="Key concept in OpenMP construct（构造） construct = pragma + structural block region（区域） region = the code in structural block The end of the region has a implicit barrier, i.e. every thread has finished the executation of the code in the construct clause（子"><meta name=keywords content='Hugo,FixIt'><meta itemprop=name content="OpenMP"><meta itemprop=description content="Key concept in OpenMP construct（构造） construct = pragma + structural block region（区域） region = the code in structural block The end of the region has a implicit barrier, i.e. every thread has finished the executation of the code in the construct clause（子"><meta itemprop=datePublished content="2024-04-30T20:49:00+08:00"><meta itemprop=dateModified content="2024-06-05T00:15:31+08:00"><meta itemprop=wordCount content="877"><meta itemprop=keywords content="HPC"><meta property="og:url" content="https://gaohongy.github.io/blog/posts/hpc/openmp/"><meta property="og:title" content="OpenMP"><meta property="og:description" content="Key concept in OpenMP construct（构造） construct = pragma + structural block region（区域） region = the code in structural block The end of the region has a implicit barrier, i.e. every thread has finished the executation of the code in the construct clause（子"><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-04-30T20:49:00+08:00"><meta property="article:modified_time" content="2024-06-05T00:15:31+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="OpenMP"><meta name=twitter:description content="Key concept in OpenMP construct（构造） construct = pragma + structural block region（区域） region = the code in structural block The end of the region has a implicit barrier, i.e. every thread has finished the executation of the code in the construct clause（子"><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=https://gaohongy.github.io/blog/posts/hpc/openmp/><link rel=prev href=https://gaohongy.github.io/blog/posts/hpc/matrix-multiplication/><link rel=next href=https://gaohongy.github.io/blog/posts/hpc/simd-extension/><link rel=stylesheet href=/blog/css/style.min.css><link rel=stylesheet href=/blog/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/blog/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"OpenMP","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/gaohongy.github.io\/blog\/posts\/hpc\/openmp\/"},"genre":"posts","wordcount":877,"url":"https:\/\/gaohongy.github.io\/blog\/posts\/hpc\/openmp\/","datePublished":"2024-04-30T20:49:00+08:00","dateModified":"2024-06-05T00:15:31+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"ghy"},"description":""}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容…… id=search-input-desktop>
+<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>OpenMP - </title><meta name=author content="ghy"><meta name=author-link content="https://github.com/gaohongy"><meta name=description content='Check the OpenMP version 1 2 3 4 5 6 7 8 9 10 #include <stdio.h> int main() { #ifdef _OPENMP printf("OpenMP version: %d\n", _OPENMP); #else printf("OpenMP is not supported.\n"); #endif return 0; } If system supports the OpenMP, you will receive similar output results OpenMP version: 201511 &ldquo;201511&rdquo; means that this OpenMP is released in November 2015. Next, you need to go to this official website to search the'><meta name=keywords content='Hugo,FixIt'><meta itemprop=name content="OpenMP"><meta itemprop=description content='Check the OpenMP version 1 2 3 4 5 6 7 8 9 10 #include <stdio.h> int main() { #ifdef _OPENMP printf("OpenMP version: %d\n", _OPENMP); #else printf("OpenMP is not supported.\n"); #endif return 0; } If system supports the OpenMP, you will receive similar output results OpenMP version: 201511 “201511” means that this OpenMP is released in November 2015. Next, you need to go to this official website to search the'><meta itemprop=datePublished content="2024-04-30T20:49:00+08:00"><meta itemprop=dateModified content="2024-06-05T11:47:14+08:00"><meta itemprop=wordCount content="2006"><meta itemprop=keywords content="HPC"><meta property="og:url" content="https://gaohongy.github.io/blog/posts/hpc/openmp/"><meta property="og:title" content="OpenMP"><meta property="og:description" content='Check the OpenMP version 1 2 3 4 5 6 7 8 9 10 #include <stdio.h> int main() { #ifdef _OPENMP printf("OpenMP version: %d\n", _OPENMP); #else printf("OpenMP is not supported.\n"); #endif return 0; } If system supports the OpenMP, you will receive similar output results OpenMP version: 201511 “201511” means that this OpenMP is released in November 2015. Next, you need to go to this official website to search the'><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-04-30T20:49:00+08:00"><meta property="article:modified_time" content="2024-06-05T11:47:14+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="OpenMP"><meta name=twitter:description content='Check the OpenMP version 1 2 3 4 5 6 7 8 9 10 #include <stdio.h> int main() { #ifdef _OPENMP printf("OpenMP version: %d\n", _OPENMP); #else printf("OpenMP is not supported.\n"); #endif return 0; } If system supports the OpenMP, you will receive similar output results OpenMP version: 201511 “201511” means that this OpenMP is released in November 2015. Next, you need to go to this official website to search the'><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=https://gaohongy.github.io/blog/posts/hpc/openmp/><link rel=prev href=https://gaohongy.github.io/blog/posts/hpc/matrix-multiplication/><link rel=next href=https://gaohongy.github.io/blog/posts/hpc/simd-extension/><link rel=stylesheet href=/blog/css/style.min.css><link rel=stylesheet href=/blog/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/blog/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"OpenMP","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/gaohongy.github.io\/blog\/posts\/hpc\/openmp\/"},"genre":"posts","wordcount":2006,"url":"https:\/\/gaohongy.github.io\/blog\/posts\/hpc\/openmp\/","datePublished":"2024-04-30T20:49:00+08:00","dateModified":"2024-06-05T11:47:14+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"ghy"},"description":""}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容…… id=search-input-desktop>
 <a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fa-solid fa-search fa-fw" aria-hidden=true></i>
 </a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fa-solid fa-times-circle fa-fw" aria-hidden=true></i>
 </a><span class="search-button search-loading" id=search-loading-desktop><i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><header class="mobile animate__faster" id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><nav><ul class=menu id=menu-mobile><li class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容…… id=search-input-mobile>
 <a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fa-solid fa-search fa-fw" aria-hidden=true></i>
 </a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fa-solid fa-times-circle fa-fw" aria-hidden=true></i>
 </a><span class="search-button search-loading" id=search-loading-mobile><i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></li><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item menu-system"><span class="menu-system-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></span></li></ul></nav></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><nav aria-label=breadcrumb class=breadcrumb-container><ol class=breadcrumb><li class=breadcrumb-item><a href=/blog/ title>主页</a></li><li class=breadcrumb-item><a href=/blog/posts/ title=Posts>Posts</a></li><li class="breadcrumb-item active" aria-current=page>OpenMP</li></ol></nav><main class=container><aside class=toc id=toc-auto><h2 class=toc-title>目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden=true></i></h2><div class="toc-content always-active" id=toc-content-auto></div></aside><aside class=aside-custom></aside><article class="page single"><div class=header><h1 class="single-title animate__animated animate__flipInX"><span>OpenMP</span></h1></div><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://github.com/gaohongy title=作者 target=_blank rel="external nofollow noopener noreferrer author" class=author><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202205161528792.jpg data-title=ghy data-alt=ghy class=avatar style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'>&nbsp;ghy</a></span>
-<span class=post-category>收录于 <a href=/blog/categories/hpc/><i class="fa-regular fa-folder fa-fw" aria-hidden=true></i> HPC</a></span></div><div class=post-meta-line><span title="发布于 2024-04-30 20:49:00"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden=true></i><time datetime=2024-04-30>2024-04-30</time></span>&nbsp;<span title="更新于 2024-06-05 00:15:31"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=2024-06-05>2024-06-05</time></span>&nbsp;</div></div><div class="details toc" id=toc-static data-kept=false><div class="details-summary toc-title"><span>目录</span>
-<span><i class="details-icon fa-solid fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#key-concept-in-openmp>Key concept in OpenMP</a></li><li><a href=#understand-the-pragmadirective-command>Understand the <code>pragma</code></a></li><li><a href=#discriminate-parallel-and-for>Discriminate parallel and for</a></li><li><a href=#fallible-point>Fallible point</a></li><li><a href=#ordered>ordered</a></li><li><a href=#reference>Reference</a></li></ul></nav></div></div><div class=content id=content data-end-flag=EOF><h2 id=key-concept-in-openmp>Key concept in OpenMP</h2><ol><li>construct（构造）</li></ol><p>construct = pragma + structural block</p><ol start=2><li>region（区域）</li></ol><p>region = the code in structural block</p><p>The end of the region has a implicit barrier, i.e. every thread has finished the executation of the code in the <strong>construct</strong></p><ol start=3><li>clause（子句）</li></ol><p>clause = behavior that defines or edits the <strong>construct</strong></p><h2 id=understand-the-pragmadirective-command>Understand the <code>pragma</code><sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup></h2><p>This command is the most important element for OpenMP.</p><p>On the one hand, it&rsquo;s called 编译制导指令，because these commands instruct the compiler to execute some particular operations when compiling.</p><p>On the other hand, it&rsquo;s like to the <code>#define</code> command, which is called 预处理指令(Preprocessor Directive).</p><h2 id=discriminate-parallel-and-for>Discriminate parallel and for</h2><div class=highlight id=id-1><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+<span class=post-category>收录于 <a href=/blog/categories/hpc/><i class="fa-regular fa-folder fa-fw" aria-hidden=true></i> HPC</a></span></div><div class=post-meta-line><span title="发布于 2024-04-30 20:49:00"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden=true></i><time datetime=2024-04-30>2024-04-30</time></span>&nbsp;<span title="更新于 2024-06-05 11:47:14"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=2024-06-05>2024-06-05</time></span>&nbsp;</div></div><div class="details toc" id=toc-static data-kept=false><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fa-solid fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#check-the-openmp-version>Check the OpenMP version</a></li><li><a href=#key-concept-in-openmp>Key concept in OpenMP</a></li><li><a href=#understand-the-pragmadirective-command>Understand the <code>pragma</code></a></li><li><a href=#discriminate-parallel-and-for>Discriminate parallel and for</a></li><li><a href=#fallible-point>Fallible point</a></li><li><a href=#construct>Construct</a><ul><li><a href=#sections>sections</a></li><li><a href=#synchronization>Synchronization</a><ul><li><a href=#barrier>barrier</a></li><li><a href=#ordered>ordered</a></li><li><a href=#critical>critical</a></li><li><a href=#atomic>atomic</a></li></ul></li><li><a href=#task>task</a></li></ul></li><li><a href=#clause>Clause</a><ul><li><a href=#data-storage-property>Data Storage Property</a></li></ul></li><li><a href=#reference>Reference</a></li></ul></nav></div></div><div class=content id=content data-end-flag=EOF><h2 id=check-the-openmp-version>Check the OpenMP version</h2><div class=highlight id=id-1><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=cp>#ifdef _OPENMP
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;OpenMP version: %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>_OPENMP</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=cp>#else
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;OpenMP is not supported.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=cp>#endif
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>If system supports the OpenMP, you will receive similar output results</p><blockquote><p>OpenMP version: 201511</p></blockquote><p>&ldquo;201511&rdquo; means that this OpenMP is released in November 2015.</p><p>Next, you need to go to <a href=https://www.openmp.org/specifications/ target=_blank rel="external nofollow noopener noreferrer">this official website</a> to search the edition and the released time, you will find that OpenMP 4.5 is released in November 2015.</p><h2 id=key-concept-in-openmp>Key concept in OpenMP</h2><ol><li>construct（构造）</li></ol><p>construct = pragma + structural block</p><ol start=2><li>region（区域）</li></ol><p>region = the code in structural block</p><p>The end of the region has a implicit barrier, i.e. every thread has finished the executation of the code in the <strong>construct</strong></p><ol start=3><li>clause（子句）</li></ol><p>clause = behavior that defines or edits the <strong>construct</strong></p><h2 id=understand-the-pragmadirective-command>Understand the <code>pragma</code><sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup></h2><p>This command is the most important element for OpenMP.</p><p>On the one hand, it&rsquo;s called 编译制导指令，because these commands instruct the compiler to execute some particular operations when compiling.</p><p>On the other hand, it&rsquo;s like to the <code>#define</code> command, which is called 预处理指令(Preprocessor Directive).</p><h2 id=discriminate-parallel-and-for>Discriminate parallel and for</h2><div class=highlight id=id-2><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -71,7 +90,7 @@
 </span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
-</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>输出结果为：</p><div class=highlight id=id-2><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>输出结果为：</p><div class=highlight id=id-3><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -104,7 +123,7 @@
 </span></span><span class=line><span class=cl>thread_id: 1 , i: 6
 </span></span><span class=line><span class=cl>thread_id: 1 , i: 7
 </span></span><span class=line><span class=cl>thread_id: 1 , i: 8
-</span></span><span class=line><span class=cl>thread_id: 1 , i: 9</span></span></code></pre></td></tr></table></div></div><p>可见，<code>parallel</code> 中的代码是每个 thread 都会完整执行的，而 <code>for</code> 中的代码会分配给不同 thread 来执行 <sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup></p><h2 id=fallible-point>Fallible point</h2><p>实测发现大括号不能随意添加，下方代码如果为 <code>#pragma omp for ordered</code> 添加一个 大括号，那么执行将报错 “‘ordered’ region must be closely nested inside a loop region with an ‘ordered’ clause“</p><div class=highlight id=id-3><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></span><span class=line><span class=cl>thread_id: 1 , i: 9</span></span></code></pre></td></tr></table></div></div><p>可见，<code>parallel</code> 中的代码是每个 thread 都会完整执行的，而 <code>for</code> 中的代码会分配给不同 thread 来执行 <sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup></p><h2 id=fallible-point>Fallible point</h2><p>实测发现大括号不能随意添加，下方代码如果为 <code>#pragma omp for ordered</code> 添加一个 大括号，那么执行将报错 “‘ordered’ region must be closely nested inside a loop region with an ‘ordered’ clause“</p><div class=highlight id=id-4><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -117,7 +136,112 @@
 </span></span></span><span class=line><span class=cl><span class=cp></span>        <span class=p>{</span>
 </span></span><span class=line><span class=cl>            <span class=n>sum</span> <span class=o>+=</span> <span class=n>thread_id</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>        <span class=p>}</span>
-</span></span><span class=line><span class=cl>    <span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=ordered>ordered</h2><div class=highlight id=id-4><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span><span class=line><span class=cl>    <span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h2 id=construct>Construct</h2><h3 id=sections>sections</h3><p>仅仅使用 <code>#pragma omp parallel</code> 所实现的并行实际是 SIMD，即在 parallel 所指定的 region 下，每个 thread 看到并且指定的代码都是相同的，只不过是通过 thredd id 实现的计算数据的不相同。</p><p>而实现并行的方式并不仅仅局限于 SIMD, 还能够通过 MIMD实现。sections 完成的就是这样一项任务，每个 section 下的代码由一个线程负责执行（注意这并不表示执行两个 section 的线程一定不会是同一个，这里实际的执行情况可能要看线程的调度策略），每个 section 下的代码是可以不同的，这也就能够实现 MIMD 了。</p><p>上述判断可以通过以下程序进行验证</p><div class=highlight id=id-5><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp> 
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;omp.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=cp>#pragma omp parallel 
+</span></span></span><span class=line><span class=cl><span class=cp></span>	<span class=p>{</span> 
+</span></span><span class=line><span class=cl>		<span class=kt>int</span> <span class=n>threadid</span> <span class=o>=</span> <span class=n>omp_get_thread_num</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=n>printf</span><span class=p>(</span><span class=s>&#34;thread %d </span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>threadid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>		<span class=cp>#pragma omp sections 
+</span></span></span><span class=line><span class=cl><span class=cp></span>		<span class=p>{</span> 
+</span></span><span class=line><span class=cl>			<span class=err>#</span><span class=n>pragma</span> <span class=n>omp</span> <span class=n>section</span> 
+</span></span><span class=line><span class=cl>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=n>printf</span><span class=p>(</span><span class=s>&#34;section 0 - thread %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>threadid</span><span class=p>);</span> 
+</span></span><span class=line><span class=cl>				<span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>			
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=cp>#pragma omp section
+</span></span></span><span class=line><span class=cl><span class=cp></span>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=n>printf</span><span class=p>(</span><span class=s>&#34;section 1 - thread %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>threadid</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>				<span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>			
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>			<span class=cp>#pragma omp section 
+</span></span></span><span class=line><span class=cl><span class=cp></span>			<span class=p>{</span>
+</span></span><span class=line><span class=cl>				<span class=n>printf</span><span class=p>(</span><span class=s>&#34;section 2 - thread %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>threadid</span><span class=p>);</span> 
+</span></span><span class=line><span class=cl>				<span class=n>sleep</span><span class=p>(</span><span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>			<span class=p>}</span>
+</span></span><span class=line><span class=cl>		<span class=p>}</span> 
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> 
+</span></span></code></pre></td></tr></table></div></div><h3 id=synchronization>Synchronization</h3><h4 id=barrier>barrier</h4><p>There is an implicit barrier after <code>parallel</code>, <code>for</code>, <code>sections</code> and <code>single</code>, and we can use <code>nowati</code> <strong>clause</strong> to cancel this implicit barrier, such as <code>#pragma omp for nowait</code>.</p><h4 id=ordered>ordered</h4><p><code>ordered</code> construct 的一个使用条件就是，要求并行循环使用 <code>ordered</code> clause, 即下方的 <code>#pragma omp for ordered</code> 和 <code>#pragma omp ordered</code>，前者是 clause，后者是 construct.</p><div class=highlight id=id-6><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;omp.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=cp>#pragma omp parallel for ordered
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=o>++</span><span class=n>i</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// Some parallel work
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=kt>int</span> <span class=n>tid</span> <span class=o>=</span> <span class=n>omp_get_thread_num</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=cp>#pragma omp ordered
+</span></span></span><span class=line><span class=cl><span class=cp></span>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Thread %d processed iteration %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>tid</span><span class=p>,</span> <span class=n>i</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>以上程序中，循环将会顺序执行</p><div class=highlight id=id-7><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -168,5 +292,121 @@
 </span></span><span class=line><span class=cl>            <span class=n>sum_parallel</span> <span class=o>+=</span> <span class=n>thread_id</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
-</span></span><span class=line><span class=cl><span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>sum_parallel</span> <span class=o>&lt;&lt;</span> <span class=n>std</span><span class=o>::</span><span class=n>endl</span><span class=p>;</span></span></span></code></pre></td></tr></table></div></div><p>需要实现的场景是，在一个大的 parallel region 中，我们希望有一小段代码是串行执行的，即严格遵循线程编号依次执行。通过 递增计数器 和 锁 可以简单实现这一点。</p><p>上方代码给了两种实现，理论上第2种实现可能出现多个 thread 同时修改 sum_parallel 变量从而导致结果出现错误，第一种实现从测试来看确实是正确的，不过令人困惑的是 <code>#pragma omp for ordered</code> 和 <code>#pragma omp ordered</code> 两个重复的 <code>ordered</code>。</p><h2 id=reference>Reference</h2><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p><a href=https://parallel.zhangjikai.com/%E7%BC%96%E8%AF%91%E5%88%B6%E5%AF%BC%E6%8C%87%E4%BB%A4.html target=_blank rel="external nofollow noopener noreferrer">编译制导指令</a>&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2><p><a href=https://zhaoxuhui.top/blog/2017/12/02/OpenMP%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0.html target=_blank rel="external nofollow noopener noreferrer">OpenMP并行编程笔记</a>&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 2024-06-05 00:15:31">更新于 2024-06-05&nbsp;</span></div></div><div class=post-info-line><div class=post-info-md><span><a href=https://github.com/gaohongy/blog/edit/main/content/posts/HPC/OpenMP.md title=编辑此页 target=_blank rel="external nofollow noopener noreferrer" class=link-to-edit>编辑此页</a></span></div><div class=post-info-share><span></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/blog/>主页</a></span></section></div><div class=post-nav><a href=/blog/posts/hpc/matrix-multiplication/ class=post-nav-item rel=prev title="Matrix Multiplication"><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>Matrix Multiplication</a>
+</span></span><span class=line><span class=cl><span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=n>sum_parallel</span> <span class=o>&lt;&lt;</span> <span class=n>std</span><span class=o>::</span><span class=n>endl</span><span class=p>;</span></span></span></code></pre></td></tr></table></div></div><p>需要实现的场景是，在一个大的 parallel region 中，我们希望有一小段代码是串行执行的，即严格遵循线程编号依次执行。通过 递增计数器 和 锁 可以简单实现这一点。</p><p>上方代码给了两种实现，理论上第2种实现可能出现多个 thread 同时修改 sum_parallel 变量从而导致结果出现错误，第一种实现从测试来看确实是正确的，不过令人困惑的是 <code>#pragma omp for ordered</code> 和 <code>#pragma omp ordered</code> 两个重复的 <code>ordered</code>。</p><h4 id=critical>critical</h4><p><code>critical</code> 用于保护代码段，使得该代码段在任何时候都只能由一个线程执行，从而避免数据竞争, 当一个线程在执行 critical 指定的 region 时，其他要执行同样 region 的线程必须等待。</p><div class=highlight id=id-8><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;omp.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>sum</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=cp>#pragma omp parallel for
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=o>++</span><span class=n>i</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=cp>#pragma omp critical
+</span></span></span><span class=line><span class=cl><span class=cp></span>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>sum</span> <span class=o>+=</span> <span class=n>i</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Thread %d added %d, sum now is %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>omp_get_thread_num</span><span class=p>(),</span> <span class=n>i</span><span class=p>,</span> <span class=n>sum</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Final sum is %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>sum</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><h4 id=atomic>atomic</h4><div class=highlight id=id-9><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;omp.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>sum</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=cp>#pragma omp parallel for
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=o>++</span><span class=n>i</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=cp>#pragma omp atomic
+</span></span></span><span class=line><span class=cl><span class=cp></span>        <span class=n>sum</span> <span class=o>+=</span> <span class=n>i</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=c1>// Note: printf is not atomic, so the output may still be interleaved
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Thread %d added %d, sum now is %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>omp_get_thread_num</span><span class=p>(),</span> <span class=n>i</span><span class=p>,</span> <span class=n>sum</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Final sum is %d</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>sum</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>The logic of this program is same as the example of <code>critical</code> construct program.</p><h3 id=task>task</h3><p>task 的常用执行逻辑是，由 1 个线程负责创建 task，然后每个线程会负责一个 task，具体每个线程执行哪一个 task 取决于实际场景下的调度策略。</p><p>这种 construct 类似创建了一个 task pool，thread 就是计算资源，从 task pool 中选择 task 来执行。</p><p><a class=lightgallery href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png?size=large" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png?size=small" data-sub-html="<h2>https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png</h2>"><img loading=lazy src=https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png srcset="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png?size=small, https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png?size=medium 1.5x, https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png?size=large 2x" sizes=auto data-title=https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png data-alt=https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202406051144940.png style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'></a></p><blockquote><p>需要注意的是，实际测试结果显示，最初创建 task 的线程，最后也是有可能会去执行某一项 task 的</p></blockquote><div class=highlight id=id-10><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;omp.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=cp>#pragma omp parallel
+</span></span></span><span class=line><span class=cl><span class=cp></span>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=cp>#pragma omp single
+</span></span></span><span class=line><span class=cl><span class=cp></span>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Thread %d: Creating tasks</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>omp_get_thread_num</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=cp>#pragma omp task
+</span></span></span><span class=line><span class=cl><span class=cp></span>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Thread %d: Executing task 1</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>omp_get_thread_num</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=cp>#pragma omp task
+</span></span></span><span class=line><span class=cl><span class=cp></span>            <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Thread %d: Executing task 2</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>omp_get_thread_num</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>When we specify the thread num is 4, the result of above program is</p><blockquote><p>Thread 0: Creating tasks</p><p>Thread 2: Executing task 1</p><p>Thread 3: Executing task 2</p></blockquote><h2 id=clause>Clause</h2><h3 id=data-storage-property>Data Storage Property</h3><ol><li><p>shared: different threads share the same data</p></li><li><p>private: different threads have they own data replica</p></li></ol><ul><li><code>firstprivate()</code></li><li><code>lastprivate()</code></li></ul><p><strong>Hot to handle array ?</strong></p><p>We can use array split grammar, for example</p><ul><li><code>[lower bound : length : stride]</code></li><li><code>[lower bound : length]</code></li><li><code>[: length : stride]</code> (To be honest, I am puzzled about this which doesn&rsquo;t specify the begin position)</li></ul><div class=highlight id=id-11><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#pragma omp parallel firstprivate(vptr[0 : 1000 : 1])</span></span></span></code></pre></td></tr></table></div></div><h2 id=reference>Reference</h2><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p><a href=https://parallel.zhangjikai.com/%E7%BC%96%E8%AF%91%E5%88%B6%E5%AF%BC%E6%8C%87%E4%BB%A4.html target=_blank rel="external nofollow noopener noreferrer">编译制导指令</a>&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2><p><a href=https://zhaoxuhui.top/blog/2017/12/02/OpenMP%E5%B9%B6%E8%A1%8C%E7%BC%96%E7%A8%8B%E7%AC%94%E8%AE%B0.html target=_blank rel="external nofollow noopener noreferrer">OpenMP并行编程笔记</a>&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 2024-06-05 11:47:14">更新于 2024-06-05&nbsp;</span></div></div><div class=post-info-line><div class=post-info-md><span><a href=https://github.com/gaohongy/blog/edit/main/content/posts/HPC/OpenMP.md title=编辑此页 target=_blank rel="external nofollow noopener noreferrer" class=link-to-edit>编辑此页</a></span></div><div class=post-info-share><span></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/blog/>主页</a></span></section></div><div class=post-nav><a href=/blog/posts/hpc/matrix-multiplication/ class=post-nav-item rel=prev title="Matrix Multiplication"><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>Matrix Multiplication</a>
 <a href=/blog/posts/hpc/simd-extension/ class=post-nav-item rel=next title="SIMD Extension">SIMD Extension<i class="fa-solid fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article></main></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class=variant-numeric>0%</span></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/blog/lib/lightgallery/css/lightgallery-bundle.min.css><link rel=stylesheet href=/blog/lib/katex/katex.min.css><link rel=stylesheet href=/blog/lib/cookieconsent/cookieconsent.min.css><script src=/blog/lib/autocomplete/autocomplete.min.js defer></script><script src=/blog/lib/fuse/fuse.min.js defer></script><script src=/blog/lib/twemoji/twemoji.min.js defer></script><script src=/blog/lib/lightgallery/lightgallery.min.js defer></script><script src=/blog/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js defer></script><script src=/blog/lib/lightgallery/plugins/zoom/lg-zoom.min.js defer></script><script src=/blog/lib/katex/katex.min.js defer></script><script src=/blog/lib/katex/auto-render.min.js defer></script><script src=/blog/lib/katex/copy-tex.min.js defer></script><script src=/blog/lib/katex/mhchem.min.js defer></script><script src=/blog/lib/cookieconsent/cookieconsent.min.js defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{enable:!1},cookieconsent:{content:{dismiss:"同意",link:"了解更多",message:"本网站使用 Cookies 来改善您的浏览体验。"},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},lightgallery:!0,math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{distance:100,findAllMatches:!1,fuseIndexURL:"/blog/index.json",highlightTag:"em",ignoreFieldNorm:!1,ignoreLocation:!1,isCaseSensitive:!1,location:0,maxResultLength:20,minMatchCharLength:2,noResultsFound:"没有找到结果",snippetLength:50,threshold:.3,type:"fuse",useExtendedSearch:!1},twemoji:!0}</script><script src=/blog/js/theme.min.js defer></script></body></html>
