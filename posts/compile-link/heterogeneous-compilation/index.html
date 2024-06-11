@@ -1,10 +1,334 @@
-<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>Heterogeneous Compilation - </title><meta name=author content="ghy"><meta name=author-link content="https://github.com/gaohongy"><meta name=description content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta name=keywords content='Hugo,FixIt'><meta itemprop=name content="Heterogeneous Compilation"><meta itemprop=description content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta itemprop=datePublished content="2024-06-07T09:49:52+08:00"><meta itemprop=dateModified content="2024-06-11T00:31:21+08:00"><meta itemprop=wordCount content="1257"><meta itemprop=keywords content="Compile-Link"><meta property="og:url" content="https://gaohongy.github.io/blog/posts/compile-link/heterogeneous-compilation/"><meta property="og:title" content="Heterogeneous Compilation"><meta property="og:description" content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-06-07T09:49:52+08:00"><meta property="article:modified_time" content="2024-06-11T00:31:21+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Heterogeneous Compilation"><meta name=twitter:description content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=https://gaohongy.github.io/blog/posts/compile-link/heterogeneous-compilation/><link rel=prev href=https://gaohongy.github.io/blog/posts/hpc/several-methods-for-obtaining-time/><link rel=stylesheet href=/blog/css/style.min.css><link rel=stylesheet href=/blog/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/blog/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Heterogeneous Compilation","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/gaohongy.github.io\/blog\/posts\/compile-link\/heterogeneous-compilation\/"},"genre":"posts","wordcount":1257,"url":"https:\/\/gaohongy.github.io\/blog\/posts\/compile-link\/heterogeneous-compilation\/","datePublished":"2024-06-07T09:49:52+08:00","dateModified":"2024-06-11T00:31:21+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"ghy"},"description":""}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容…… id=search-input-desktop>
+<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-CN><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>Heterogeneous Compilation - </title><meta name=author content="ghy"><meta name=author-link content="https://github.com/gaohongy"><meta name=description content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta name=keywords content='Hugo,FixIt'><meta itemprop=name content="Heterogeneous Compilation"><meta itemprop=description content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta itemprop=datePublished content="2024-06-07T09:49:52+08:00"><meta itemprop=dateModified content="2024-06-11T11:51:12+08:00"><meta itemprop=wordCount content="2455"><meta itemprop=keywords content="Compile-Link"><meta property="og:url" content="https://gaohongy.github.io/blog/posts/compile-link/heterogeneous-compilation/"><meta property="og:title" content="Heterogeneous Compilation"><meta property="og:description" content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta property="og:locale" content="zh_CN"><meta property="og:type" content="article"><meta property="article:section" content="posts"><meta property="article:published_time" content="2024-06-07T09:49:52+08:00"><meta property="article:modified_time" content="2024-06-11T11:51:12+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Heterogeneous Compilation"><meta name=twitter:description content="与 CUDA Compilation 不同在于 The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system. Clang Offload Bundler is used to combined different code for different machine structurel. Clang Offload Packager is used to embed device code into host code. Clang Linker Wrapper is used to ."><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=https://gaohongy.github.io/blog/posts/compile-link/heterogeneous-compilation/><link rel=prev href=https://gaohongy.github.io/blog/posts/hpc/several-methods-for-obtaining-time/><link rel=stylesheet href=/blog/css/style.min.css><link rel=stylesheet href=/blog/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/blog/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"Heterogeneous Compilation","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/gaohongy.github.io\/blog\/posts\/compile-link\/heterogeneous-compilation\/"},"genre":"posts","wordcount":2455,"url":"https:\/\/gaohongy.github.io\/blog\/posts\/compile-link\/heterogeneous-compilation\/","datePublished":"2024-06-07T09:49:52+08:00","dateModified":"2024-06-11T11:51:12+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"ghy"},"description":""}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem("theme")?localStorage.getItem("theme")==="dark":"auto"==="auto"?window.matchMedia("(prefers-color-scheme: dark)").matches:"auto"==="dark")&&document.body.setAttribute("data-theme","dark")</script><div class=wrapper data-page-style=normal><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item delimiter"></li><li class="menu-item search" id=search-desktop><input type=text placeholder=搜索文章标题或内容…… id=search-input-desktop>
 <a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-desktop title=搜索><i class="fa-solid fa-search fa-fw" aria-hidden=true></i>
 </a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-desktop title=清空><i class="fa-solid fa-times-circle fa-fw" aria-hidden=true></i>
 </a><span class="search-button search-loading" id=search-loading-desktop><i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><header class="mobile animate__faster" id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/blog/ title><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-title=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png data-alt=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202301210616317.png class=logo style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'><span class=header-title-text></span></a><span class=header-subtitle></span></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><nav><ul class=menu id=menu-mobile><li class=search-wrapper><div class="search mobile" id=search-mobile><input type=text placeholder=搜索文章标题或内容…… id=search-input-mobile>
 <a href=javascript:void(0); class="search-button search-toggle" id=search-toggle-mobile title=搜索><i class="fa-solid fa-search fa-fw" aria-hidden=true></i>
 </a><a href=javascript:void(0); class="search-button search-clear" id=search-clear-mobile title=清空><i class="fa-solid fa-times-circle fa-fw" aria-hidden=true></i>
 </a><span class="search-button search-loading" id=search-loading-mobile><i class="fa-solid fa-spinner fa-fw fa-spin" aria-hidden=true></i></span></div><a href=javascript:void(0); class=search-cancel id=search-cancel-mobile>取消</a></li><li class=menu-item><a class=menu-link href=/blog/posts/>文章</a></li><li class=menu-item><a class=menu-link href=/blog/categories/>分类</a></li><li class=menu-item><a class=menu-link href=/blog/tags/>标签</a></li><li class="menu-item menu-system"><span class="menu-system-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></span></li></ul></nav></div></header><div class="search-dropdown desktop"><div id=search-dropdown-desktop></div></div><div class="search-dropdown mobile"><div id=search-dropdown-mobile></div></div><nav aria-label=breadcrumb class=breadcrumb-container><ol class=breadcrumb><li class=breadcrumb-item><a href=/blog/ title>主页</a></li><li class=breadcrumb-item><a href=/blog/posts/ title=Posts>Posts</a></li><li class="breadcrumb-item active" aria-current=page>Heterogeneous Compilation</li></ol></nav><main class=container><aside class=toc id=toc-auto><h2 class=toc-title>目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden=true></i></h2><div class="toc-content always-active" id=toc-content-auto></div></aside><aside class=aside-custom></aside><article class="page single"><div class=header><h1 class="single-title animate__animated animate__flipInX"><span>Heterogeneous Compilation</span></h1></div><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://github.com/gaohongy title=作者 target=_blank rel="external nofollow noopener noreferrer author" class=author><img loading=lazy src=https://cdn.jsdelivr.net/gh/G-ghy/cloudImages@master/202205161528792.jpg data-title=ghy data-alt=ghy class=avatar style="background:url(/blog/svg/loading.min.svg)no-repeat 50%" onload='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e);this.dataset.lazyloaded=""' onerror='this.title=this.dataset.title,this.alt=this.dataset.alt;for(const e of["style","data-title","data-alt","onerror","onload"])this.removeAttribute(e)'>&nbsp;ghy</a></span>
-<span class=post-category>收录于 <a href=/blog/categories/compile-link/><i class="fa-regular fa-folder fa-fw" aria-hidden=true></i> Compile-Link</a></span></div><div class=post-meta-line><span title="发布于 2024-06-07 09:49:52"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden=true></i><time datetime=2024-06-07>2024-06-07</time></span>&nbsp;<span title="更新于 2024-06-11 00:31:21"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=2024-06-11>2024-06-11</time></span>&nbsp;</div></div><div class="details toc" id=toc-static data-kept=false><div class="details-summary toc-title"><span>目录</span>
-<span><i class="details-icon fa-solid fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#packager-打包的意义何在>packager 打包的意义何在</a></li><li><a href=#对于现有工具的理解>对于现有工具的理解</a></li></ul></nav></div></div><div class=content id=content data-end-flag=EOF><p>与 <a href=https://gaohongy.github.io/blog/posts/compile-link/cuda-compilation/ target=_blank rel="external nofollow noopener noreferrer">CUDA Compilation</a> 不同在于</p><p>The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system.</p><ol><li>Clang Offload Bundler is used to combined different code for different machine structurel.</li><li>Clang Offload Packager is used to embed device code into host code.</li><li>Clang Linker Wrapper is used to .</li></ol><p>这里面最复杂的感觉是怎么处理链接关系，如果仅仅说代码嵌入，从 CUDA 的流程来看，在 cudafe1.cpp include stub.c 生成 .o 这一步中 host code 中就已经包含了 device code，如果仅仅说 embed 的话，这显然就已经完成了，但是为何 CUDA 还进行后续那么多步骤，因为这一步生成的 .o 显然是无法运行的，device code 都还只是一个 extern signal，还需要同 CUDA runtime library 进行链接，这个过程该怎么进行比较难想。</p><p>但是链接的难点是，目前程序中的 device code 二进制的 fatbinary，同 CUDA runtime library 之间的链接该如何完成</p><h2 id=packager-打包的意义何在>packager 打包的意义何在</h2><p>简单来看，<code>clang-offload-packager</code> 或者 <code>fatbinary</code> 就是在原有的 ELF 数据基础上添加了部分额外信息然后封装为了特定的结构化数据，然后将此数据装填到 host object 中。</p><p>至于为什么一定要经过这样一个打包的步骤，按照目前理解，可能目的是为 device object 添加额外信息后，后续的处理程序便于定位 device object 中不同部分的数据（正确的理解视角应当是 device object 中包含多种类型的数据，直接装载多种 device object 的 ELF 数据到 host object 中后续过程无法定位要所需要的数据，所以为不同数据添加上相关信息再嵌入到 host object 中）。</p><h2 id=对于现有工具的理解>对于现有工具的理解</h2><p>无论有哪些工具，所需要做的核心工作就三点：</p><ol><li>生成类 fatbinary（关于 fatbinary 这个词的理解似乎不同场景有所不同，有些认为是 device code 相关内容的结合结果是 fatbinary，有些认为是 device object 嵌入 host object 之后的结果是 fatbinary，但是 wikipedia 给出的 fatbinary 这个概念本身对应后者，这里暂时不纠结用词，理解这个意思即可）</li><li>代码嵌入</li><li>链接</li></ol><p>Prerequisite explanation: the following content references to the <a href=https://reviews.llvm.org/D125165 target=_blank rel="external nofollow noopener noreferrer">[Clang] Introduce clang-offload-packager tool to bundle device files</a></p><p>现在的工具情况是：</p><ol><li><p>clang-offload-packager
-<code>clang-offload-packager</code> 实现的作用类似与 CUDA 的 fatbinary 工具类似，it creates a binary that can then be embedded into the host.</p></li><li><p>clang-offload-bundler</p></li></ol><p>The <code>clang-offload-bundler</code> is to embed device files into the host. Now the tool chain does this directly in clang by creating a global string in the LLVM-IR of the host rather than calling this tool. But HIP toolchain still uses the <code>clang-offload-bundler</code>.</p><p><code>clang-offload-bundler</code> 似乎还有一些特殊的用途:</p><blockquote><p>There is still functionality that the clang-offload-bundler provides that I don&rsquo;t intend to replace, namely the bundling and un-bundling of text files.</p></blockquote><p><code>clang-offload-bundler</code> 似乎还有一个问题:</p><blockquote><p>I don&rsquo;t think we want to stick with the clang-offload-bundler approach, because the files that the &ndash;clang-offload-bundler spat out weren&rsquo;t valid input to the rest of LLVM, e.g. clang -S -emit-llvm &ndash;offload-arch=gfx908 foo.hip -o - | opt would break.</p></blockquote><p><code>clang-offload-bundler</code> 的作用似乎比较混乱，按照目前理解它应当是既具备生成类 fatbinary 的作用，同时也具备代码嵌入的作用。LLVM-project 可能是为了实现功能细化，单独创造了一个<code>clang-offload-packager</code>工具用于生成类 fatbinary，同时因为上述提到的 bundler 作为一个独立工具所具备的问题，因此把代码嵌入的工具集成到 clang 中来实现。当然这只是预期的效果，如以下内容所示目前有一个问题就是在 HIP toolchain 中，仍然使用着 <code>clang-offload-bundler</code> 生成类 fatbinary 的功能，如果想要实现 bundler 和 HIP toolchain 之间的解耦，需要修改 HIP runtime，这并不是段时间内能够解决的问题，所以这些工具目前仍然保留了下来。</p><blockquote><p>For HIP toolchain, clang-offload-bundler is also used to generate fatbinary files which can be loaded dynamically at run time through module API&rsquo;s. So far I don&rsquo;t think this can be replaced by clang-offload-packager in a short time, since it needs HIP runtime change.</p></blockquote><p>所以按照我的理解，packager 可以看为 bundler 的一个子集，最终期望实现的工具结合方式应该就是 <code>clang-offload-packager</code> + <code>clang</code>. 前者负责 device object 打包，后者负责将 device object 嵌入 host object.</p><ol start=3><li>clang-linker-wrapper (由clang-offload-wrapper合并而来)</li></ol></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 2024-06-11 00:31:21">更新于 2024-06-11&nbsp;</span></div></div><div class=post-info-line><div class=post-info-md><span><a href=https://github.com/gaohongy/blog/edit/main/content/posts/Compile-Link/Heterogeneous-Compilation.md title=编辑此页 target=_blank rel="external nofollow noopener noreferrer" class=link-to-edit>编辑此页</a></span></div><div class=post-info-share><span></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/blog/>主页</a></span></section></div><div class=post-nav><a href=/blog/posts/hpc/several-methods-for-obtaining-time/ class=post-nav-item rel=prev title="Several Methods For Obtaining Time"><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>Several Methods For Obtaining Time</a></div></div></article></main></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class=variant-numeric>0%</span></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/blog/lib/lightgallery/css/lightgallery-bundle.min.css><link rel=stylesheet href=/blog/lib/katex/katex.min.css><link rel=stylesheet href=/blog/lib/cookieconsent/cookieconsent.min.css><script src=/blog/lib/autocomplete/autocomplete.min.js defer></script><script src=/blog/lib/fuse/fuse.min.js defer></script><script src=/blog/lib/twemoji/twemoji.min.js defer></script><script src=/blog/lib/lightgallery/lightgallery.min.js defer></script><script src=/blog/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js defer></script><script src=/blog/lib/lightgallery/plugins/zoom/lg-zoom.min.js defer></script><script src=/blog/lib/katex/katex.min.js defer></script><script src=/blog/lib/katex/auto-render.min.js defer></script><script src=/blog/lib/katex/copy-tex.min.js defer></script><script src=/blog/lib/katex/mhchem.min.js defer></script><script src=/blog/lib/cookieconsent/cookieconsent.min.js defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{enable:!1},cookieconsent:{content:{dismiss:"同意",link:"了解更多",message:"本网站使用 Cookies 来改善您的浏览体验。"},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},lightgallery:!0,math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{distance:100,findAllMatches:!1,fuseIndexURL:"/blog/index.json",highlightTag:"em",ignoreFieldNorm:!1,ignoreLocation:!1,isCaseSensitive:!1,location:0,maxResultLength:20,minMatchCharLength:2,noResultsFound:"没有找到结果",snippetLength:50,threshold:.3,type:"fuse",useExtendedSearch:!1},twemoji:!0}</script><script src=/blog/js/theme.min.js defer></script></body></html>
+<span class=post-category>收录于 <a href=/blog/categories/compile-link/><i class="fa-regular fa-folder fa-fw" aria-hidden=true></i> Compile-Link</a></span></div><div class=post-meta-line><span title="发布于 2024-06-07 09:49:52"><i class="fa-regular fa-calendar-alt fa-fw me-1" aria-hidden=true></i><time datetime=2024-06-07>2024-06-07</time></span>&nbsp;<span title="更新于 2024-06-11 11:51:12"><i class="fa-regular fa-edit fa-fw me-1" aria-hidden=true></i><time datetime=2024-06-11>2024-06-11</time></span>&nbsp;</div></div><div class="details toc" id=toc-static data-kept=false><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fa-solid fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#目标分析>目标分析</a></li><li><a href=#packager-打包的意义何在>packager 打包的意义何在</a></li><li><a href=#对于现有工具的理解>对于现有工具的理解</a></li><li><a href=#clang-offload-packager>clang-offload-packager</a></li></ul></nav></div></div><div class=content id=content data-end-flag=EOF><p>与 <a href=https://gaohongy.github.io/blog/posts/compile-link/cuda-compilation/ target=_blank rel="external nofollow noopener noreferrer">CUDA Compilation</a> 不同在于</p><p>The tools used in the CUDA compilation are all closed source except gcc, g++ etc., for example fatbinary and nvlink. We need to substitue these tools to tools in clang system.</p><ol><li>Clang Offload Bundler is used to combined different code for different machine structurel.</li><li>Clang Offload Packager is used to embed device code into host code.</li><li>Clang Linker Wrapper is used to .</li></ol><p>这里面最复杂的感觉是怎么处理链接关系，如果仅仅说代码嵌入，从 CUDA 的流程来看，在 cudafe1.cpp include stub.c 生成 .o 这一步中 host code 中就已经包含了 device code，如果仅仅说 embed 的话，这显然就已经完成了，但是为何 CUDA 还进行后续那么多步骤，因为这一步生成的 .o 显然是无法运行的，device code 都还只是一个 extern signal，还需要同 CUDA runtime library 进行链接，这个过程该怎么进行比较难想。</p><p>但是链接的难点是，目前程序中的 device code 二进制的 fatbinary，同 CUDA runtime library 之间的链接该如何完成</p><h2 id=目标分析>目标分析</h2><p>分析的核心目的是：学习现有异构程序编译链接生成 host end 单可执行文件的方法，将流程迁移到图计算机上实现异构编译。现有的场景基础是，已经生成了 device ELF object，后续需要由此生成带额外信息的结构化数据，然后嵌入到 host object 中，经过链接器链接 runtime library，生成 host end 可执行文件。</p><p>因为目前没有其他 device，只能拿 gpu 的进行。关键在于分析打包的格式，打包后的数据嵌入流程，以及在这种嵌入方式下，链接工作和嵌入后文件结构之间的关联。</p><p>cubin 和 fatbinary 的区别在于，前者是打包后生成的普通二进制文件，虽然打包遵循了一定格式，但这种格式通过 <code>file</code> 是无法获知的，显示的仅仅是 data；后者也是二进制文件，但是其遵循的是 ELF 文件格式。
+CUDA的编译流程是：</p><ol><li>.cu -> .s (clang 生成 ptx)</li></ol><div class=highlight id=id-1><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>clang -cc1 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -triple nvptx64-nvidia-cuda <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -aux-triple x86_64-unknown-linux-gnu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -S <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -dumpdir main- <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -disable-free <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -clear-ast-before-backend <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -main-file-name main.cu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mrelocation-model static <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mframe-pointer<span class=o>=</span>all <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fno-rounding-math <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -no-integrated-as <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -aux-target-cpu x86-64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fcuda-is-device <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mllvm <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -enable-memcpyopt-without-libcalls <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fcuda-allow-variadic-functions <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mlink-builtin-bitcode /home/jiaheng/dev/cuda-12.1/nvvm/libdevice/libdevice.10.bc <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -target-sdk-version<span class=o>=</span>12.1 -target-cpu sm_52 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -target-feature +ptx81 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -debugger-tuning<span class=o>=</span>gdb <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fno-dwarf-directory-asm <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fdebug-compilation-dir<span class=o>=</span>/home/jiaheng/gaohy/clang-offload-packager-test <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -v <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -resource-dir /home/jiaheng/gaohy/llvm-install/lib/clang/19 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /home/jiaheng/gaohy/llvm-install/lib/clang/19/include/cuda_wrappers <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -include __clang_cuda_runtime_wrapper.h <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>
+</span></span><span class=line><span class=cl>      -c-isystem /home/jiaheng/gaohy/opencv-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -c-isystem /home/jiaheng/gaohy/llvm-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -c-isystem . <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cxx-isystem /home/jiaheng/gaohy/opencv-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cxx-isystem /home/jiaheng/gaohy/llvm-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cxx-isystem . <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>
+</span></span><span class=line><span class=cl>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/x86_64-linux-gnu/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/backward <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/x86_64-linux-gnu/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/backward <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /home/jiaheng/gaohy/llvm-install/lib/clang/19/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/local/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /usr/include/x86_64-linux-gnu -internal-externc-isystem /include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /usr/include -internal-isystem /home/jiaheng/dev/cuda-12.1/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /home/jiaheng/gaohy/llvm-install/lib/clang/19/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/local/include -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /usr/include/x86_64-linux-gnu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /include -internal-externc-isystem /usr/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>
+</span></span><span class=line><span class=cl>      -fdeprecated-macro <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fno-autolink <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -ferror-limit <span class=m>19</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fgnuc-version<span class=o>=</span>4.2.1 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fskip-odr-check-in-gmf <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fcxx-exceptions <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fexceptions <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cuid<span class=o>=</span>2ca25e66da768d70 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -D__GCC_HAVE_DWARF2_CFI_ASM<span class=o>=</span><span class=m>1</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -o 1-main-sm_52-21aa72.s <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -x cuda <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      main.cu</span></span></code></pre></td></tr></table></div></div><ol start=2><li>.s -> .cubin (ptxas汇编器由 ptx 生成 ELF 格式的 cubin)</li></ol><div class=highlight id=id-2><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ptxas -m64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -O0 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -v <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      --gpu-name sm_52 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      --output-file 2-main-sm_52-02c6a6.cubin <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      1-main-sm_52-21aa72.s</span></span></code></pre></td></tr></table></div></div><ol start=3><li>.s + .cubin -> .fatbin (fatbinary 将 ptx 和 对应的 ELF 打包为 fatbinary)</li></ol><div class=highlight id=id-3><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>fatbinary -64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>          --create 3-main-4a26e4.fatbin <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>          --image<span class=o>=</span><span class=nv>profile</span><span class=o>=</span>sm_52,file<span class=o>=</span>2-main-sm_52-02c6a6.cubin <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>          --image<span class=o>=</span><span class=nv>profile</span><span class=o>=</span>compute_52,file<span class=o>=</span>1-main-sm_52-21aa72.s</span></span></code></pre></td></tr></table></div></div><ol start=4><li>.fatbin -> .o (clang 将 fatbinary 嵌入 host object，形成 ELF 格式的 .o)</li></ol><div class=highlight id=id-4><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span><span class=lnt>63
+</span><span class=lnt>64
+</span><span class=lnt>65
+</span><span class=lnt>66
+</span><span class=lnt>67
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>clang -cc1 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -triple x86_64-unknown-linux-gnu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -target-sdk-version<span class=o>=</span>12.1 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fcuda-allow-variadic-functions <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -aux-triple nvptx64-nvidia-cuda <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -emit-obj <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mrelax-all <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -dumpdir main- <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -disable-free <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -clear-ast-before-backend <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -main-file-name main.cu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mrelocation-model pic <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -pic-level <span class=m>2</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -pic-is-pie <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mframe-pointer<span class=o>=</span>all <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fmath-errno <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -ffp-contract<span class=o>=</span>on <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fno-rounding-math <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -mconstructor-aliases <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -funwind-tables<span class=o>=</span><span class=m>2</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -target-cpu x86-64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -tune-cpu generic <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -debugger-tuning<span class=o>=</span>gdb <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fdebug-compilation-dir<span class=o>=</span>/home/jiaheng/gaohy/clang-offload-packager-test <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -v <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fcoverage-compilation-dir<span class=o>=</span>/home/jiaheng/gaohy/clang-offload-packager-test <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -resource-dir /home/jiaheng/gaohy/llvm-install/lib/clang/19 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /home/jiaheng/gaohy/llvm-install/lib/clang/19/include/cuda_wrappers <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -include __clang_cuda_runtime_wrapper.h <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -c-isystem /home/jiaheng/gaohy/opencv-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -c-isystem /home/jiaheng/gaohy/llvm-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -c-isystem . <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cxx-isystem /home/jiaheng/gaohy/opencv-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cxx-isystem /home/jiaheng/gaohy/llvm-install/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cxx-isystem . <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/x86_64-linux-gnu/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/backward <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/x86_64-linux-gnu/c++/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../include/c++/9/backward <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /home/jiaheng/gaohy/llvm-install/lib/clang/19/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/local/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /usr/include/x86_64-linux-gnu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /usr/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /home/jiaheng/gaohy/llvm-install/lib/clang/19/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/local/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /usr/lib/gcc/x86_64-linux-gnu/9/../../../../x86_64-linux-gnu/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /usr/include/x86_64-linux-gnu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-externc-isystem /usr/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -internal-isystem /home/jiaheng/dev/cuda-12.1/include <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fdeprecated-macro <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -ferror-limit <span class=m>19</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fgnuc-version<span class=o>=</span>4.2.1 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fskip-odr-check-in-gmf <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fcxx-exceptions <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fexceptions <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -fcuda-include-gpubinary 3-main-4a26e4.fatbin <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -cuid<span class=o>=</span>2ca25e66da768d70 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -faddrsig <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -D__GCC_HAVE_DWARF2_CFI_ASM<span class=o>=</span><span class=m>1</span> <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -o 4-main-006de2.o <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      -x cuda <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>      main.cu</span></span></code></pre></td></tr></table></div></div><ol start=5><li>.o -> executable file (ld 对 .o 完成链接工作)</li></ol><div class=highlight id=id-5><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ld -z relro <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  --hash-style<span class=o>=</span>gnu <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  --eh-frame-hdr <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -m elf_x86_64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -pie <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -dynamic-linker /lib64/ld-linux-x86-64.so.2 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -o 5-main /lib/x86_64-linux-gnu/Scrt1.o /lib/x86_64-linux-gnu/crti.o /usr/lib/gcc/x86_64-linux-gnu/9/crtbeginS.o <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -L/home/jiaheng/dev/cuda-12.1/lib64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -L/usr/lib/gcc/x86_64-linux-gnu/9 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -L/usr/lib/gcc/x86_64-linux-gnu/9/../../../../lib64 -L/lib/x86_64-linux-gnu -L/lib/../lib64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -L/usr/lib/x86_64-linux-gnu -L/usr/lib/../lib64 <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -L/lib <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -L/usr/lib <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  4-main-006de2.o <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lcudart <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lstdc++ <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lm <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lgcc_s <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lgcc <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lc <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lgcc_s <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  -lgcc <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  /usr/lib/gcc/x86_64-linux-gnu/9/crtendS.o <span class=se>\
+</span></span></span><span class=line><span class=cl><span class=se></span>  /lib/x86_64-linux-gnu/crtn.o</span></span></code></pre></td></tr></table></div></div><p>不知道是不是所有场景都可以简单通过 ld 实现链接工作，在图计算场景下是否还需要自行实现链接器，还是说链接规则都是通用的，只要其他步骤中的输出结构遵循 ELF 格式就可以完成链接？</p><h2 id=packager-打包的意义何在>packager 打包的意义何在</h2><p>简单来看，<code>clang-offload-packager</code> 或者 <code>fatbinary</code> 就是在原有的 ELF 数据基础上添加了部分额外信息然后封装为了特定的结构化数据，然后将此数据装填到 host object 中。</p><p>至于为什么一定要经过这样一个打包的步骤，按照目前理解，可能目的是为 device object 添加额外信息后，后续的处理程序便于定位 device object 中不同部分的数据（正确的理解视角应当是 device object 中包含多种类型的数据，直接装载多种 device object 的 ELF 数据到 host object 中后续过程无法定位要所需要的数据，所以为不同数据添加上相关信息再嵌入到 host object 中）。</p><h2 id=对于现有工具的理解>对于现有工具的理解</h2><p>无论有哪些工具，所需要做的核心工作就三点：</p><ol><li>生成类 fatbinary（关于 fatbinary 这个词的理解似乎不同场景有所不同，有些认为是 device code 相关内容的结合结果是 fatbinary，有些认为是 device object 嵌入 host object 之后的结果是 fatbinary，但是 wikipedia 给出的 fatbinary 这个概念本身对应后者，这里暂时不纠结用词，理解这个意思即可）</li><li>代码嵌入</li><li>链接</li></ol><p>Prerequisite explanation: the following content references to the <a href=https://reviews.llvm.org/D125165 target=_blank rel="external nofollow noopener noreferrer">[Clang] Introduce clang-offload-packager tool to bundle device files</a></p><p>现在的工具情况是：</p><ol><li><p>clang-offload-packager
+<code>clang-offload-packager</code> 实现的作用类似与 CUDA 的 fatbinary 工具类似，it creates a binary that can then be embedded into the host.</p></li><li><p>clang-offload-bundler</p></li></ol><p>The <code>clang-offload-bundler</code> is to embed device files into the host. Now the tool chain does this directly in clang by creating a global string in the LLVM-IR of the host rather than calling this tool. But HIP toolchain still uses the <code>clang-offload-bundler</code>.</p><p><code>clang-offload-bundler</code> 似乎还有一些特殊的用途:</p><blockquote><p>There is still functionality that the clang-offload-bundler provides that I don&rsquo;t intend to replace, namely the bundling and un-bundling of text files.</p></blockquote><p><code>clang-offload-bundler</code> 似乎还有一个问题:</p><blockquote><p>I don&rsquo;t think we want to stick with the clang-offload-bundler approach, because the files that the &ndash;clang-offload-bundler spat out weren&rsquo;t valid input to the rest of LLVM, e.g. clang -S -emit-llvm &ndash;offload-arch=gfx908 foo.hip -o - | opt would break.</p></blockquote><p><code>clang-offload-bundler</code> 的作用似乎比较混乱，按照目前理解它应当是既具备生成类 fatbinary 的作用，同时也具备代码嵌入的作用（这个从 <code>--help</code> 信息中无法验证，还需要实际测试一下）。LLVM-project 可能是为了实现功能细化，单独创造了一个<code>clang-offload-packager</code>工具用于生成类 fatbinary，同时因为上述提到的 bundler 作为一个独立工具所具备的问题，因此把代码嵌入的工具集成到 clang 中来实现。当然这只是预期的效果，如以下内容所示目前有一个问题就是在 HIP toolchain 中，仍然使用着 <code>clang-offload-bundler</code> 生成类 fatbinary 的功能，如果想要实现 bundler 和 HIP toolchain 之间的解耦，需要修改 HIP runtime，这并不是段时间内能够解决的问题，所以这些工具目前仍然保留了下来。</p><blockquote><p>For HIP toolchain, clang-offload-bundler is also used to generate fatbinary files which can be loaded dynamically at run time through module API&rsquo;s. So far I don&rsquo;t think this can be replaced by clang-offload-packager in a short time, since it needs HIP runtime change.</p></blockquote><p>所以按照我的理解，packager 可以看为 bundler 的一个子集，最终期望实现的工具结合方式应该就是 <code>clang-offload-packager</code> + <code>clang</code>. 前者负责 device object 打包，后者负责将 device object 嵌入 host object.</p><ol start=3><li>clang-linker-wrapper (由clang-offload-wrapper合并而来)</li></ol><h2 id=clang-offload-packager>clang-offload-packager</h2><p>源代码位于 <code>llvm-project/clang/tools/clang-offload-packager/ClangOffloadPackager.cpp</code></p><p>源代码中涉及到一个数据类型 <a href=https://llvm.org/doxygen/classllvm_1_1object_1_1OffloadBinary.html target=_blank rel="external nofollow noopener noreferrer">OffloadBinary</a></p><p>文档中给出这样一句话：</p><blockquote><p>We use this format to embed the offloading image into the host executable so it can be extracted and used by the linker.</p></blockquote><p>也就是说假设我们希望向 clang 中添加对于其他数据的支持，核心依据只是要和 linker 的工作对应即可，让 linker 能够正确解析出来数据从而完成链接工作。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="更新于 2024-06-11 11:51:12">更新于 2024-06-11&nbsp;</span></div></div><div class=post-info-line><div class=post-info-md><span><a href=https://github.com/gaohongy/blog/edit/main/content/posts/Compile-Link/Heterogeneous-Compilation.md title=编辑此页 target=_blank rel="external nofollow noopener noreferrer" class=link-to-edit>编辑此页</a></span></div><div class=post-info-share><span></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/blog/>主页</a></span></section></div><div class=post-nav><a href=/blog/posts/hpc/several-methods-for-obtaining-time/ class=post-nav-item rel=prev title="Several Methods For Obtaining Time"><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>Several Methods For Obtaining Time</a></div></div></article></main></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class=variant-numeric>0%</span></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/blog/lib/lightgallery/css/lightgallery-bundle.min.css><link rel=stylesheet href=/blog/lib/katex/katex.min.css><link rel=stylesheet href=/blog/lib/cookieconsent/cookieconsent.min.css><script src=/blog/lib/autocomplete/autocomplete.min.js defer></script><script src=/blog/lib/fuse/fuse.min.js defer></script><script src=/blog/lib/twemoji/twemoji.min.js defer></script><script src=/blog/lib/lightgallery/lightgallery.min.js defer></script><script src=/blog/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js defer></script><script src=/blog/lib/lightgallery/plugins/zoom/lg-zoom.min.js defer></script><script src=/blog/lib/katex/katex.min.js defer></script><script src=/blog/lib/katex/auto-render.min.js defer></script><script src=/blog/lib/katex/copy-tex.min.js defer></script><script src=/blog/lib/katex/mhchem.min.js defer></script><script src=/blog/lib/cookieconsent/cookieconsent.min.js defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:10},comment:{enable:!1},cookieconsent:{content:{dismiss:"同意",link:"了解更多",message:"本网站使用 Cookies 来改善您的浏览体验。"},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},lightgallery:!0,math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{distance:100,findAllMatches:!1,fuseIndexURL:"/blog/index.json",highlightTag:"em",ignoreFieldNorm:!1,ignoreLocation:!1,isCaseSensitive:!1,location:0,maxResultLength:20,minMatchCharLength:2,noResultsFound:"没有找到结果",snippetLength:50,threshold:.3,type:"fuse",useExtendedSearch:!1},twemoji:!0}</script><script src=/blog/js/theme.min.js defer></script></body></html>
