@@ -1,3 +1,19 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Math - Category -</title><link>https://gaohongy.github.io/blog/categories/math/</link><description>Math - Category |</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 23 Sep 2021 20:50:00 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/math/" rel="self" type="application/rss+xml"/><item><title>Latex Grammar Summary</title><link>https://gaohongy.github.io/blog/posts/math/latex-grammar-summary/</link><pubDate>Thu, 23 Sep 2021 20:50:00 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/math/latex-grammar-summary/</guid><description><![CDATA[<h2 id="点" class="heading-element"><span>点</span>
   <a href="#%e7%82%b9" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></pa]]></description></item></channel></rss>
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ol>
+<li>单个点 ($\cdot$) ： <code>$\cdot$</code></li>
+<li>横向多个点 ($\cdots$) : <code>$\cdots$</code></li>
+<li>竖向多个点 ($\vdots$) : <code>$\vdots$</code></li>
+<li>斜向多个点 ($\ddots$) : <code>$\ddots$</code></li>
+</ol>
+<h2 id="数学字体" class="heading-element"><span>数学字体</span>
+  <a href="#%e6%95%b0%e5%ad%a6%e5%ad%97%e4%bd%93" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><blockquote>
+<p>math<strong>bb</strong>：blackboard bold（黑板粗体），用于期望
+math<strong>bf</strong>：math boldface，用于矩阵、向量
+math<strong>rm</strong>：math roman，罗马体（整体），用于微分符号d、二项式系数C、等号上的def、自然常数e、虚数单位i
+math<strong>cal</strong>：math calligraphy（美术字），用于集合，分布</p>]]></description></item></channel></rss>
