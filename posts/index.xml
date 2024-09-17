@@ -1,4 +1,44 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts -</title><link>https://gaohongy.github.io/blog/posts/</link><description>All Posts |</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Wed, 11 Sep 2024 14:41:40 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/posts/" rel="self" type="application/rss+xml"/><item><title>Runtime</title><link>https://gaohongy.github.io/blog/posts/graph-computing/runtime/</link><pubDate>Wed, 11 Sep 2024 14:41:40 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/graph-computing/runtime/</guid><description><![CDATA[<p>在主板上增加 PLX 芯片以提供更多的 PCIe 通道</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>All Posts -</title><link>https://gaohongy.github.io/blog/posts/</link><description>All Posts |</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Sep 2024 17:10:35 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/posts/" rel="self" type="application/rss+xml"/><item><title>Terminal</title><link>https://gaohongy.github.io/blog/posts/linux/terminal/</link><pubDate>Sat, 14 Sep 2024 17:10:35 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/terminal/</guid><description><![CDATA[<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">特性</th>
+          <th style="text-align: left">真实的虚拟终端 (VT)</th>
+          <th style="text-align: left">伪终端 (PTS)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">硬件依赖</td>
+          <td style="text-align: left">直接与物理硬件（显示器、键盘）交互</td>
+          <td style="text-align: left">软件仿真，不直接与物理硬件交互</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">设备文件</td>
+          <td style="text-align: left">/dev/tty1, /dev/tty2 等</td>
+          <td style="text-align: left">/dev/pts/0, /dev/pts/1 等</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">使用场景</td>
+          <td style="text-align: left">物理机的控制台登录，无需图形界面</td>
+          <td style="text-align: left">图形终端仿真器、远程登录（如 SSH）会话</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">固定数量</td>
+          <td style="text-align: left">通常有 6 个或更多虚拟终端</td>
+          <td style="text-align: left">动态创建，按需分配</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">终端切换方式</td>
+          <td style="text-align: left">Ctrl + Alt + F1 到 Ctrl + Alt + F6</td>
+          <td style="text-align: left">软件仿真器或通过网络远程连接，如 ssh 登录</td>
+      </tr>
+  </tbody>
+</table>
+<p>通过 <code>/proc/&lt;PID&gt;</code> 可以查看进程的相关信息，一些命令的实现也是基于这个文件</p>]]></description></item><item><title>Linux Device Drivers</title><link>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</link><pubDate>Sat, 14 Sep 2024 14:57:57 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</guid><description><![CDATA[<h2 id="io-设备" class="heading-element"><span>IO 设备</span>
+  <a href="#io-%e8%ae%be%e5%a4%87" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>IO 设备的基本形态就是一些寄存器(以及一些 protocol，说明在寄存器接收到某些值时要做出何种处理） + 控制器，从而能够与 CPU 交互数据，通过 mmap 的方式映射到内存空间中，CPU 可以对这些寄存器的值进行修改</p>]]></description></item><item><title>Runtime</title><link>https://gaohongy.github.io/blog/posts/graph-computing/runtime/</link><pubDate>Wed, 11 Sep 2024 14:41:40 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/graph-computing/runtime/</guid><description><![CDATA[<p>在主板上增加 PLX 芯片以提供更多的 PCIe 通道</p>
 <p>PCIe 设备插到 PCIe 插槽需要由 PLX 芯片提供支持</p>
 <p>一个PCIe插槽在物理层面上确实只能插入一个设备。例如，你只能插入一张显卡或一块SSD到一个PCIe插槽中。但是通过PLX芯片等交换设备，可以让多个PCIe设备通过该插槽共享带宽并同时被RC识别和使用(PLX芯片实际上是在分配带宽，这并没有改变某一时刻 RC 只会和某个插槽上的一台设备进行通信的事实，对于资源有限的PCIe插槽环境比较有意义）</p>]]></description></item><item><title>Function Simulator</title><link>https://gaohongy.github.io/blog/posts/graph-computing/function-simulator/</link><pubDate>Fri, 23 Aug 2024 15:33:50 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/graph-computing/function-simulator/</guid><description><![CDATA[<p>The key class of function simulator is <code>TopUnit</code>. We can use <code>TopUnit.CycleStep()</code> to begin the execution of simulator.</p>
 <p>In <code>CycleStep()</code>, we will call the <code>Frontend()</code> and <code>Backend()</code>, the former is used to update the many types of counters and the latter is used to execute instructions sequence.</p>
@@ -32,47 +72,4 @@
   <a href="#%e8%af%b4%e6%98%8e" class="heading-mark">
     <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
   </a>
-</h2><p>SIMD Extension 的各种函数中参数的顺序以及各种函数的实现机制都是遵循着机器在实际存储时采用的小端序，注意在和数组混用时可能会产生一定思维上的混乱。</p>]]></description></item><item><title>OpenMP</title><link>https://gaohongy.github.io/blog/posts/hpc/openmp/</link><pubDate>Tue, 30 Apr 2024 20:49:00 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/hpc/openmp/</guid><description><![CDATA[<h2 id="check-the-openmp-version" class="heading-element"><span>Check the OpenMP version</span>
-  <a href="#check-the-openmp-version" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl"><span class="cp">#ifdef _OPENMP
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;OpenMP version: %d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">_OPENMP</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="cp">#else
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;OpenMP is not supported.</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl"><span class="cp">#endif
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p>If system supports the OpenMP, you will receive similar output results</p>]]></description></item><item><title>Matrix Multiplication</title><link>https://gaohongy.github.io/blog/posts/hpc/matrix-multiplication/</link><pubDate>Sun, 28 Apr 2024 10:00:06 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/hpc/matrix-multiplication/</guid><description><![CDATA[<ol>
-<li>GEMM（General Matrix Multiplication）-通用矩阵乘</li>
-<li>BLAS (Basic Linear Algebra Subprograms) - 基本线性代数子程序</li>
-<li>SGEMM (Single precision General Matrix Multiply) - 单精度矩阵乘法</li>
-<li>DGEMM (Double precision General Matrix Multiply) - 双精度矩阵乘法</li>
-<li>CGEMM (Complex single precision General Matrix Multiply) - 单精度复数矩阵乘法</li>
-<li>ZGEMM (Complex double precision General Matrix Multiply) - 双精度复数矩阵乘法</li>
-</ol>
-<h2 id="matrix--vector" class="heading-element"><span>Matrix &amp; Vector</span>
-  <a href="#matrix--vector" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><ul>
-<li>
-<p>SPMV (Sparse Matrix-Vector multiplication)</p>]]></description></item></channel></rss>
+</h2><p>SIMD Extension 的各种函数中参数的顺序以及各种函数的实现机制都是遵循着机器在实际存储时采用的小端序，注意在和数组混用时可能会产生一定思维上的混乱。</p>]]></description></item></channel></rss>

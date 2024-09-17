@@ -1,4 +1,44 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Linux - Category -</title><link>https://gaohongy.github.io/blog/categories/linux/</link><description>Linux - Category |</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 08 Apr 2024 17:45:39 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/linux/" rel="self" type="application/rss+xml"/><item><title>Principle of software version control in Linux</title><link>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</link><pubDate>Mon, 08 Apr 2024 17:45:39 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</guid><description><![CDATA[<p>In Linux, sometimes we will face to a software which has many editions, such as gcc and java. In different scenes, maybe we need different editions of the same software, so we must save all of them. But how can we switch them?</p>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Linux - Category -</title><link>https://gaohongy.github.io/blog/categories/linux/</link><description>Linux - Category |</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Sep 2024 17:10:35 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/linux/" rel="self" type="application/rss+xml"/><item><title>Terminal</title><link>https://gaohongy.github.io/blog/posts/linux/terminal/</link><pubDate>Sat, 14 Sep 2024 17:10:35 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/terminal/</guid><description><![CDATA[<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">特性</th>
+          <th style="text-align: left">真实的虚拟终端 (VT)</th>
+          <th style="text-align: left">伪终端 (PTS)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">硬件依赖</td>
+          <td style="text-align: left">直接与物理硬件（显示器、键盘）交互</td>
+          <td style="text-align: left">软件仿真，不直接与物理硬件交互</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">设备文件</td>
+          <td style="text-align: left">/dev/tty1, /dev/tty2 等</td>
+          <td style="text-align: left">/dev/pts/0, /dev/pts/1 等</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">使用场景</td>
+          <td style="text-align: left">物理机的控制台登录，无需图形界面</td>
+          <td style="text-align: left">图形终端仿真器、远程登录（如 SSH）会话</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">固定数量</td>
+          <td style="text-align: left">通常有 6 个或更多虚拟终端</td>
+          <td style="text-align: left">动态创建，按需分配</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">终端切换方式</td>
+          <td style="text-align: left">Ctrl + Alt + F1 到 Ctrl + Alt + F6</td>
+          <td style="text-align: left">软件仿真器或通过网络远程连接，如 ssh 登录</td>
+      </tr>
+  </tbody>
+</table>
+<p>通过 <code>/proc/&lt;PID&gt;</code> 可以查看进程的相关信息，一些命令的实现也是基于这个文件</p>]]></description></item><item><title>Linux Device Drivers</title><link>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</link><pubDate>Sat, 14 Sep 2024 14:57:57 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</guid><description><![CDATA[<h2 id="io-设备" class="heading-element"><span>IO 设备</span>
+  <a href="#io-%e8%ae%be%e5%a4%87" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>IO 设备的基本形态就是一些寄存器(以及一些 protocol，说明在寄存器接收到某些值时要做出何种处理） + 控制器，从而能够与 CPU 交互数据，通过 mmap 的方式映射到内存空间中，CPU 可以对这些寄存器的值进行修改</p>]]></description></item><item><title>Principle of software version control in Linux</title><link>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</link><pubDate>Mon, 08 Apr 2024 17:45:39 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</guid><description><![CDATA[<p>In Linux, sometimes we will face to a software which has many editions, such as gcc and java. In different scenes, maybe we need different editions of the same software, so we must save all of them. But how can we switch them?</p>
 <p>Linux uses the <strong>symlink</strong> to allow user easily switching between programs.</p>
 <p>Then, we use the gcc as an example to illustrate the principle of software version control.</p>]]></description></item><item><title>Variables in Linux</title><link>https://gaohongy.github.io/blog/posts/linux/variables-in-linux/</link><pubDate>Fri, 24 Nov 2023 10:32:30 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/variables-in-linux/</guid><description><![CDATA[<h2 id="types-of-variables" class="heading-element"><span>Types of variables</span>
   <a href="#types-of-variables" class="heading-mark">
