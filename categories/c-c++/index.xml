@@ -22,7 +22,6 @@
 </h2><p>对于类类型,编译器只能自动执行一步隐式类型转换.例如从字符串字面值转换为string类型,但是无法继续将string隐式转换为其他类型</p>]]></description></item><item><title>Comparison of C++ object initialization method</title><link>https://gaohongy.github.io/blog/posts/c-c++/comparison-of-c++-object-initialization-method/</link><pubDate>Sun, 18 Jun 2023 17:18:40 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/c-c++/comparison-of-c++-object-initialization-method/</guid><description><![CDATA[<p>在了解创建对象的方式之前，首先了解一下<strong>初始化</strong>和<strong>赋值</strong>两个操作，</p>
 <ol>
 <li>初始化是创建变量时赋予其一个初始值，即初始化之前并不存在变量</li>
-<li>赋值是把对象的当前值擦除，用新值代替旧值，即赋值之前存在变量
-让人困惑的是<code>=</code>既可以用于初始化，也可以用于赋值，不要认为初始化和赋值是相同的操作</li>
+<li>赋值是把对象的当前值擦除，用新值代替旧值，即赋值之前存在变量</li>
 </ol>
-<p>关于默认值（默认初始化），值和变量类型和位置决定</p>]]></description></item></channel></rss>
+<p>让人困惑的是<code>=</code>既可以用于初始化，也可以用于赋值，不要认为初始化和赋值是相同的操作</p>]]></description></item></channel></rss>
