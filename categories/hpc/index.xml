@@ -47,7 +47,7 @@
   </a>
 </h2><ul>
 <li>
-<p>SPMV (Sparse Matrix-Vector multiplication)</p>]]></description></item><item><title>Memory Alignment</title><link>https://gaohongy.github.io/blog/posts/hpc/memory-alignment/</link><pubDate>Sat, 23 Mar 2024 21:08:23 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/hpc/memory-alignment/</guid><description><![CDATA[<p>内存的编址单位是字节</p>
+<p>GeMV</p>]]></description></item><item><title>Memory Alignment</title><link>https://gaohongy.github.io/blog/posts/hpc/memory-alignment/</link><pubDate>Sat, 23 Mar 2024 21:08:23 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/hpc/memory-alignment/</guid><description><![CDATA[<p>内存的编址单位是字节</p>
 <p>但是内存 IO 的单位是字长，此数值应当和 数据通路 的宽度有关，当数据通路为 32 位时，那么一次内存 IO 就会读取4B数据<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <blockquote>
 <p>对于上述内容，存在两点需要说明：</p>]]></description></item><item><title>Parallel Computing</title><link>https://gaohongy.github.io/blog/posts/hpc/parallel-computing/</link><pubDate>Mon, 29 Jan 2024 23:41:59 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/hpc/parallel-computing/</guid><description><![CDATA[<h2 id="law" class="heading-element"><span>Law</span>
