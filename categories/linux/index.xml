@@ -1,36 +1,36 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Linux - Category -</title><link>https://gaohongy.github.io/blog/categories/linux/</link><description>Linux - Category |</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 14 Sep 2024 17:10:35 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/linux/" rel="self" type="application/rss+xml"/><item><title>Terminal</title><link>https://gaohongy.github.io/blog/posts/linux/terminal/</link><pubDate>Sat, 14 Sep 2024 17:10:35 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/terminal/</guid><description><![CDATA[<table>
   <thead>
       <tr>
-          <th style="text-align: left">特性</th>
-          <th style="text-align: left">真实的虚拟终端 (VT)</th>
-          <th style="text-align: left">伪终端 (PTS)</th>
+          <th>特性</th>
+          <th>真实的虚拟终端 (VT)</th>
+          <th>伪终端 (PTS)</th>
       </tr>
   </thead>
   <tbody>
       <tr>
-          <td style="text-align: left">硬件依赖</td>
-          <td style="text-align: left">直接与物理硬件（显示器、键盘）交互</td>
-          <td style="text-align: left">软件仿真，不直接与物理硬件交互</td>
+          <td>硬件依赖</td>
+          <td>直接与物理硬件（显示器、键盘）交互</td>
+          <td>软件仿真，不直接与物理硬件交互</td>
       </tr>
       <tr>
-          <td style="text-align: left">设备文件</td>
-          <td style="text-align: left">/dev/tty1, /dev/tty2 等</td>
-          <td style="text-align: left">/dev/pts/0, /dev/pts/1 等</td>
+          <td>设备文件</td>
+          <td>/dev/tty1, /dev/tty2 等</td>
+          <td>/dev/pts/0, /dev/pts/1 等</td>
       </tr>
       <tr>
-          <td style="text-align: left">使用场景</td>
-          <td style="text-align: left">物理机的控制台登录，无需图形界面</td>
-          <td style="text-align: left">图形终端仿真器、远程登录（如 SSH）会话</td>
+          <td>使用场景</td>
+          <td>物理机的控制台登录，无需图形界面</td>
+          <td>图形终端仿真器、远程登录（如 SSH）会话</td>
       </tr>
       <tr>
-          <td style="text-align: left">固定数量</td>
-          <td style="text-align: left">通常有 6 个或更多虚拟终端</td>
-          <td style="text-align: left">动态创建，按需分配</td>
+          <td>固定数量</td>
+          <td>通常有 6 个或更多虚拟终端</td>
+          <td>动态创建，按需分配</td>
       </tr>
       <tr>
-          <td style="text-align: left">终端切换方式</td>
-          <td style="text-align: left">Ctrl + Alt + F1 到 Ctrl + Alt + F6</td>
-          <td style="text-align: left">软件仿真器或通过网络远程连接，如 ssh 登录</td>
+          <td>终端切换方式</td>
+          <td>Ctrl + Alt + F1 到 Ctrl + Alt + F6</td>
+          <td>软件仿真器或通过网络远程连接，如 ssh 登录</td>
       </tr>
   </tbody>
 </table>
