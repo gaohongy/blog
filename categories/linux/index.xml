@@ -1,137 +1,137 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title>Linux - Category -</title><link>https://gaohongy.github.io/blog/categories/linux/</link><description>Linux - Category |</description><generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 23 Nov 2024 22:36:58 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/linux/" rel="self" type="application/rss+xml"/><item><title>SSH Local and Remote Port Forwarding</title><link>https://gaohongy.github.io/blog/posts/linux/ssh-local-and-remote-port-forwarding/</link><pubDate>Sat, 23 Nov 2024 22:36:58 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/ssh-local-and-remote-port-forwarding/</guid><description><![CDATA[<p><a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=large" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=small" data-sub-html="<h2>https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png</h2>"><img loading="lazy" src="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png" alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png" srcset="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=small, https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=medium 1.5x, https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=large 2x" data-title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png" style="background: url(/blog/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/></a> <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
-<h2 id="understanding-of-forwarding" class="heading-element"><span>Understanding of forwarding</span>
-  <a href="#understanding-of-forwarding" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><ol>
-<li>转发的是什么？</li>
-</ol>
-<p>答：port forwarding 其中的 port 就已经指明了这一点，传输层的 port 标定了具体的 application，所以转发的实际是对于这个 application 的请求。</p>]]></description></item><item><title>Terminal</title><link>https://gaohongy.github.io/blog/posts/linux/terminal/</link><pubDate>Sat, 14 Sep 2024 17:10:35 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/terminal/</guid><description><![CDATA[<table>
-  <thead>
-      <tr>
-          <th>特性</th>
-          <th>真实的虚拟终端 (VT)</th>
-          <th>伪终端 (PTS)</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>硬件依赖</td>
-          <td>直接与物理硬件（显示器、键盘）交互</td>
-          <td>软件仿真，不直接与物理硬件交互</td>
-      </tr>
-      <tr>
-          <td>设备文件</td>
-          <td>/dev/tty1, /dev/tty2 等</td>
-          <td>/dev/pts/0, /dev/pts/1 等</td>
-      </tr>
-      <tr>
-          <td>使用场景</td>
-          <td>物理机的控制台登录，无需图形界面</td>
-          <td>图形终端仿真器、远程登录（如 SSH）会话</td>
-      </tr>
-      <tr>
-          <td>固定数量</td>
-          <td>通常有 6 个或更多虚拟终端</td>
-          <td>动态创建，按需分配</td>
-      </tr>
-      <tr>
-          <td>终端切换方式</td>
-          <td>Ctrl + Alt + F1 到 Ctrl + Alt + F6</td>
-          <td>软件仿真器或通过网络远程连接，如 ssh 登录</td>
-      </tr>
-  </tbody>
-</table>
-<p>通过 <code>/proc/&lt;PID&gt;</code> 可以查看进程的相关信息，一些命令的实现也是基于这个文件</p>]]></description></item><item><title>Linux Device Drivers</title><link>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</link><pubDate>Sat, 14 Sep 2024 14:57:57 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</guid><description><![CDATA[<h2 id="io-设备" class="heading-element"><span>IO 设备</span>
-  <a href="#io-%e8%ae%be%e5%a4%87" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><p>IO 设备的基本形态就是一些寄存器(以及一些 protocol，说明在寄存器接收到某些值时要做出何种处理） + 控制器，从而能够与 CPU 交互数据，通过 mmap 的方式映射到内存空间中，CPU 可以对这些寄存器的值进行修改</p>]]></description></item><item><title>Principle of software version control in Linux</title><link>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</link><pubDate>Mon, 08 Apr 2024 17:45:39 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</guid><description><![CDATA[<p>In Linux, sometimes we will face to a software which has many editions, such as gcc and java. In different scenes, maybe we need different editions of the same software, so we must save all of them. But how can we switch them?</p>
-<p>Linux uses the <strong>symlink</strong> to allow user easily switching between programs.</p>
-<p>Then, we use the gcc as an example to illustrate the principle of software version control.</p>]]></description></item><item><title>Variables in Linux</title><link>https://gaohongy.github.io/blog/posts/linux/variables-in-linux/</link><pubDate>Fri, 24 Nov 2023 10:32:30 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/variables-in-linux/</guid><description><![CDATA[<h2 id="types-of-variables" class="heading-element"><span>Types of variables</span>
-  <a href="#types-of-variables" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><ol>
-<li>Environment/Global Variables</li>
-<li>Shell/Local Variables</li>
-</ol>
-<p>The difference between these two variables is that environment variables can be interviewed by child processes, i.e. the so-called global variables are only shared within the process hierarchy of the current process（进程链）, existing only between the current process and its child processes. Environment variables of other processes and those of the current process are not shared. But Shell variables can only be interviewed by current process.</p>]]></description></item><item><title>Comparison of Shell Script Execution Modes</title><link>https://gaohongy.github.io/blog/posts/linux/comparison-of-shell-script-execution-modes/</link><pubDate>Thu, 27 Jul 2023 18:34:31 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/comparison-of-shell-script-execution-modes/</guid><description><![CDATA[<h2 id="方法概览" class="heading-element"><span>方法概览</span>
-  <a href="#%e6%96%b9%e6%b3%95%e6%a6%82%e8%a7%88" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">% <span class="nb">echo</span> <span class="s2">&#34;echo &#39;Hello Script&#39;&#34;</span> &gt; script.sh</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="方式1直接运行可执行文件" class="heading-element"><span>方式1：直接运行可执行文件</span>
-  <a href="#%e6%96%b9%e5%bc%8f1%e7%9b%b4%e6%8e%a5%e8%bf%90%e8%a1%8c%e5%8f%af%e6%89%a7%e8%a1%8c%e6%96%87%e4%bb%b6" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">% chmod +x script.sh
-</span></span><span class="line"><span class="cl">% ./script.sh
-</span></span><span class="line"><span class="cl">Hello Script</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="方式2使用命令-sh-或-bash" class="heading-element"><span>方式2：使用命令 sh 或 bash</span>
-  <a href="#%e6%96%b9%e5%bc%8f2%e4%bd%bf%e7%94%a8%e5%91%bd%e4%bb%a4-sh-%e6%88%96-bash" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">% sh script.sh
-</span></span><span class="line"><span class="cl">Hello Script
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">% bash script.sh
-</span></span><span class="line"><span class="cl">Hello Script</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="方式3使用命令-source-或-" class="heading-element"><span>方式3：使用命令 source 或 .</span>
-  <a href="#%e6%96%b9%e5%bc%8f3%e4%bd%bf%e7%94%a8%e5%91%bd%e4%bb%a4-source-%e6%88%96-" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">% <span class="nb">source</span> script.sh
-</span></span><span class="line"><span class="cl">Hello Script
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">% . ./script.sh
-</span></span><span class="line"><span class="cl">Hello Script</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="两种分类方法" class="heading-element"><span>两种分类方法</span>
-  <a href="#%e4%b8%a4%e7%a7%8d%e5%88%86%e7%b1%bb%e6%96%b9%e6%b3%95" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><h3 id="是否需要执行权限" class="heading-element"><span>是否需要执行权限</span>
-  <a href="#%e6%98%af%e5%90%a6%e9%9c%80%e8%a6%81%e6%89%a7%e8%a1%8c%e6%9d%83%e9%99%90" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h3><p>只有方式1需要执行权限。这是因为方式1把脚本作为可执行文件，自然需要执行权限，但方式2和方式3都是把脚本作为命令的参数，可以不具备执行权限</p>]]></description></item><item><title>Linux basic knowledge</title><link>https://gaohongy.github.io/blog/posts/linux/linux-basic-knowledge/</link><pubDate>Wed, 18 Jan 2023 23:51:41 +0800</pubDate><author>Author</author><guid>https://gaohongy.github.io/blog/posts/linux/linux-basic-knowledge/</guid><description><![CDATA[<h2 id="terminal-快捷键" class="heading-element"><span>Terminal 快捷键</span>
-  <a href="#terminal-%e5%bf%ab%e6%8d%b7%e9%94%ae" class="heading-mark">
-    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
-  </a>
-</h2><ul>
-<li>
-<p>历史命令：</p>]]></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Linux on</title><link>https://gaohongy.github.io/blog/categories/linux/</link><description>Recent content in Linux on</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 17 Apr 2025 23:40:13 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>SSH Local and Remote Port Forwarding</title><link>https://gaohongy.github.io/blog/posts/linux/ssh-local-and-remote-port-forwarding/</link><pubDate>Sat, 23 Nov 2024 22:36:58 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/ssh-local-and-remote-port-forwarding/</guid><description>&lt;p>&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=large" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=small" data-sub-html="&lt;h2>https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png&lt;/h2>">&lt;img loading="lazy" src="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png" alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png" srcset="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=small, https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=medium 1.5x, https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png?size=large 2x" data-title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202411232237252.png" style="background: url(/blog/images/loading.min.svg) no-repeat center;" onload="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}this.dataset.lazyloaded='';" onerror="this.title=this.dataset.title;for(const i of ['style', 'data-title','onerror','onload']){this.removeAttribute(i);}"/>&lt;/a> &lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>&lt;/p>
+&lt;h2 id="understanding-of-forwarding" class="heading-element">&lt;span>Understanding of forwarding&lt;/span>
+ &lt;a href="#understanding-of-forwarding" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;ol>
+&lt;li>转发的是什么？&lt;/li>
+&lt;/ol>
+&lt;p>答：port forwarding 其中的 port 就已经指明了这一点，传输层的 port 标定了具体的 application，所以转发的实际是对于这个 application 的请求。&lt;/p></description></item><item><title>Terminal</title><link>https://gaohongy.github.io/blog/posts/linux/terminal/</link><pubDate>Sat, 14 Sep 2024 17:10:35 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/terminal/</guid><description>&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>特性&lt;/th>
+ &lt;th>真实的虚拟终端 (VT)&lt;/th>
+ &lt;th>伪终端 (PTS)&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>硬件依赖&lt;/td>
+ &lt;td>直接与物理硬件（显示器、键盘）交互&lt;/td>
+ &lt;td>软件仿真，不直接与物理硬件交互&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>设备文件&lt;/td>
+ &lt;td>/dev/tty1, /dev/tty2 等&lt;/td>
+ &lt;td>/dev/pts/0, /dev/pts/1 等&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>使用场景&lt;/td>
+ &lt;td>物理机的控制台登录，无需图形界面&lt;/td>
+ &lt;td>图形终端仿真器、远程登录（如 SSH）会话&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>固定数量&lt;/td>
+ &lt;td>通常有 6 个或更多虚拟终端&lt;/td>
+ &lt;td>动态创建，按需分配&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>终端切换方式&lt;/td>
+ &lt;td>Ctrl + Alt + F1 到 Ctrl + Alt + F6&lt;/td>
+ &lt;td>软件仿真器或通过网络远程连接，如 ssh 登录&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>通过 &lt;code>/proc/&amp;lt;PID&amp;gt;&lt;/code> 可以查看进程的相关信息，一些命令的实现也是基于这个文件&lt;/p></description></item><item><title>Linux Device Drivers</title><link>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</link><pubDate>Sat, 14 Sep 2024 14:57:57 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/linux-device-drivers/</guid><description>&lt;h2 id="层次结构" class="heading-element">&lt;span>层次结构&lt;/span>
+ &lt;a href="#%e5%b1%82%e6%ac%a1%e7%bb%93%e6%9e%84" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;p>在了解驱动程序的具体内容之前，我们可以首先从 Nvidia GPU 所提供的一些 API 层级入手来理解整体的结构，下图展示了上层应用程序在使用 &lt;code>cudaMalloc&lt;/code> 时的调用流程图，其中的重点就是 Runtime API, Driver API 和 驱动程序。&lt;/p></description></item><item><title>Principle of software version control in Linux</title><link>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</link><pubDate>Mon, 08 Apr 2024 17:45:39 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/principle-of-software-version-control-in-linux/</guid><description>&lt;p>In Linux, sometimes we will face to a software which has many editions, such as gcc and java. In different scenes, maybe we need different editions of the same software, so we must save all of them. But how can we switch them?&lt;/p>
+&lt;p>Linux uses the &lt;strong>symlink&lt;/strong> to allow user easily switching between programs.&lt;/p>
+&lt;p>Then, we use the gcc as an example to illustrate the principle of software version control.&lt;/p></description></item><item><title>Variables in Linux</title><link>https://gaohongy.github.io/blog/posts/linux/variables-in-linux/</link><pubDate>Fri, 24 Nov 2023 10:32:30 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/variables-in-linux/</guid><description>&lt;h2 id="types-of-variables" class="heading-element">&lt;span>Types of variables&lt;/span>
+ &lt;a href="#types-of-variables" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;ol>
+&lt;li>Environment/Global Variables&lt;/li>
+&lt;li>Shell/Local Variables&lt;/li>
+&lt;/ol>
+&lt;p>The difference between these two variables is that environment variables can be interviewed by child processes, i.e. the so-called global variables are only shared within the process hierarchy of the current process（进程链）, existing only between the current process and its child processes. Environment variables of other processes and those of the current process are not shared. But Shell variables can only be interviewed by current process.&lt;/p></description></item><item><title>Comparison of Shell Script Execution Modes</title><link>https://gaohongy.github.io/blog/posts/linux/comparison-of-shell-script-execution-modes/</link><pubDate>Thu, 27 Jul 2023 18:34:31 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/comparison-of-shell-script-execution-modes/</guid><description>&lt;h2 id="方法概览" class="heading-element">&lt;span>方法概览&lt;/span>
+ &lt;a href="#%e6%96%b9%e6%b3%95%e6%a6%82%e8%a7%88" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">% &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;echo &amp;#39;Hello Script&amp;#39;&amp;#34;&lt;/span> &amp;gt; script.sh&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="方式1直接运行可执行文件" class="heading-element">&lt;span>方式1：直接运行可执行文件&lt;/span>
+ &lt;a href="#%e6%96%b9%e5%bc%8f1%e7%9b%b4%e6%8e%a5%e8%bf%90%e8%a1%8c%e5%8f%af%e6%89%a7%e8%a1%8c%e6%96%87%e4%bb%b6" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">% chmod +x script.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">% ./script.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Hello Script&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="方式2使用命令-sh-或-bash" class="heading-element">&lt;span>方式2：使用命令 sh 或 bash&lt;/span>
+ &lt;a href="#%e6%96%b9%e5%bc%8f2%e4%bd%bf%e7%94%a8%e5%91%bd%e4%bb%a4-sh-%e6%88%96-bash" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">% sh script.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Hello Script
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">% bash script.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Hello Script&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h3 id="方式3使用命令-source-或-" class="heading-element">&lt;span>方式3：使用命令 source 或 .&lt;/span>
+ &lt;a href="#%e6%96%b9%e5%bc%8f3%e4%bd%bf%e7%94%a8%e5%91%bd%e4%bb%a4-source-%e6%88%96-" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h3>&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">% &lt;span class="nb">source&lt;/span> script.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Hello Script
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">% . ./script.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Hello Script&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;h2 id="两种分类方法" class="heading-element">&lt;span>两种分类方法&lt;/span>
+ &lt;a href="#%e4%b8%a4%e7%a7%8d%e5%88%86%e7%b1%bb%e6%96%b9%e6%b3%95" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;h3 id="是否需要执行权限" class="heading-element">&lt;span>是否需要执行权限&lt;/span>
+ &lt;a href="#%e6%98%af%e5%90%a6%e9%9c%80%e8%a6%81%e6%89%a7%e8%a1%8c%e6%9d%83%e9%99%90" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h3>&lt;p>只有方式1需要执行权限。这是因为方式1把脚本作为可执行文件，自然需要执行权限，但方式2和方式3都是把脚本作为命令的参数，可以不具备执行权限&lt;/p></description></item><item><title>Linux basic knowledge</title><link>https://gaohongy.github.io/blog/posts/linux/linux-basic-knowledge/</link><pubDate>Wed, 18 Jan 2023 23:51:41 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/linux-basic-knowledge/</guid><description>&lt;h2 id="terminal-快捷键" class="heading-element">&lt;span>Terminal 快捷键&lt;/span>
+ &lt;a href="#terminal-%e5%bf%ab%e6%8d%b7%e9%94%ae" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>历史命令：&lt;/p></description></item></channel></rss>
