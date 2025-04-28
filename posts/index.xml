@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/posts/</link><description/><generator>Hugo 0.146.6 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Thu, 17 Apr 2025 23:40:13 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>pybind analyze</title><link>https://gaohongy.github.io/blog/posts/c-c++/pybind-analyze/</link><pubDate>Wed, 25 Dec 2024 10:25:15 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/pybind-analyze/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><category domain="https://gaohongy.github.io/blog/categories/python/">Python</category><description>&lt;p>作用在于将 C++ 实现的函数封装为 module，供 python 代码调用。&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/posts/</link><description/><generator>Hugo 0.147.0 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Mon, 28 Apr 2025 23:39:45 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/posts/index.xml" rel="self" type="application/rss+xml"/><item><title>pybind analyze</title><link>https://gaohongy.github.io/blog/posts/c-c++/pybind-analyze/</link><pubDate>Wed, 25 Dec 2024 10:25:15 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/pybind-analyze/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><category domain="https://gaohongy.github.io/blog/categories/python/">Python</category><description>&lt;p>作用在于将 C++ 实现的函数封装为 module，供 python 代码调用。&lt;/p>
 &lt;p>想要理解 pybind 的封装逻辑，还需要理解 python 是如何使用 pybind 生成的内容的，即关键点在于 python 的 import 机制的基本原理。&lt;/p>
 &lt;h2 id="python-的模块加载机制" class="heading-element">&lt;span>Python 的模块加载机制&lt;/span>
  &lt;a href="#python-%e7%9a%84%e6%a8%a1%e5%9d%97%e5%8a%a0%e8%bd%bd%e6%9c%ba%e5%88%b6" class="heading-mark">
@@ -1454,9 +1454,110 @@ w：弱符号（weak）。这些符号是可以被其它定义替代的，表示
 &lt;ul>
 &lt;li>&lt;code>.text&lt;/code>: 源语⾔编译后形成的成机器代码&lt;/li>
 &lt;li>&lt;code>.data&lt;/code>: ⼰初始化的全局变量和局部静态变量&lt;/li>
-&lt;li>&lt;code>.bss&lt;/code>: 末初始化的全局变量和局部静态变量&lt;/li>
+&lt;li>&lt;code>.bss&lt;/code>(block started by symbol): 末初始化的全局变量和局部静态变量(这部分数据默认值为 0，其实可以直接放在 .data 段，但是存放 0 没有必要，只需要预留一个位置即可）&lt;/li>
 &lt;li>&lt;code>.note.GNU-stack&lt;/code>: 堆栈提示段&lt;/li>
 &lt;/ul>
+&lt;blockquote>
+&lt;p>为什么要将指令和数据分开存放？&lt;/p>
+&lt;ol>
+&lt;li>权限管理：指令只读，数据可读写&lt;/li>
+&lt;li>提高 cache 命中率：指令数据分离利于提高局部性&lt;/li>
+&lt;li>资源复用：共享指令等只读数据&lt;/li>
+&lt;/ol>&lt;/blockquote>
+&lt;p>关于 ELF 中的这些 section，应用程序是可以使用一些非系统保留的名字作为段名的(可以通过&lt;code>__attribute__((section(&amp;quot;name&amp;quot;)))&lt;/code>来指定变量或函数所属的section)，并且 ELF 也是支持具有相同名称的 section 同时存在的。&lt;/p>
+&lt;blockquote>
+&lt;p>section 的名称对于 compiler 和 linker 来说是有意义的(待明确意义是什么)，对于操作系统没有实质性意义，操作系统如何处理一个 section 取决于它的属性和权限&lt;/p>&lt;/blockquote>
+&lt;h4 id="data-rodata-bss-section" class="heading-element">&lt;span>data rodata bss section&lt;/span>
+ &lt;a href="#data-rodata-bss-section" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h4>&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th style="text-align: center">变量类型&lt;/th>
+ &lt;th style="text-align: center">初始化状态&lt;/th>
+ &lt;th style="text-align: center">存储段&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td style="text-align: center">全局非静态变量&lt;/td>
+ &lt;td style="text-align: center">未初始化&lt;/td>
+ &lt;td style="text-align: center">.bss&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">&lt;/td>
+ &lt;td style="text-align: center">初始化为零 (=0)&lt;/td>
+ &lt;td style="text-align: center">.bss&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">&lt;/td>
+ &lt;td style="text-align: center">初始化为非零 (=42)&lt;/td>
+ &lt;td style="text-align: center">.data&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">全局静态变量 (static)&lt;/td>
+ &lt;td style="text-align: center">未初始化&lt;/td>
+ &lt;td style="text-align: center">.bss&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">&lt;/td>
+ &lt;td style="text-align: center">初始化为零 (=0)&lt;/td>
+ &lt;td style="text-align: center">.bss&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">&lt;/td>
+ &lt;td style="text-align: center">初始化为非零 (=10)&lt;/td>
+ &lt;td style="text-align: center">.data&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">局部静态变量 (static)&lt;/td>
+ &lt;td style="text-align: center">未初始化&lt;/td>
+ &lt;td style="text-align: center">.bss&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">&lt;/td>
+ &lt;td style="text-align: center">初始化为零 (=0)&lt;/td>
+ &lt;td style="text-align: center">.bss&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">&lt;/td>
+ &lt;td style="text-align: center">初始化为非零 (=20)&lt;/td>
+ &lt;td style="text-align: center">.data&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">局部非静态变量&lt;/td>
+ &lt;td style="text-align: center">未初始化&lt;/td>
+ &lt;td style="text-align: center">栈&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td style="text-align: center">&lt;/td>
+ &lt;td style="text-align: center">初始化为任意值&lt;/td>
+ &lt;td style="text-align: center">栈&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>实际上，我们可以比较确定的只有静态变量(全局/局部)和局部非静态变量的表现。对于全局非静态变量，在未初始化或者初始化为 0 时的表现和编译器的实现相关，相关理论参见&lt;/p>
+&lt;p>字符串常量理论上属于只读数据，但是有些编译器会将其放置在 .data 段中&lt;/p>
+&lt;h4 id="重定位表" class="heading-element">&lt;span>重定位表&lt;/span>
+ &lt;a href="#%e9%87%8d%e5%ae%9a%e4%bd%8d%e8%a1%a8" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h4>&lt;p>如果一个 section 需要进行重定位，那么就会存在一个对应的重定位表，例如 &lt;code>.rel.text&lt;/code> 是 &lt;code>.text&lt;/code> section 的重定位表，&lt;code>.rel.data&lt;/code> 是 &lt;code>.data&lt;/code> section 的重定位表&lt;/p>
+&lt;h4 id="符号表" class="heading-element">&lt;span>符号表&lt;/span>
+ &lt;a href="#%e7%ac%a6%e5%8f%b7%e8%a1%a8" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h4>&lt;p>需要了解的是，使用 &lt;code>ld&lt;/code> 作为链接器生成可执行程序时，其会自动定义一些来自链接器的链接脚本中的特殊符号，我们无需定义但是可以声明后引用。&lt;/p>
+&lt;h4 id="相关工具同-elf-字段的对应关系" class="heading-element">&lt;span>相关工具同 ELF 字段的对应关系&lt;/span>
+ &lt;a href="#%e7%9b%b8%e5%85%b3%e5%b7%a5%e5%85%b7%e5%90%8c-elf-%e5%ad%97%e6%ae%b5%e7%9a%84%e5%af%b9%e5%ba%94%e5%85%b3%e7%b3%bb" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h4>&lt;ol>
+&lt;li>&lt;code>objdump&lt;/code> 就是挑选了 ELF 中的一些关键 section 做了输出&lt;/li>
+&lt;li>&lt;code>readelf&lt;/code> 是读取了 section table 的内容&lt;/li>
+&lt;li>&lt;code>nm&lt;/code> 读取了 symbol table 的内容&lt;/li>
+&lt;/ol>
 &lt;h2 id="how-can-we-understand-elf-" class="heading-element">&lt;span>How can we understand ELF ?&lt;/span>
  &lt;a href="#how-can-we-understand-elf-" class="heading-mark">
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
