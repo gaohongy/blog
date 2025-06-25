@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/project-experience/</link><description/><generator>Hugo 0.147.8 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Mon, 12 May 2025 22:50:49 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/project-experience/index.xml" rel="self" type="application/rss+xml"/><item><title>Runtime Library</title><link>https://gaohongy.github.io/blog/posts/linux/runtime-library/</link><pubDate>Mon, 12 May 2025 20:21:46 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/runtime-library/</guid><category domain="https://gaohongy.github.io/blog/categories/linux/">Linux</category><description>&lt;p>程序运行的基本步骤：&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/project-experience/</link><description/><generator>Hugo 0.147.9 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Wed, 25 Jun 2025 14:50:14 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/project-experience/index.xml" rel="self" type="application/rss+xml"/><item><title>Runtime Library</title><link>https://gaohongy.github.io/blog/posts/linux/runtime-library/</link><pubDate>Mon, 12 May 2025 20:21:46 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/runtime-library/</guid><category domain="https://gaohongy.github.io/blog/categories/linux/">Linux</category><description>&lt;p>程序运行的基本步骤：&lt;/p>
 &lt;ol>
 &lt;li>操作系统创建进程，将控制权移交给程序的入口（一般为运行库的某个入口函数）&lt;/li>
 &lt;li>入口函数执行初始化&lt;/li>
@@ -790,7 +790,164 @@
  &lt;/tr>
  &lt;/tbody>
 &lt;/table>
-&lt;h2 id="io-设备" class="heading-element">&lt;span>IO 设备&lt;/span>
+&lt;p>除了 API 层面的关系比较容易混乱，我们也很容易混淆“内核代码API”，“库函数”以及”系统调用“这些概念。&lt;/p>
+&lt;p>比如说，我们常说&lt;code>read()&lt;/code>, &lt;code>write()&lt;/code>这些&amp;quot;系统调用&amp;quot;以统一形式的访问接口屏蔽了底层的硬件细节，包括&lt;a href="https://man7.org/linux/man-pages/man2/read.2.html"target="_blank" rel="external nofollow noopener noreferrer">read(2) — Linux manual page&lt;/a>官方文档中也将&lt;code>read()&lt;/code>归到了&amp;quot;System Calls Manual&amp;quot;中。它们的实现到底位于哪一层？为什么我们会称它们就是系统调用？&lt;/p>
+&lt;p>wikipedia对于&amp;quot;system call&amp;quot;给出的定义如下。&lt;/p>
+&lt;blockquote>
+&lt;p>a system call (syscall) is the programmatic way in which a computer program requests a service from the operating system on which it is executed&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>&lt;/p>&lt;/blockquote>
+&lt;p>可见，系统调用实际上是一种请求操作系统服务的一种编程方式（这里补充一点，系统调用一个关键过程是实现了用户态和内核态的转换），而之所以将 &lt;code>read()&lt;/code>, &lt;code>write()&lt;/code> 这些函数称为系统调用，是因为它们需要同硬件交互确实是需要由操作系统提供支撑的（不过我理解直接称它们为系统调用还是不太准确，因为系统调用的定义明确给出它是一种“方式”而不是一些具体的函数，如果说这些函数实现或者包含了系统调用的过程可能更准确一些，不过为了描述上的统一，下文依然直接将其称之为系统调用）。&lt;/p>
+&lt;p>从定义来看其实也纠正了我们之前理解上的错误，此前我们一直认为系统调用应该是和“内核代码”处在同一个层次的概念，所以当我们在&lt;a href="https://man7.org/linux/man-pages/man2/read.2.html"target="_blank" rel="external nofollow noopener noreferrer">read(2) — Linux manual page&lt;/a>文档中，发现 &lt;code>read()&lt;/code>, &lt;code>write()&lt;/code> 还属于“Standard C library”就会感觉到很迷惑（因为当我们对于“库”的理解就是一个高于内核代码更靠近用户的一个层次）。&lt;/p>
+&lt;p>截止到目前，对各个概念的理解依然是非常混乱的，我理解原因在于“系统调用”和&amp;quot;内核代码API&amp;quot;, &amp;ldquo;库函数&amp;quot;并不是同一个视角下的概念。比如 &lt;code>read()&lt;/code> 属于系统调用是从它的实现模式上来说，属于库函数是从它的实现层次上来说，而系统调用和库函数往往会在一个上下文下掺杂着来讨论，所以也就会觉得混乱了。所以为了更清晰地了解整个过程，下文我们只基于代码具体是如何实现的这个视角来梳理整个调用流程。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-txt" data-lang="txt">&lt;span class="line">&lt;span class="cl">用户程序调用 glibc 的 read(fd, buf, len)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> → glibc 触发 syscall(SYS_read, fd, buf, len)
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> → CPU 执行 syscall 指令（硬件层）
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> → 内核根据系统调用号跳转到 sys_read() 处理函数
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> → sys_read() 调用内核 API（如 vfs_read()）
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> → 结果逐层返回&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>各个层次之间更详细的交互关系如下图所示。&lt;/p>
+&lt;pre class="mermaid">flowchart TD
+ %% ================= 用户空间 =================
+ subgraph UserSpace["用户空间 (Ring 3)"]
+ App["应用程序"]
+ Glibc["glibc库"]
+ Wrapper["系统调用包装器"]
+ SyscallNum["SYS_read 系统调用号"]
+
+ App -->|"调用库函数&lt;br>例如 read()"| Glibc
+ App -.->|"常说的&lt;br>“系统调用”"| Glibc
+ Glibc --> Wrapper
+ Wrapper -->|"参数检查&lt;br>错误处理&lt;br>缓冲管理"| SyscallNum
+ end
+
+ %% ================= 特权切换 =================
+ subgraph Transition["CPU 特权切换"]
+ direction LR
+ SyscallNum -->|"触发"| CPU["CPU 指令"]
+ CPU -->|"x86: syscall/sysenter&lt;br>ARM: svc&lt;br>RISC-V: ecall"| ModeSwitch["模式切换&lt;br>(Ring 3 → Ring 0)"]
+ end
+
+ %% ================= 内核空间 =================
+ subgraph KernelSpace["内核空间 (Ring 0)"]
+ direction TB
+ Entry["系统调用入口"]
+ SysHandler["sys_read()"]
+ KernelAPI["ksys_read()"]
+ VFS["VFS 层：vfs_read"]
+ Driver["设备驱动程序"]
+ CopyData["copy_to_user()&lt;br>复制数据到用户空间"]
+ ReturnToUser["返回用户空间"]
+
+ ModeSwitch --> Entry
+ Entry -->|"查表分发：sys_call_table"| SysHandler
+ SysHandler -->|"参数验证&lt;br>权限检查"| KernelAPI
+ KernelAPI -->|"调用"| VFS
+ VFS -->|"文件系统驱动&lt;br>页缓存管理"| Driver
+ Driver --> CopyData
+ CopyData --> ReturnToUser
+ ReturnToUser --> App
+ end
+
+ %% ================= 硬件层 =================
+ subgraph Hardware["硬件层"]
+ Disk["磁盘控制器"]
+ MMU["MMU：地址转换"]
+ end
+
+ Driver --> |"读取数据"| Disk
+ CPU -.-> MMU
+
+ %% ================= 术语映射 =================
+ Glibc -.->|"实际的&lt;br>“系统调用过程”"| SysHandler
+ CPU -.->|"CPU 指令层面的&lt;br>“系统调用”"| ModeSwitch
+ KernelAPI -.->|"内核内部视角的&lt;br>“系统调用实现”"| VFS
+
+ %% ================= 样式定义 =================
+ classDef user fill:#E1F5FE,stroke:#039BE5,stroke-width:2px
+ classDef kernel fill:#FFEBEE,stroke:#F44336,stroke-width:2px
+ classDef hardware fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px
+ classDef transition fill:#FFF3E0,stroke:#FFA000,stroke-width:2px
+
+ class App,Glibc,Wrapper,SyscallNum user
+ class CPU,ModeSwitch,Entry,SysHandler,KernelAPI,VFS,Driver,CopyData,ReturnToUser kernel
+ class Disk,MMU hardware
+ class CPU,ModeSwitch transition&lt;/pre>
+&lt;template>flowchart TD
+ %% ================= 用户空间 =================
+ subgraph UserSpace["用户空间 (Ring 3)"]
+ App["应用程序"]
+ Glibc["glibc库"]
+ Wrapper["系统调用包装器"]
+ SyscallNum["SYS_read 系统调用号"]
+
+ App -->|"调用库函数&lt;br>例如 read()"| Glibc
+ App -.->|"常说的&lt;br>“系统调用”"| Glibc
+ Glibc --> Wrapper
+ Wrapper -->|"参数检查&lt;br>错误处理&lt;br>缓冲管理"| SyscallNum
+ end
+
+ %% ================= 特权切换 =================
+ subgraph Transition["CPU 特权切换"]
+ direction LR
+ SyscallNum -->|"触发"| CPU["CPU 指令"]
+ CPU -->|"x86: syscall/sysenter&lt;br>ARM: svc&lt;br>RISC-V: ecall"| ModeSwitch["模式切换&lt;br>(Ring 3 → Ring 0)"]
+ end
+
+ %% ================= 内核空间 =================
+ subgraph KernelSpace["内核空间 (Ring 0)"]
+ direction TB
+ Entry["系统调用入口"]
+ SysHandler["sys_read()"]
+ KernelAPI["ksys_read()"]
+ VFS["VFS 层：vfs_read"]
+ Driver["设备驱动程序"]
+ CopyData["copy_to_user()&lt;br>复制数据到用户空间"]
+ ReturnToUser["返回用户空间"]
+
+ ModeSwitch --> Entry
+ Entry -->|"查表分发：sys_call_table"| SysHandler
+ SysHandler -->|"参数验证&lt;br>权限检查"| KernelAPI
+ KernelAPI -->|"调用"| VFS
+ VFS -->|"文件系统驱动&lt;br>页缓存管理"| Driver
+ Driver --> CopyData
+ CopyData --> ReturnToUser
+ ReturnToUser --> App
+ end
+
+ %% ================= 硬件层 =================
+ subgraph Hardware["硬件层"]
+ Disk["磁盘控制器"]
+ MMU["MMU：地址转换"]
+ end
+
+ Driver --> |"读取数据"| Disk
+ CPU -.-> MMU
+
+ %% ================= 术语映射 =================
+ Glibc -.->|"实际的&lt;br>“系统调用过程”"| SysHandler
+ CPU -.->|"CPU 指令层面的&lt;br>“系统调用”"| ModeSwitch
+ KernelAPI -.->|"内核内部视角的&lt;br>“系统调用实现”"| VFS
+
+ %% ================= 样式定义 =================
+ classDef user fill:#E1F5FE,stroke:#039BE5,stroke-width:2px
+ classDef kernel fill:#FFEBEE,stroke:#F44336,stroke-width:2px
+ classDef hardware fill:#E8F5E9,stroke:#4CAF50,stroke-width:2px
+ classDef transition fill:#FFF3E0,stroke:#FFA000,stroke-width:2px
+
+ class App,Glibc,Wrapper,SyscallNum user
+ class CPU,ModeSwitch,Entry,SysHandler,KernelAPI,VFS,Driver,CopyData,ReturnToUser kernel
+ class Disk,MMU hardware
+ class CPU,ModeSwitch transition&lt;/template>&lt;h2 id="io-设备" class="heading-element">&lt;span>IO 设备&lt;/span>
  &lt;a href="#io-%e8%ae%be%e5%a4%87" class="heading-mark">
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
  &lt;/a>
@@ -1241,7 +1398,7 @@
 &lt;p>&lt;code>module_init()&lt;/code>: 更高层次的，专门用于模块初始化。指定模块加载时的初始化函数，它的作用范围是整个模块，而不仅限于某种特定的硬件。&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;code>pci_register_driver()&lt;/code>: 专门用于向内核注册 PCI 驱动程序的，它只能在 PCI 驱动程序中使用，并且其作用是告诉内核该驱动能够处理哪些 PCI 设备。(USB 设备的注册函数是 &lt;code>usb_register_driver()&lt;/code>）&lt;sup id="fnref:1">&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref">1&lt;/a>&lt;/sup>&lt;/p>
+&lt;p>&lt;code>pci_register_driver()&lt;/code>: 专门用于向内核注册 PCI 驱动程序的，它只能在 PCI 驱动程序中使用，并且其作用是告诉内核该驱动能够处理哪些 PCI 设备。(USB 设备的注册函数是 &lt;code>usb_register_driver()&lt;/code>）&lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup>&lt;/p>
 &lt;/li>
 &lt;/ol>
 &lt;p>因为注册驱动程序的本质就是让操作系统内核了解到该用哪些函数来对应中断信号，因此这些特定于设备的驱动注册函数一定是操作系统标准库提供的(&lt;code>include/linux/pci.h&lt;/code>, 内核中的 PCI 子系统 API)。&lt;/p>
@@ -1263,7 +1420,7 @@
  &lt;/a>
 &lt;/h3>&lt;p>PCIe 高频总线，主板做多层（多层 PCB）提供支持&lt;/p>
 &lt;p>PCIe 直接连接在 CPU 的PCIe 控制器上，从而做到超低延迟：&lt;/p>
-&lt;p>&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png" data-sub-html="&lt;h2>https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png&lt;/h2>">&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png">&lt;/a> &lt;sup id="fnref:2">&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref">2&lt;/a>&lt;/sup>&lt;/p>
+&lt;p>&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png" data-sub-html="&lt;h2>https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png&lt;/h2>">&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140942901.png">&lt;/a> &lt;sup id="fnref:3">&lt;a href="#fn:3" class="footnote-ref" role="doc-noteref">3&lt;/a>&lt;/sup>&lt;/p>
 &lt;p>因为外围数量众多，不可能全部都直接同 CPU 进行交互，因此存在一个南桥芯片组，一些非极其重要的设备先和南桥交互，由南桥将数据或请求汇总好后再统一交由 CPU 处理(下图中红色表示和 CPU 直连的设备）&lt;/p>
 &lt;p>&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140949029.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140949029.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140949029.png" data-sub-html="&lt;h2>https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140949029.png&lt;/h2>">&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140949029.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202409140949029.png">&lt;/a>&lt;/p>
 &lt;p>关于带宽的分配问题：&lt;/p>
@@ -1497,10 +1654,13 @@
 &lt;hr>
 &lt;ol>
 &lt;li id="fn:1">
-&lt;p>&lt;a href="https://docs.kernel.org/PCI/pci.html"target="_blank" rel="external nofollow noopener noreferrer">How To Write Linux PCI Drivers&lt;/a>&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://en.wikipedia.org/wiki/System_call"target="_blank" rel="external nofollow noopener noreferrer">System call | wikipedia&lt;/a>&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
 &lt;/li>
 &lt;li id="fn:2">
-&lt;p>&lt;a href="https://www.bilibili.com/video/BV1cJ411K7HW/?spm_id_from=333.788&amp;amp;vd_source=98d46c524d240bd89f118ad90be17aef"target="_blank" rel="external nofollow noopener noreferrer">详解主板南桥芯片组的功能和作用&lt;/a>&amp;#160;&lt;a href="#fnref:2" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://docs.kernel.org/PCI/pci.html"target="_blank" rel="external nofollow noopener noreferrer">How To Write Linux PCI Drivers&lt;/a>&amp;#160;&lt;a href="#fnref:2" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li id="fn:3">
+&lt;p>&lt;a href="https://www.bilibili.com/video/BV1cJ411K7HW/?spm_id_from=333.788&amp;amp;vd_source=98d46c524d240bd89f118ad90be17aef"target="_blank" rel="external nofollow noopener noreferrer">详解主板南桥芯片组的功能和作用&lt;/a>&amp;#160;&lt;a href="#fnref:3" class="footnote-backref" role="doc-backlink">&amp;#x21a9;&amp;#xfe0e;&lt;/a>&lt;/p>
 &lt;/li>
 &lt;/ol>
 &lt;/div></description></item><item><title>Runtime</title><link>https://gaohongy.github.io/blog/posts/graph-computing/runtime/</link><pubDate>Wed, 11 Sep 2024 14:41:40 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/graph-computing/runtime/</guid><category domain="https://gaohongy.github.io/blog/categories/graph-computing/">Graph-Computing</category><description>&lt;p>在主板上增加 PLX 芯片以提供更多的 PCIe 通道&lt;/p>
