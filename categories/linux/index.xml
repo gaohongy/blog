@@ -1,4 +1,252 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/linux/</link><description/><generator>Hugo 0.148.2 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Wed, 25 Jun 2025 14:50:14 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>Runtime Library</title><link>https://gaohongy.github.io/blog/posts/linux/runtime-library/</link><pubDate>Mon, 12 May 2025 20:21:46 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/runtime-library/</guid><category domain="https://gaohongy.github.io/blog/categories/linux/">Linux</category><description>&lt;p>程序运行的基本步骤：&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/linux/</link><description/><generator>Hugo 0.148.2 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Sat, 09 Aug 2025 22:57:19 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/linux/index.xml" rel="self" type="application/rss+xml"/><item><title>From Disk To Operating System</title><link>https://gaohongy.github.io/blog/posts/linux/from-disk-to-operating-system/</link><pubDate>Sat, 09 Aug 2025 21:28:56 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/from-disk-to-operating-system/</guid><category domain="https://gaohongy.github.io/blog/categories/linux/">Linux</category><description>&lt;h2 id="硬盘分类" class="heading-element">&lt;span>硬盘分类&lt;/span>
+ &lt;a href="#%e7%a1%ac%e7%9b%98%e5%88%86%e7%b1%bb" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>接口类型&lt;/th>
+ &lt;th>全称&lt;/th>
+ &lt;th>协议类型&lt;/th>
+ &lt;th>传输速率范围&lt;/th>
+ &lt;th>连接方式&lt;/th>
+ &lt;th>主要特点&lt;/th>
+ &lt;th>典型应用场景&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>SATA&lt;/td>
+ &lt;td>Serial ATA&lt;/td>
+ &lt;td>AHCI/NVMe&lt;/td>
+ &lt;td>1.5-6 Gbps&lt;/td>
+ &lt;td>7针数据+15针电源&lt;/td>
+ &lt;td>兼容性强，成本低，支持热插拔&lt;/td>
+ &lt;td>家用PC、普通服务器&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>mSATA&lt;/td>
+ &lt;td>Mini-SATA&lt;/td>
+ &lt;td>AHCI&lt;/td>
+ &lt;td>1.5-6 Gbps&lt;/td>
+ &lt;td>52针接口&lt;/td>
+ &lt;td>SATA的迷你版本，无电源接口&lt;/td>
+ &lt;td>超极本、工业设备&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>SATAe&lt;/td>
+ &lt;td>SATA Express&lt;/td>
+ &lt;td>AHCI/NVMe&lt;/td>
+ &lt;td>8-16 Gbps&lt;/td>
+ &lt;td>2x SATA+PCIe&lt;/td>
+ &lt;td>兼容SATA和PCIe协议&lt;/td>
+ &lt;td>早期高性能存储过渡方案&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>M.2&lt;/td>
+ &lt;td>NGFF (Next Gen FF)&lt;/td>
+ &lt;td>SATA/NVMe&lt;/td>
+ &lt;td>6-32 Gbps&lt;/td>
+ &lt;td>M型/B型/M+B型键&lt;/td>
+ &lt;td>支持PCIe通道，体积小巧，可选SATA或NVMe协议&lt;/td>
+ &lt;td>笔记本、高端PC、工作站&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>U.2&lt;/td>
+ &lt;td>SFF-8639&lt;/td>
+ &lt;td>NVMe&lt;/td>
+ &lt;td>32-64 Gbps&lt;/td>
+ &lt;td>68针接口&lt;/td>
+ &lt;td>支持热插拔，兼容2.5寸硬盘形态&lt;/td>
+ &lt;td>企业级存储、数据中心&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>PCIe&lt;/td>
+ &lt;td>PCI Express&lt;/td>
+ &lt;td>NVMe&lt;/td>
+ &lt;td>16-128 Gbps&lt;/td>
+ &lt;td>PCIe插槽&lt;/td>
+ &lt;td>直接连接CPU，超低延迟&lt;/td>
+ &lt;td>高性能计算、显卡扩展存储&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>SAS&lt;/td>
+ &lt;td>Serial Attached SCSI&lt;/td>
+ &lt;td>SCSI&lt;/td>
+ &lt;td>6-24 Gbps&lt;/td>
+ &lt;td>29针接口&lt;/td>
+ &lt;td>全双工，支持多路径访问，高可靠性&lt;/td>
+ &lt;td>企业级服务器、存储阵列&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>FC&lt;/td>
+ &lt;td>Fibre Channel&lt;/td>
+ &lt;td>SCSI/FCP&lt;/td>
+ &lt;td>16-128 Gbps&lt;/td>
+ &lt;td>光纤接口&lt;/td>
+ &lt;td>超长距离传输（最远10km），支持SAN架构&lt;/td>
+ &lt;td>大型数据中心、云存储&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>USB&lt;/td>
+ &lt;td>Universal Serial Bus&lt;/td>
+ &lt;td>UAS/BOT&lt;/td>
+ &lt;td>0.48-40 Gbps&lt;/td>
+ &lt;td>Type-A/C等&lt;/td>
+ &lt;td>即插即用，广泛兼容&lt;/td>
+ &lt;td>外置存储、移动设备&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>Thunderbolt&lt;/td>
+ &lt;td>-&lt;/td>
+ &lt;td>NVMe over PCIe&lt;/td>
+ &lt;td>40-120 Gbps&lt;/td>
+ &lt;td>Type-C接口&lt;/td>
+ &lt;td>支持菊花链拓扑，可传输视频和数据&lt;/td>
+ &lt;td>创意工作站、外置SSD&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>NVMe-oF&lt;/td>
+ &lt;td>NVMe over Fabrics&lt;/td>
+ &lt;td>RDMA/FC/TCP&lt;/td>
+ &lt;td>25-200 Gbps&lt;/td>
+ &lt;td>多种网络介质&lt;/td>
+ &lt;td>支持远程访问NVMe设备&lt;/td>
+ &lt;td>分布式存储、超融合架构&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>IDE/PATA&lt;/td>
+ &lt;td>Parallel ATA&lt;/td>
+ &lt;td>ATA&lt;/td>
+ &lt;td>16-133 MBps&lt;/td>
+ &lt;td>40/80针排线&lt;/td>
+ &lt;td>已淘汰，并行传输&lt;/td>
+ &lt;td>2000年前的老旧电脑&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;p>上述表格总结的各类接口，还存在着各种类型的协议&lt;/p>
+&lt;ol>
+&lt;li>AHCI：面向机械硬盘设计，支持NCQ但存在延迟瓶颈&lt;/li>
+&lt;li>NVMe：专为SSD优化，支持64K命令队列，延迟降低90%&lt;/li>
+&lt;li>SCSI：企业级协议，支持标签化命令和错误恢复&lt;/li>
+&lt;li>UAS：USB3.0后的新一代协议，替代BOT模式提升效率&lt;/li>
+&lt;li>RDMA：绕过CPU直接内存访问，用于超低延迟场景&lt;/li>
+&lt;/ol>
+&lt;h2 id="引导类型与磁盘分区表格式" class="heading-element">&lt;span>引导类型与磁盘分区表格式&lt;/span>
+ &lt;a href="#%e5%bc%95%e5%af%bc%e7%b1%bb%e5%9e%8b%e4%b8%8e%e7%a3%81%e7%9b%98%e5%88%86%e5%8c%ba%e8%a1%a8%e6%a0%bc%e5%bc%8f" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;ol>
+&lt;li>开机引导方式为 Legacy 引导 -&amp;gt; 磁盘存储数据的结构需要为 MBR 分区&lt;/li>
+&lt;li>UEFI 引导 -&amp;gt; GPT 分区&lt;/li>
+&lt;/ol>
+&lt;table>
+ &lt;thead>
+ &lt;tr>
+ &lt;th>项目&lt;/th>
+ &lt;th>EFI/UEFI&lt;/th>
+ &lt;th>GPT&lt;/th>
+ &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+ &lt;tr>
+ &lt;td>本质&lt;/td>
+ &lt;td>启动固件（主板程序）&lt;/td>
+ &lt;td>磁盘分区表（磁盘结构）&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>执行位置&lt;/td>
+ &lt;td>主板固件中&lt;/td>
+ &lt;td>磁盘开头的分区结构&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>管理对象&lt;/td>
+ &lt;td>控制系统引导流程、寻找 EFI 文件&lt;/td>
+ &lt;td>控制磁盘分区的布局和类型&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>相互关系&lt;/td>
+ &lt;td>UEFI 需要 GPT 格式的磁盘才能使用 EFI 启动&lt;/td>
+ &lt;td>GPT 磁盘中必须有一个 EFI 分区供 UEFI 使用&lt;/td>
+ &lt;/tr>
+ &lt;tr>
+ &lt;td>可否分开使用&lt;/td>
+ &lt;td>GPT 可以用 BIOS 启动（需要 BIOS 支持）&lt;/td>
+ &lt;td>UEFI 也可兼容 MBR（有兼容启动选项）&lt;/td>
+ &lt;/tr>
+ &lt;/tbody>
+&lt;/table>
+&lt;h2 id="由-archlinux-了解系统安装的本质" class="heading-element">&lt;span>由 archlinux 了解系统安装的本质&lt;/span>
+ &lt;a href="#%e7%94%b1-archlinux-%e4%ba%86%e8%a7%a3%e7%b3%bb%e7%bb%9f%e5%ae%89%e8%a3%85%e7%9a%84%e6%9c%ac%e8%b4%a8" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;p>在 Windows 系统安装流程中，分为三个层次：&lt;/p>
+&lt;ol>
+&lt;li>安装在启动盘中的 PE 系统&lt;/li>
+&lt;li>系统安装镜像（一般为 iso 文件）&lt;/li>
+&lt;li>实际安装到磁盘的系统&lt;/li>
+&lt;/ol>
+&lt;p>由于 Windows 在内以及包含一般 Linux 发行版在内的众多系统，往往就是双击或者说挂载 iso 之后，遵循着一系列的设置流程，系统就安装完成了，所以我一直不太理解这个 iso 系统镜像文件究竟是什么。&lt;/p>
+&lt;p>但是由于 archlinux 系统安装的所有过程都需要手动完成（安装流程参考&lt;a href="https://arch.icekylin.online/guide/"target="_blank" rel="external nofollow noopener noreferrer">Arch Linux 安装使用教程&lt;/a>)，因此在这个过程才了解到系统镜像中包含的文件结构实际就是最后安装完成后的系统所具备的文件结构，而装系统也就是在镜像中的文件基础上，经过一系列自定义，将这些文件区别化的迁移到磁盘中的一个过程。&lt;/p>
+&lt;h2 id="实践" class="heading-element">&lt;span>实践&lt;/span>
+ &lt;a href="#%e5%ae%9e%e8%b7%b5" class="heading-mark">
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
+ &lt;/a>
+&lt;/h2>&lt;p>一种更便捷且安全的实践方式是使用 QEMU 完成一个系统的安装流程，以下给出简要的流程描述。&lt;/p>
+&lt;ol>
+&lt;li>编译安装 QEMU&lt;/li>
+&lt;/ol>
+&lt;p>&lt;a href="https://download.qemu.org/"target="_blank" rel="external nofollow noopener noreferrer">source code&lt;/a>&lt;/p>
+&lt;p>configure 脚本如下&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">../configure --prefix=xxx --enable-kvm --target-list=x86_64-softmmu --enable-debug --enable-slirp&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;p>其中的添加 slirp 是因为在 qemu 启动时需要指定虚拟机使用的网络模式，其中的 user network backend 默认是不具备的，需要在编译时额外添加选项，该解决方案参考&lt;a href="https://stackoverflow.com/questions/75641274/network-backend-user-is-not-compiled-into-this-binary"target="_blank" rel="external nofollow noopener noreferrer">network backend &amp;lsquo;user&amp;rsquo; is not compiled into this binary&lt;/a>。&lt;/p>
+&lt;ol start="2">
+&lt;li>创建虚拟磁盘&lt;/li>
+&lt;/ol>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">qemu-img create -f qcow2 ubuntu.qcow2 20G&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="3">
+&lt;li>启动 qemu&lt;/li>
+&lt;/ol>
+&lt;p>比较关键的一点是如何让 qemu 模拟 UEFI 启动，一般来说这是需要主板支持的，在虚拟机下则需要通过 ovmf 来进行支持，一方面是需要在宿主机安装 ovmf，另一方面是在 qemu 启动时添加额外的选项。&lt;/p>
+&lt;div class="highlight">&lt;div class="chroma">
+&lt;table class="lntable">&lt;tr>&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code>&lt;span class="lnt">1
+&lt;/span>&lt;span class="lnt">2
+&lt;/span>&lt;span class="lnt">3
+&lt;/span>&lt;span class="lnt">4
+&lt;/span>&lt;span class="lnt">5
+&lt;/span>&lt;span class="lnt">6
+&lt;/span>&lt;span class="lnt">7
+&lt;/span>&lt;span class="lnt">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td class="lntd">
+&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl"># bios 是设置 UEFI 启动模式，需要在宿主机安装 ovmf
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">#qemu-system-x86_64 \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># -enable-kvm \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># -m 2048 \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># -nic user,model=virtio \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># -drive file=arch.qcow2,media=disk,if=virtio \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># -cdrom archlinux-x86_64.iso \
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"># -bios /usr/share/OVMF/OVMF_CODE.fd&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>&lt;ol start="4">
+&lt;li>其他问题解决&lt;/li>
+&lt;/ol>
+&lt;p>在添加完引导程序准备启动程序时，可能会在开机时仍然找不到引导程序，这是因为某些主板的 UEFI 会硬编码引导路径，仅识别固定路径 EFI/BOOT/BOOTX64.EFI，忽略其他自定义路径（如 EFI/ARCH/grubx64.efi），所以需要额外将 GRUB 安装到 UEFI 规范中的后备引导路径，当然这一点在 archlinux 的安装流程中也有说明。&lt;/p></description></item><item><title>CUDA Performance Analysis</title><link>https://gaohongy.github.io/blog/posts/hpc/cuda-performance-analysis/</link><pubDate>Fri, 08 Aug 2025 14:14:27 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/hpc/cuda-performance-analysis/</guid><category domain="https://gaohongy.github.io/blog/categories/hpc/">HPC</category><description>&lt;p>学习视频参考(视频有提供ppt）：https://www.bilibili.com/video/BV13w411o7cu/?from=search&amp;amp;seid=13327380806166965269&amp;amp;spm_id_from=333.337.0.0&amp;amp;vd_source=98d46c524d240bd89f118ad90be17aef&lt;/p>
+&lt;p>调优一定要找好 baseline，就是我们需要首先知道自己的目标是什么，才能知道是否有必要调优以及如何调优&lt;/p></description></item><item><title>Runtime Library</title><link>https://gaohongy.github.io/blog/posts/linux/runtime-library/</link><pubDate>Mon, 12 May 2025 20:21:46 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/runtime-library/</guid><category domain="https://gaohongy.github.io/blog/categories/linux/">Linux</category><description>&lt;p>程序运行的基本步骤：&lt;/p>
 &lt;ol>
 &lt;li>操作系统创建进程，将控制权移交给程序的入口（一般为运行库的某个入口函数）&lt;/li>
 &lt;li>入口函数执行初始化&lt;/li>
@@ -1687,14 +1935,4 @@ w：弱符号（weak）。这些符号是可以被其它定义替代的，表示
 &lt;li>
 &lt;p>PLX 控制器的交互（通常负责 PCIe 数据传输，例如 DMA）&lt;/p>
 &lt;/li>
-&lt;/ol></description></item><item><title>Debugging With GDB</title><link>https://gaohongy.github.io/blog/posts/project-experience/debugging-with-gdb/</link><pubDate>Fri, 02 Aug 2024 10:58:33 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/project-experience/debugging-with-gdb/</guid><category domain="https://gaohongy.github.io/blog/categories/project-experience/">Project-Experience</category><description>&lt;h2 id="how-to-launch-a-program" class="heading-element">&lt;span>How to launch a program&lt;/span>
- &lt;a href="#how-to-launch-a-program" class="heading-mark">
- &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true">&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z">&lt;/path>&lt;/svg>
- &lt;/a>
-&lt;/h2>&lt;p>There are three ways to launch a program:&lt;/p>
-&lt;ul>
-&lt;li>&lt;code>run&lt;/code>: Start debugged program. If we don&amp;rsquo;t set any breakpoints, it will run directly until get to the end of execution.&lt;/li>
-&lt;li>&lt;code>start&lt;/code>: Start the debugged program stopping at the beginning of the main procedure.&lt;/li>
-&lt;li>&lt;code>starti&lt;/code>: Start the debugged program stopping at the first instruction.&lt;/li>
-&lt;/ul></description></item><item><title>Program Loading</title><link>https://gaohongy.github.io/blog/posts/linux/program-loading/</link><pubDate>Fri, 02 Aug 2024 09:54:09 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/program-loading/</guid><category domain="https://gaohongy.github.io/blog/categories/linux/">Linux</category><description>&lt;p>Before the program running, static loader or dynamic loader need to initialize the content of the progress stack which is stipulated by &lt;a href="https://jyywiki.cn/OS/manuals/sysv-abi.pdf"target="_blank" rel="external nofollow noopener noreferrer">System V Application Binary Interface&lt;/a>.&lt;/p>
-&lt;p>&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202408020952442.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202408020952442.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202408020952442.png" data-sub-html="&lt;h2>https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202408020952442.png&lt;/h2>">&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202408020952442.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/202408020952442.png">&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;/ol></description></item></channel></rss>
