@@ -75,11 +75,11 @@ mpic++ 编译 .cpp 文件</p><p>MPI标准的不同实现：MPICH、MVAPICH、MVA
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=nf>MPI_Init</span><span class=p>(</span><span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// Get the number of processes
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>world_size</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>world_size</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>MPI_Comm_size</span><span class=p>(</span><span class=n>MPI_COMM_WORLD</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>world_size</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// Get the rank of the process
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>int</span> <span class=n>world_rank</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>world_rank</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=nf>MPI_Comm_rank</span><span class=p>(</span><span class=n>MPI_COMM_WORLD</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>world_rank</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=nf>MPI_Finalize</span><span class=p>();</span></span></span></code></pre></td></tr></table></div></div><h2 id=mpi-environment-management class=heading-element><span>MPI Environment Management</span>
@@ -155,7 +155,7 @@ mpic++ 编译 .cpp 文件</p><p>MPI标准的不同实现：MPICH、MVAPICH、MVA
 </span><span class=lnt>36
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;mpi.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>MPI_Init</span><span class=p>(</span><span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
@@ -228,7 +228,7 @@ mpic++ 编译 .cpp 文件</p><p>MPI标准的不同实现：MPICH、MVAPICH、MVA
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;mpi.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>MPI_Init</span><span class=p>(</span><span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
@@ -290,7 +290,7 @@ mpic++ 编译 .cpp 文件</p><p>MPI标准的不同实现：MPICH、MVAPICH、MVA
 </span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;mpi.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unistd.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>MPI_Init</span><span class=p>(</span><span class=nb>NULL</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
@@ -344,7 +344,7 @@ mpic++ 编译 .cpp 文件</p><p>MPI标准的不同实现：MPICH、MVAPICH、MVA
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cp>#define MAX_NUMBERS 100
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>numbers</span><span class=p>[</span><span class=n>MAX_NUMBERS</span><span class=p>];</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=n>world_rank</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
@@ -379,7 +379,7 @@ mpic++ 编译 .cpp 文件</p><p>MPI标准的不同实现：MPICH、MVAPICH、MVA
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cp>#define MAX_NUMBERS 100
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=n>numbers</span><span class=p>[</span><span class=n>MAX_NUMBERS</span><span class=p>];</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=n>world_rank</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>

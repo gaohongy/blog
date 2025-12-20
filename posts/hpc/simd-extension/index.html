@@ -123,8 +123,8 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>  <span class=n>sse_sapxy</span><span class=p>(</span><span class=mi>999999</span><span class=p>,</span> <span class=mf>3.14159</span><span class=p>,</span> <span class=n>a</span> <span class=o>+</span> <span class=mi>1</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>  <span class=c1>// sse_sapxy(1000000, 3.14159, a);
-</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=c1>// sse_sapxy(999996, 3.14159, a + 4);
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Now, let&rsquo;s see the right implementation of SIMD extension optimize version code</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></span></span><span class=line><span class=cl>  <span class=c1>// sse_sapxy(999996, 3.14159, a + 4);
+</span></span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>Now, let&rsquo;s see the right implementation of SIMD extension optimize version code</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -158,7 +158,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=n>i</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(((</span><span class=kt>unsigned</span> <span class=kt>long</span> <span class=kt>long</span><span class=p>)</span><span class=n>x</span> <span class=o>%</span> <span class=mi>16</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span> <span class=c1>// check if memory is aligned.
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>for</span> <span class=p>(</span><span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span> <span class=o>/</span> <span class=mi>4</span> <span class=o>*</span> <span class=mi>4</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>4</span><span class=p>)</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span> <span class=o>/</span> <span class=mi>4</span> <span class=o>*</span> <span class=mi>4</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>4</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>      <span class=kr>__m128</span> <span class=n>v_x</span> <span class=o>=</span> <span class=n>_mm_load_ps</span><span class=p>(</span><span class=n>x</span> <span class=o>+</span> <span class=n>i</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>      <span class=n>v_x</span> <span class=o>=</span> <span class=n>_mm_mul_ps</span><span class=p>(</span><span class=n>v_x</span><span class=p>,</span> <span class=n>v_a</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>      <span class=n>_mm_store_ps</span><span class=p>(</span><span class=n>x</span> <span class=o>+</span> <span class=n>i</span><span class=p>,</span> <span class=n>v_x</span><span class=p>);</span>
@@ -207,7 +207,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>  <span class=kt>int</span> <span class=n>i</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(((</span><span class=kt>unsigned</span> <span class=kt>long</span> <span class=kt>long</span><span class=p>)</span><span class=n>x</span> <span class=o>%</span> <span class=mi>16</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span> <span class=c1>// check if memory is aligned.
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kr>__m128</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=p>(</span><span class=kr>__m128</span> <span class=o>*</span><span class=p>)</span><span class=n>x</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl>    <span class=kr>__m128</span> <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=p>(</span><span class=kr>__m128</span> <span class=o>*</span><span class=p>)</span><span class=n>x</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>n</span> <span class=o>/</span> <span class=mi>4</span> <span class=o>*</span> <span class=mi>4</span><span class=p>;</span> <span class=n>i</span> <span class=o>+=</span> <span class=mi>4</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>      <span class=o>*</span><span class=n>p</span> <span class=o>=</span> <span class=n>_mm_mul_ps</span><span class=p>(</span><span class=o>*</span><span class=n>p</span><span class=p>,</span> <span class=n>v_a</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>      <span class=n>p</span><span class=o>++</span><span class=p>;</span>
@@ -249,10 +249,10 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>23
 </span><span class=lnt>24
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=c1>// compile with -mavx
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;immintrin.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>a</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>1.0</span> <span class=p>,</span> <span class=mf>2.0</span><span class=p>,</span> <span class=mf>3.0</span><span class=p>,</span> <span class=mf>4.0</span><span class=p>};</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>b</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>4.0</span><span class=p>,</span> <span class=mf>3.0</span><span class=p>,</span> <span class=mf>2.0</span><span class=p>,</span> <span class=mf>1.0</span><span class=p>};</span>
@@ -295,7 +295,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>21
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;immintrin.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>a</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>1.0</span><span class=p>,</span> <span class=mf>1.0</span><span class=p>,</span> <span class=mf>2.0</span><span class=p>,</span> <span class=mf>2.0</span><span class=p>};</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>b</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>3.0</span><span class=p>,</span> <span class=mf>3.0</span><span class=p>,</span> <span class=mf>4.0</span><span class=p>,</span> <span class=mf>4.0</span><span class=p>};</span>
@@ -349,7 +349,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>31
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;immintrin.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>a</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>1.0</span> <span class=p>,</span> <span class=mf>2.0</span><span class=p>,</span> <span class=mf>3.0</span><span class=p>,</span> <span class=mf>4.0</span><span class=p>};</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>b</span><span class=p>[</span><span class=mi>2</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>5.0</span><span class=p>,</span> <span class=mf>6.0</span><span class=p>};</span>
@@ -399,7 +399,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>19
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;immintrin.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>a</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>1.0</span> <span class=p>,</span> <span class=mf>2.0</span><span class=p>,</span> <span class=mf>3.0</span><span class=p>,</span> <span class=mf>4.0</span><span class=p>};</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>dst</span><span class=p>[</span><span class=mi>4</span><span class=p>];</span>
@@ -440,7 +440,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>22
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;immintrin.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>a</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>1.0</span> <span class=p>,</span> <span class=mf>2.0</span><span class=p>,</span> <span class=mf>3.0</span><span class=p>,</span> <span class=mf>4.0</span><span class=p>};</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>b</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>5.0</span><span class=p>,</span> <span class=mf>6.0</span><span class=p>,</span> <span class=mf>7.0</span><span class=p>,</span> <span class=mf>8.0</span><span class=p>};</span>
@@ -450,7 +450,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>    <span class=n>__m256d</span> <span class=n>vb</span> <span class=o>=</span> <span class=n>_mm256_loadu_pd</span><span class=p>(</span><span class=n>b</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=n>__m256d</span> <span class=n>vdst</span> <span class=o>=</span> <span class=n>_mm256_blend_pd</span><span class=p>(</span><span class=n>va</span><span class=p>,</span> <span class=n>vb</span><span class=p>,</span> <span class=mh>0xA</span><span class=p>);</span> <span class=c1>// 0xA: 1010
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=n>_mm256_storeu_pd</span><span class=p>(</span><span class=n>dst</span><span class=p>,</span> <span class=n>vdst</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=mi>4</span><span class=p>;</span> <span class=n>i</span><span class=o>++</span><span class=p>)</span> <span class=p>{</span>
@@ -482,7 +482,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>20
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;immintrin.h&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>a2</span><span class=p>[]</span> <span class=o>=</span> <span class=p>{</span><span class=mf>1.0</span><span class=p>,</span> <span class=mf>2.0</span><span class=p>};</span>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>a4</span><span class=p>[</span><span class=mi>4</span><span class=p>];</span>

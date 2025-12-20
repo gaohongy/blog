@@ -50,33 +50,33 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=n>interface</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=c1>// 调用派生类的实现
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>static_cast</span><span class=o>&lt;</span><span class=n>Derived</span><span class=o>*&gt;</span><span class=p>(</span><span class=k>this</span><span class=p>)</span><span class=o>-&gt;</span><span class=n>implementation</span><span class=p>();</span>
+</span></span></span><span class=line><span class=cl>        <span class=k>static_cast</span><span class=o>&lt;</span><span class=n>Derived</span><span class=o>*&gt;</span><span class=p>(</span><span class=k>this</span><span class=p>)</span><span class=o>-&gt;</span><span class=n>implementation</span><span class=p>();</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// 基类提供的默认实现
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>void</span> <span class=nf>implementation</span><span class=p>()</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=nf>implementation</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=c1>// 默认实现
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Derived1</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span><span class=o>&lt;</span><span class=n>Derived1</span><span class=o>&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=n>implementation</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=c1>// 派生类自定义的实现
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=p>}</span>
+</span></span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Derived2</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span><span class=o>&lt;</span><span class=n>Derived2</span><span class=o>&gt;</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=c1>// Derived2没有实现 implementation 函数，将使用基类提供的默认实现
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>};</span>
+</span></span></span><span class=line><span class=cl><span class=p>};</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>Derived1</span> <span class=n>d1</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>Derived2</span> <span class=n>d2</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=n>d1</span><span class=p>.</span><span class=n>interface</span><span class=p>();</span> <span class=c1>// 调用 Derived1 的实现
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>d2</span><span class=p>.</span><span class=n>interface</span><span class=p>();</span> <span class=c1>// 调用 Derived2 的默认实现
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl>    <span class=n>d2</span><span class=p>.</span><span class=n>interface</span><span class=p>();</span> <span class=c1>// 调用 Derived2 的默认实现
+</span></span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>这里能够实现多态的本质原因就是，基类能够获取到子类信息，子类所继承的基类方法就已经是对应自身的了，并不需要在运行时再进行绑定。</p><p>这种方式实现了类似虚函数的效果，但是并没有虚函数使用时查找虚函数表的开销，不过正如前面所描述的，由于在编译时就已经做好了绑定，自然就不再具备动态多态的动态绑定机制了。</p><h2 id=dynamic-polymorphism class=heading-element><span>dynamic polymorphism</span>
 <a href=#dynamic-polymorphism class=heading-mark><svg class="octicon octicon-link" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5.0 114.95 4.95l-2.5 2.5a3.5 3.5.0 01-4.95.0.751.751.0 01.018-1.042.751.751.0 011.042-.018 1.998 1.998.0 002.83.0l2.5-2.5a2.002 2.002.0 00-2.83-2.83l-1.25 1.25a.751.751.0 01-1.042-.018.751.751.0 01-.018-1.042zm-4.69 9.64a1.998 1.998.0 002.83.0l1.25-1.25a.751.751.0 011.042.018.751.751.0 01.018 1.042l-1.25 1.25a3.5 3.5.0 11-4.95-4.95l2.5-2.5a3.5 3.5.0 014.95.0.751.751.0 01-.018 1.042.751.751.0 01-1.042.018 1.998 1.998.0 00-2.83.0l-2.5 2.5a1.998 1.998.0 000 2.83z"/></svg></a></h2><p>动态多态性是面向对象编程中的一个重要概念，通常通过虚函数和基类指针（或引用）实现。</p><p>使用指针时的示例: <code>ptr</code> 的静态类型是基类 <code>Base</code>，其实际类型是派生类 <code>Derived</code>。如果基类中的 <code>display()</code> 方法没有声明为虚函数，那么在通过 <code>ptr</code> 调用 <code>display()</code> 时，是无法找到派生类的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
@@ -111,34 +111,34 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>31
 </span><span class=lnt>32
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// 基类
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>class</span> <span class=nc>Base</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Base</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=c1>// 虚函数
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>virtual</span> <span class=kt>void</span> <span class=n>display</span><span class=p>()</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl>    <span class=k>virtual</span> <span class=kt>void</span> <span class=n>display</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Base::display()&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>std</span><span class=o>::</span><span class=n>endl</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// 派生类
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>class</span> <span class=nc>Derived</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Derived</span> <span class=o>:</span> <span class=k>public</span> <span class=n>Base</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=c1>// 覆盖基类虚函数
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>void</span> <span class=n>display</span><span class=p>()</span> <span class=k>const</span> <span class=k>override</span> <span class=p>{</span>
+</span></span></span><span class=line><span class=cl>    <span class=kt>void</span> <span class=n>display</span><span class=p>()</span> <span class=k>const</span> <span class=k>override</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=n>std</span><span class=o>::</span><span class=n>cout</span> <span class=o>&lt;&lt;</span> <span class=s>&#34;Derived::display()&#34;</span> <span class=o>&lt;&lt;</span> <span class=n>std</span><span class=o>::</span><span class=n>endl</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=p>};</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=c1>// 创建基类指针，并指向派生类对象
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>Base</span><span class=o>*</span> <span class=n>ptr</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Derived</span><span class=p>();</span>
+</span></span></span><span class=line><span class=cl>    <span class=n>Base</span><span class=o>*</span> <span class=n>ptr</span> <span class=o>=</span> <span class=k>new</span> <span class=n>Derived</span><span class=p>();</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// 调用虚函数，实现动态多态
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>ptr</span><span class=o>-&gt;</span><span class=n>display</span><span class=p>();</span> <span class=c1>// 输出 Derived::display()
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>    <span class=n>ptr</span><span class=o>-&gt;</span><span class=n>display</span><span class=p>();</span> <span class=c1>// 输出 Derived::display()
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// 释放内存
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>delete</span> <span class=n>ptr</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl>    <span class=k>delete</span> <span class=n>ptr</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>使用引用的示例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
@@ -171,7 +171,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>28
 </span><span class=lnt>29
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Base</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
 </span></span><span class=line><span class=cl>    <span class=k>virtual</span> <span class=kt>void</span> <span class=n>Display</span><span class=p>()</span> <span class=k>const</span> <span class=p>{</span>
@@ -188,15 +188,15 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>Print</span><span class=p>(</span><span class=n>Base</span><span class=o>&amp;</span> <span class=n>obj</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>obj</span><span class=p>.</span><span class=n>Display</span><span class=p>();</span> <span class=c1>// 实际调用取决于 obj 的动态类型
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=n>Base</span> <span class=n>b</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>        <span class=n>Derived</span> <span class=n>d</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>        <span class=n>Print</span><span class=p>(</span><span class=n>b</span><span class=p>);</span> <span class=c1>// 输出：Base Display
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=n>Print</span><span class=p>(</span><span class=n>d</span><span class=p>);</span> <span class=c1>// 输出：Derived Display
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>        <span class=n>Print</span><span class=p>(</span><span class=n>d</span><span class=p>);</span> <span class=c1>// 输出：Derived Display
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></td></tr></table></div></div><p>该如何理解虚函数所带来的这种机制？</p><p>有一种不一定准确但简单的理解方式，在使用虚函数时，实际存在一张虚函数表，我们可以理解这张表格记录了派生类类型和成员变量/成员方法入口之间的映射关系，在得知变量的实际类型（派生类类型）时，就可以依据这张表格找到派生类的成员变量或成员方法了，而如果没有这张表格，那么即使能够确定当前的变量的实际类型是某个派生类，但是并不能确定它的变量或方法的入口地址，所以只能够访问静态类型的变量或方法了。</p><h2 id=两种多态方式辨析 class=heading-element><span>两种多态方式辨析</span>
 <a href=#%e4%b8%a4%e7%a7%8d%e5%a4%9a%e6%80%81%e6%96%b9%e5%bc%8f%e8%be%a8%e6%9e%90 class=heading-mark><svg class="octicon octicon-link" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5.0 114.95 4.95l-2.5 2.5a3.5 3.5.0 01-4.95.0.751.751.0 01.018-1.042.751.751.0 011.042-.018 1.998 1.998.0 002.83.0l2.5-2.5a2.002 2.002.0 00-2.83-2.83l-1.25 1.25a.751.751.0 01-1.042-.018.751.751.0 01-.018-1.042zm-4.69 9.64a1.998 1.998.0 002.83.0l1.25-1.25a.751.751.0 011.042.018.751.751.0 01.018 1.042l-1.25 1.25a3.5 3.5.0 11-4.95-4.95l2.5-2.5a3.5 3.5.0 014.95.0.751.751.0 01-.018 1.042.751.751.0 01-1.042.018 1.998 1.998.0 00-2.83.0l-2.5 2.5a1.998 1.998.0 000 2.83z"/></svg></a></h2><p>静态多态是通过编译期间的类型信息来决定调用哪个函数，通常是通过模板或函数重载来实现。在静态多态中，函数的重载解析发生在编译时期，因此调用的函数在编译时期就已经确定。</p><p>动态多态是通过运行时的类型信息来决定调用哪个函数，通常是通过虚函数来实现。在动态多态中，函数的解析发生在运行时期，通过基类指针或引用调用虚函数时，实际调用的函数在运行时期根据对象的类型动态确定。</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="Updated on 2025-05-19 23:01:15">Updated on 2025-05-19&nbsp;</span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span></span></div></div></div><div class=post-info-more><section class=post-tags></section><section><span><a href=javascript:void(0); onclick=window.history.back()>Back</a></span>&nbsp;|&nbsp;<span><a href=/blog/>Home</a></span></section></div><div class=post-nav><a href=/blog/posts/linux/principle-of-software-version-control-in-linux/ class=post-nav-item rel=prev title="Principle of Software Version Control in Linux"><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>Principle of Software Version Control in Linux</a><a href=/blog/posts/project-experience/debugging-in-visual-studio-code/ class=post-nav-item rel=next title="Debugging in Visual Studio Code">Debugging in Visual Studio Code<i class="fa-solid fa-angle-right fa-fw" aria-hidden=true></i></a></div></div></article><aside class=toc id=toc-auto aria-label=Contents><h2 class=toc-title>Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden=true></i></h2><div class="toc-content always-active" id=toc-content-auto></div></aside></main></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class=variant-numeric>0%</span></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>This website works best with JavaScript enabled.</div></noscript></div><link rel=stylesheet href=/blog/lib/lightgallery/css/lightgallery-bundle.min.css><link rel=preload href=/blog/lib/katex/katex.min.css as=style onload='this.removeAttribute("onload"),this.rel="stylesheet"'><noscript><link rel=stylesheet href=/blog/lib/katex/katex.min.css></noscript><link rel=stylesheet href=/blog/lib/cookieconsent/cookieconsent.min.css><script src=/blog/lib/autocomplete/autocomplete.min.js defer></script><script src=/blog/lib/fuse/fuse.min.js defer></script><script src=/blog/lib/twemoji/twemoji.min.js defer></script><script src=/blog/lib/lightgallery/lightgallery.min.js defer></script><script src=/blog/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js defer></script><script src=/blog/lib/lightgallery/plugins/zoom/lg-zoom.min.js defer></script><script src=/blog/lib/katex/katex.min.js defer></script><script src=/blog/lib/katex/auto-render.min.js defer></script><script src=/blog/lib/katex/copy-tex.min.js defer></script><script src=/blog/lib/katex/mhchem.min.js defer></script><script src=/blog/lib/cookieconsent/cookieconsent.min.js defer></script><script>window.config={code:{copyTitle:"Copy to clipboard",maxShownLines:10},comment:{enable:!1},cookieconsent:{content:{dismiss:"Got it!",link:"Learn more",message:"This website uses Cookies to improve your experience."},enable:!0,palette:{button:{background:"#f0f0f0"},popup:{background:"#1aa3ff"}},theme:"edgeless"},lightgallery:!0,math:{delimiters:[{display:!0,left:"$$",right:"$$"},{display:!0,left:"\\[",right:"\\]"},{display:!0,left:"\\begin{equation}",right:"\\end{equation}"},{display:!0,left:"\\begin{equation*}",right:"\\end{equation*}"},{display:!0,left:"\\begin{align}",right:"\\end{align}"},{display:!0,left:"\\begin{align*}",right:"\\end{align*}"},{display:!0,left:"\\begin{alignat}",right:"\\end{alignat}"},{display:!0,left:"\\begin{alignat*}",right:"\\end{alignat*}"},{display:!0,left:"\\begin{gather}",right:"\\end{gather}"},{display:!0,left:"\\begin{CD}",right:"\\end{CD}"},{display:!1,left:"$",right:"$"},{display:!1,left:"\\(",right:"\\)"}],strict:!1},search:{distance:100,findAllMatches:!1,highlightTag:"em",ignoreFieldNorm:!1,ignoreLocation:!1,isCaseSensitive:!1,location:0,maxResultLength:20,minMatchCharLength:2,noResultsFound:"No results found",snippetLength:50,threshold:.3,useExtendedSearch:!1},twemoji:!0,version:"v0.3.18"}</script><script src=/blog/js/theme.min.js defer></script></body></html>

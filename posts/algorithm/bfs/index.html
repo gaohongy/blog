@@ -72,7 +72,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstring&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstdio&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>pair</span><span class=o>&lt;</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=n>PII</span><span class=p>;</span>
@@ -208,7 +208,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstring&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstdio&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>pair</span><span class=o>&lt;</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=n>PII</span><span class=p>;</span>
@@ -390,7 +390,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>120
 </span><span class=lnt>121
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=c1>// leetcode部分实现
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=mi>500010</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=mi>500010</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>class</span> <span class=nc>Solution</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl><span class=k>public</span><span class=o>:</span>
@@ -417,7 +417,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>                <span class=kt>int</span> <span class=n>a</span> <span class=o>=</span> <span class=n>x</span> <span class=o>+</span> <span class=n>dx</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>b</span> <span class=o>=</span> <span class=n>y</span> <span class=o>+</span> <span class=n>dy</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
 </span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>a</span> <span class=o>&lt;</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>a</span> <span class=o>&gt;=</span> <span class=mi>3</span> <span class=o>||</span> <span class=n>b</span> <span class=o>&lt;</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>b</span> <span class=o>&gt;=</span> <span class=n>n</span><span class=p>)</span> <span class=k>continue</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>g</span><span class=p>[</span><span class=n>a</span><span class=p>][</span><span class=n>b</span><span class=p>]</span> <span class=o>==</span> <span class=mi>1</span><span class=p>)</span> <span class=k>continue</span><span class=p>;</span> <span class=c1>// 有障碍无法走
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=n>dis</span><span class=p>[</span><span class=n>a</span><span class=p>][</span><span class=n>b</span><span class=p>]</span> <span class=o>&gt;</span> <span class=n>dis</span><span class=p>[</span><span class=n>x</span><span class=p>][</span><span class=n>y</span><span class=p>]</span> <span class=o>+</span> <span class=p>(</span><span class=n>i</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>3</span><span class=p>))</span>
 </span></span><span class=line><span class=cl>                <span class=p>{</span>
 </span></span><span class=line><span class=cl>                    <span class=n>dis</span><span class=p>[</span><span class=n>a</span><span class=p>][</span><span class=n>b</span><span class=p>]</span> <span class=o>=</span> <span class=n>dis</span><span class=p>[</span><span class=n>x</span><span class=p>][</span><span class=n>y</span><span class=p>]</span> <span class=o>+</span> <span class=p>(</span><span class=n>i</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>3</span><span class=p>);</span>
@@ -445,12 +445,12 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl><span class=p>};</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// 全部实现
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstring&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstdio&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;deque&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=mi>500010</span><span class=p>;</span>
@@ -482,7 +482,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>            <span class=kt>int</span> <span class=n>a</span> <span class=o>=</span> <span class=n>x</span> <span class=o>+</span> <span class=n>dx</span><span class=p>[</span><span class=n>i</span><span class=p>],</span> <span class=n>b</span> <span class=o>=</span> <span class=n>y</span> <span class=o>+</span> <span class=n>dy</span><span class=p>[</span><span class=n>i</span><span class=p>];</span>
 </span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>a</span> <span class=o>&lt;</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>a</span> <span class=o>&gt;=</span> <span class=mi>3</span> <span class=o>||</span> <span class=n>b</span> <span class=o>&lt;</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>b</span> <span class=o>&gt;=</span> <span class=n>n</span><span class=p>)</span> <span class=k>continue</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>g</span><span class=p>[</span><span class=n>a</span><span class=p>][</span><span class=n>b</span><span class=p>]</span> <span class=o>==</span> <span class=mi>1</span><span class=p>)</span> <span class=k>continue</span><span class=p>;</span> <span class=c1>// 有障碍无法走
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>dis</span><span class=p>[</span><span class=n>a</span><span class=p>][</span><span class=n>b</span><span class=p>]</span> <span class=o>&gt;</span> <span class=n>dis</span><span class=p>[</span><span class=n>x</span><span class=p>][</span><span class=n>y</span><span class=p>]</span> <span class=o>+</span> <span class=p>(</span><span class=n>i</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>3</span><span class=p>))</span>
 </span></span><span class=line><span class=cl>            <span class=p>{</span>
 </span></span><span class=line><span class=cl>                <span class=n>dis</span><span class=p>[</span><span class=n>a</span><span class=p>][</span><span class=n>b</span><span class=p>]</span> <span class=o>=</span> <span class=n>dis</span><span class=p>[</span><span class=n>x</span><span class=p>][</span><span class=n>y</span><span class=p>]</span> <span class=o>+</span> <span class=p>(</span><span class=n>i</span> <span class=o>==</span> <span class=mi>0</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>1</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>2</span> <span class=o>||</span> <span class=n>i</span> <span class=o>==</span> <span class=mi>3</span><span class=p>);</span>
@@ -631,7 +631,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;string&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;map&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unordered_map&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>pair</span><span class=o>&lt;</span><span class=kt>char</span><span class=p>,</span> <span class=n>string</span><span class=o>&gt;</span> <span class=n>PII</span><span class=p>;</span>
@@ -808,11 +808,11 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cm> */</span>
 </span></span><span class=line><span class=cl> 
 </span></span><span class=line><span class=cl><span class=c1>// 单向bfs
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;queue&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unordered_map&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=mi>10</span><span class=p>;</span>
@@ -830,7 +830,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cm> * 但是如果有多个位置匹配，虽然说只替换一个，但是要将替换每一个位置的情况全部放进队列，而非第一个匹配的位置
 </span></span></span><span class=line><span class=cl><span class=cm> */</span>
 </span></span><span class=line><span class=cl><span class=kt>void</span> <span class=nf>extend</span><span class=p>(</span><span class=n>string</span> <span class=n>t</span><span class=p>,</span> <span class=n>string</span> <span class=n>a</span><span class=p>,</span> <span class=n>string</span> <span class=n>b</span><span class=p>)</span> <span class=c1>// 把t中a的部分换为b
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>{</span>
+</span></span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>t</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=o>++</span> <span class=n>i</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>t</span><span class=p>.</span><span class=n>substr</span><span class=p>(</span><span class=n>i</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>size</span><span class=p>())</span> <span class=o>==</span> <span class=n>a</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>        <span class=p>{</span>
@@ -981,7 +981,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstring&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;queue&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unordered_map&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=mi>10</span><span class=p>;</span>
@@ -999,8 +999,8 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>extend</span><span class=p>(</span><span class=n>queue</span><span class=o>&lt;</span><span class=n>string</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>q</span><span class=p>,</span> <span class=n>unordered_map</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>da</span><span class=p>,</span> <span class=n>unordered_map</span><span class=o>&lt;</span><span class=n>string</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=o>&amp;</span><span class=n>db</span><span class=p>,</span> <span class=n>string</span> <span class=n>a</span><span class=p>[],</span> <span class=n>string</span> <span class=n>b</span><span class=p>[])</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=c1>// 我们要做的是将当前q中的元素全部拓展一遍，但是这样写会将拓展后的点也会被遍历
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=c1>// while (q.size())
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=n>qs</span> <span class=o>=</span> <span class=n>q</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=n>k</span> <span class=o>&lt;</span> <span class=n>qs</span><span class=p>;</span> <span class=o>++</span> <span class=n>k</span><span class=p>)</span>
+</span></span></span><span class=line><span class=cl>    <span class=c1>// while (q.size())
+</span></span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>k</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=n>qs</span> <span class=o>=</span> <span class=n>q</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=n>k</span> <span class=o>&lt;</span> <span class=n>qs</span><span class=p>;</span> <span class=o>++</span> <span class=n>k</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>    <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=n>string</span> <span class=n>t</span> <span class=o>=</span> <span class=n>q</span><span class=p>.</span><span class=n>front</span><span class=p>();</span>
 </span></span><span class=line><span class=cl>        <span class=n>q</span><span class=p>.</span><span class=n>pop</span><span class=p>();</span>
@@ -1013,14 +1013,14 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>                    
 </span></span><span class=line><span class=cl>                    <span class=k>if</span> <span class=p>(</span><span class=n>da</span><span class=p>.</span><span class=n>count</span><span class=p>(</span><span class=n>state</span><span class=p>))</span> <span class=k>continue</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>                    <span class=k>if</span> <span class=p>(</span><span class=n>db</span><span class=p>.</span><span class=n>count</span><span class=p>(</span><span class=n>state</span><span class=p>))</span> <span class=k>return</span> <span class=n>da</span><span class=p>[</span><span class=n>t</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span> <span class=o>+</span> <span class=n>db</span><span class=p>[</span><span class=n>state</span><span class=p>]</span> <span class=p>;</span> <span class=c1>// 已经找到交点就可以返回距离了, da[t] + 1就是da[state]，因为此时da[state]还没有更新所以用da[t]
-</span></span></span><span class=line><span class=cl><span class=c1></span>                    
+</span></span></span><span class=line><span class=cl>                    
 </span></span><span class=line><span class=cl>                    <span class=n>da</span><span class=p>[</span><span class=n>state</span><span class=p>]</span> <span class=o>=</span> <span class=n>da</span><span class=p>[</span><span class=n>t</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>                    <span class=n>q</span><span class=p>.</span><span class=n>push</span><span class=p>(</span><span class=n>state</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>                <span class=p>}</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl>    
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>11</span><span class=p>;</span> <span class=c1>// q在拓展时并没有找到交点
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>bfs</span><span class=p>()</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=n>qa</span><span class=p>.</span><span class=n>push</span><span class=p>(</span><span class=n>A</span><span class=p>);</span> <span class=n>da</span><span class=p>[</span><span class=n>A</span><span class=p>]</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
@@ -1042,7 +1042,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>    <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>t</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>qa</span><span class=p>.</span><span class=n>size</span><span class=p>()</span> <span class=o>&lt;=</span> <span class=n>qb</span><span class=p>.</span><span class=n>size</span><span class=p>())</span> <span class=n>t</span> <span class=o>=</span> <span class=n>extend</span><span class=p>(</span><span class=n>qa</span><span class=p>,</span> <span class=n>da</span><span class=p>,</span> <span class=n>db</span><span class=p>,</span> <span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>);</span> <span class=c1>// 对于qa 将a替换为b
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>else</span> <span class=n>t</span> <span class=o>=</span> <span class=n>extend</span><span class=p>(</span><span class=n>qb</span><span class=p>,</span> <span class=n>db</span><span class=p>,</span> <span class=n>da</span><span class=p>,</span> <span class=n>b</span><span class=p>,</span> <span class=n>a</span><span class=p>);</span>
+</span></span></span><span class=line><span class=cl>        <span class=k>else</span> <span class=n>t</span> <span class=o>=</span> <span class=n>extend</span><span class=p>(</span><span class=n>qb</span><span class=p>,</span> <span class=n>db</span><span class=p>,</span> <span class=n>da</span><span class=p>,</span> <span class=n>b</span><span class=p>,</span> <span class=n>a</span><span class=p>);</span>
 </span></span><span class=line><span class=cl>        
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>t</span> <span class=o>&lt;=</span> <span class=mi>10</span><span class=p>)</span> <span class=k>return</span> <span class=n>t</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
@@ -1143,7 +1143,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;queue&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unordered_map&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=n>string</span> <span class=nf>bfs</span><span class=p>(</span><span class=n>string</span> <span class=n>start</span><span class=p>)</span>
@@ -1295,11 +1295,11 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;queue&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;unordered_map&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>f</span><span class=p>(</span><span class=n>string</span> <span class=n>state</span><span class=p>)</span> <span class=c1>// 估价函数-获取状态state的估价值
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>{</span>
+</span></span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>res</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>(</span><span class=kt>int</span> <span class=n>i</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span> <span class=n>i</span> <span class=o>&lt;</span> <span class=n>state</span><span class=p>.</span><span class=n>size</span><span class=p>();</span> <span class=o>++</span> <span class=n>i</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>state</span><span class=p>[</span><span class=n>i</span><span class=p>]</span> <span class=o>!=</span> <span class=sc>&#39;x&#39;</span><span class=p>)</span>
@@ -1339,11 +1339,11 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>            <span class=n>swap</span><span class=p>(</span><span class=n>tmp</span><span class=p>[</span><span class=n>k</span><span class=p>],</span> <span class=n>tmp</span><span class=p>[</span><span class=n>a</span> <span class=o>*</span> <span class=mi>3</span> <span class=o>+</span> <span class=n>b</span><span class=p>]);</span>
 </span></span><span class=line><span class=cl>            
 </span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=o>!</span><span class=n>dis</span><span class=p>.</span><span class=n>count</span><span class=p>(</span><span class=n>tmp</span><span class=p>)</span> <span class=o>||</span> <span class=n>dis</span><span class=p>[</span><span class=n>tmp</span><span class=p>]</span> <span class=o>&gt;</span> <span class=n>dis</span><span class=p>[</span><span class=n>state</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span> <span class=c1>// 此前除了dijkstra都是直接更新dis[tmp]，不需要判断，而dijkstra实现时用的是数组都进行了初始化，这里并没有初始化，虽然默认值是0但从严谨性的角度来说还是要判断是否是不存在的情况的
-</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=p>{</span>
+</span></span></span><span class=line><span class=cl>            <span class=p>{</span>
 </span></span><span class=line><span class=cl>                <span class=n>dis</span><span class=p>[</span><span class=n>tmp</span><span class=p>]</span> <span class=o>=</span> <span class=n>dis</span><span class=p>[</span><span class=n>state</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>                <span class=n>prev</span><span class=p>[</span><span class=n>tmp</span><span class=p>]</span> <span class=o>=</span> <span class=p>{</span><span class=n>state</span><span class=p>,</span> <span class=n>op</span><span class=p>[</span><span class=n>i</span><span class=p>]};</span>
 </span></span><span class=line><span class=cl>                <span class=n>heap</span><span class=p>.</span><span class=n>push</span><span class=p>({</span><span class=n>dis</span><span class=p>[</span><span class=n>tmp</span><span class=p>]</span> <span class=o>+</span> <span class=n>f</span><span class=p>(</span><span class=n>tmp</span><span class=p>),</span> <span class=n>tmp</span><span class=p>});</span> <span class=c1>// 注意我们存放的应该是起点到该状态距离+该状态到终点的预估距离，即考虑的是最终答案，按照最终答案的大小安排的搜索顺序才是最优的
-</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=p>}</span>
+</span></span></span><span class=line><span class=cl>            <span class=p>}</span>
 </span></span><span class=line><span class=cl>        <span class=p>}</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl>    
@@ -1354,7 +1354,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>        <span class=n>end</span> <span class=o>=</span> <span class=n>prev</span><span class=p>[</span><span class=n>end</span><span class=p>].</span><span class=n>first</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl>    <span class=n>reverse</span><span class=p>(</span><span class=n>res</span><span class=p>.</span><span class=n>begin</span><span class=p>(),</span> <span class=n>res</span><span class=p>.</span><span class=n>end</span><span class=p>());</span> <span class=c1>// 记得翻转
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=n>res</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>res</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
@@ -1456,7 +1456,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstring&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>pair</span><span class=o>&lt;</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=n>PII</span><span class=p>;</span>
@@ -1591,7 +1591,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;algorithm&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;cstring&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>typedef</span> <span class=n>pair</span><span class=o>&lt;</span><span class=kt>int</span><span class=p>,</span> <span class=kt>int</span><span class=o>&gt;</span> <span class=n>PII</span><span class=p>;</span>

@@ -71,13 +71,13 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;vector&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;cute/tensor.hpp&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=n>__global__</span> <span class=kt>void</span> <span class=nf>copy</span><span class=p>(</span><span class=kt>int</span><span class=o>*</span> <span class=n>data</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=n>threadIdx</span><span class=p>.</span><span class=n>x</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>__shared__</span> <span class=kt>int</span> <span class=n>temp</span><span class=p>[</span><span class=mi>4</span><span class=p>];</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>//printf(&#34;data[%d]=%d\n&#34;, idx, data[idx]);
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Tensor</span> <span class=n>g_input</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>make_tensor</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>        <span class=n>cute</span><span class=o>::</span><span class=n>make_gmem_ptr</span><span class=p>(</span><span class=n>data</span><span class=p>),</span>
 </span></span><span class=line><span class=cl>        <span class=n>cute</span><span class=o>::</span><span class=n>Shape</span><span class=o>&lt;</span><span class=n>cute</span><span class=o>::</span><span class=n>_4</span><span class=o>&gt;</span><span class=p>{}</span>
@@ -88,7 +88,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>    <span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// 让每个线程知道自己要负责哪部分数据
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>cute</span><span class=o>::</span><span class=n>Layout</span> <span class=n>t_layout</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>make_layout</span><span class=p>(</span><span class=n>cute</span><span class=o>::</span><span class=n>Shape</span><span class=o>&lt;</span><span class=n>cute</span><span class=o>::</span><span class=n>_4</span><span class=o>&gt;</span><span class=p>{});</span>
+</span></span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Layout</span> <span class=n>t_layout</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>make_layout</span><span class=p>(</span><span class=n>cute</span><span class=o>::</span><span class=n>Shape</span><span class=o>&lt;</span><span class=n>cute</span><span class=o>::</span><span class=n>_4</span><span class=o>&gt;</span><span class=p>{});</span>
 </span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Tensor</span> <span class=n>tg_frag</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>local_partition</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>        <span class=n>g_input</span><span class=p>,</span> 
 </span></span><span class=line><span class=cl>        <span class=n>t_layout</span><span class=p>,</span>
@@ -228,13 +228,13 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;vector&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;cute/tensor.hpp&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=n>__global__</span> <span class=kt>void</span> <span class=nf>copy</span><span class=p>(</span><span class=kt>int</span><span class=o>*</span> <span class=n>data</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=n>threadIdx</span><span class=p>.</span><span class=n>x</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>__shared__</span> <span class=kt>int</span> <span class=n>temp</span><span class=p>[</span><span class=mi>8</span><span class=p>];</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>//printf(&#34;data[%d]=%d\n&#34;, idx, data[idx]);
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Tensor</span> <span class=n>g_input</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>make_tensor</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>        <span class=n>cute</span><span class=o>::</span><span class=n>make_gmem_ptr</span><span class=p>(</span><span class=n>data</span><span class=p>),</span>
 </span></span><span class=line><span class=cl>        <span class=n>cute</span><span class=o>::</span><span class=n>Shape</span><span class=o>&lt;</span><span class=n>cute</span><span class=o>::</span><span class=n>_8</span><span class=o>&gt;</span><span class=p>{}</span>
@@ -245,7 +245,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>    <span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// 让每个线程知道自己要负责哪部分数据
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>cute</span><span class=o>::</span><span class=n>Layout</span> <span class=n>t_layout</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>make_layout</span><span class=p>(</span>
+</span></span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Layout</span> <span class=n>t_layout</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>make_layout</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>        <span class=n>cute</span><span class=o>::</span><span class=n>make_shape</span><span class=p>(</span><span class=n>cute</span><span class=o>::</span><span class=n>_4</span><span class=p>{},</span> <span class=n>cute</span><span class=o>::</span><span class=n>_2</span><span class=p>{})</span>
 </span></span><span class=line><span class=cl>    <span class=p>);</span>
 </span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Tensor</span> <span class=n>tg_frag</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>local_partition</span><span class=p>(</span>
@@ -350,13 +350,13 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c++ data-lang=c++><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;vector&gt;</span><span class=cp>
 </span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&#34;cute/tensor.hpp&#34;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=n>__global__</span> <span class=kt>void</span> <span class=nf>copy</span><span class=p>(</span><span class=kt>int</span><span class=o>*</span> <span class=n>data</span><span class=p>)</span> <span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=kt>int</span> <span class=n>idx</span> <span class=o>=</span> <span class=n>threadIdx</span><span class=p>.</span><span class=n>x</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=n>__shared__</span> <span class=kt>int</span> <span class=n>temp</span><span class=p>[</span><span class=mi>8</span><span class=p>];</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>//printf(&#34;data[%d]=%d\n&#34;, idx, data[idx]);
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Layout</span> <span class=n>t_layout</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>make_layout</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>        <span class=n>cute</span><span class=o>::</span><span class=n>make_shape</span><span class=p>(</span><span class=n>cute</span><span class=o>::</span><span class=n>_4</span><span class=p>{},</span> <span class=n>cute</span><span class=o>::</span><span class=n>_2</span><span class=p>{})</span>
 </span></span><span class=line><span class=cl>    <span class=p>);</span>
@@ -371,7 +371,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>    <span class=p>);</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=c1>// 让每个线程知道自己要负责哪部分数据
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>cute</span><span class=o>::</span><span class=n>Tensor</span> <span class=n>tg_frag</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>local_partition</span><span class=p>(</span>
+</span></span></span><span class=line><span class=cl>    <span class=n>cute</span><span class=o>::</span><span class=n>Tensor</span> <span class=n>tg_frag</span> <span class=o>=</span> <span class=n>cute</span><span class=o>::</span><span class=n>local_partition</span><span class=p>(</span>
 </span></span><span class=line><span class=cl>        <span class=n>g_input</span><span class=p>,</span> 
 </span></span><span class=line><span class=cl>        <span class=n>cute</span><span class=o>::</span><span class=n>make_layout</span><span class=p>(</span><span class=n>cute</span><span class=o>::</span><span class=n>Shape</span><span class=o>&lt;</span><span class=n>cute</span><span class=o>::</span><span class=n>_4</span><span class=o>&gt;</span><span class=p>{}),</span>
 </span></span><span class=line><span class=cl>        <span class=n>idx</span>

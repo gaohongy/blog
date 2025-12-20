@@ -38,21 +38,21 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>27
 </span><span class=lnt>28
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=kt>bool</span> <span class=nf>check</span><span class=p>(</span><span class=kt>int</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span><span class=cm>/* ... */</span><span class=p>}</span> <span class=c1>// 检查x是否满足某种性质
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// 区间[l, r]被划分成[l, mid]和[mid + 1, r]时使用：
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>int</span> <span class=nf>bsearch_1</span><span class=p>(</span><span class=kt>int</span> <span class=n>l</span><span class=p>,</span> <span class=kt>int</span> <span class=n>r</span><span class=p>)</span>
+</span></span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>bsearch_1</span><span class=p>(</span><span class=kt>int</span> <span class=n>l</span><span class=p>,</span> <span class=kt>int</span> <span class=n>r</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>    <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=kt>int</span> <span class=n>mid</span> <span class=o>=</span> <span class=n>l</span> <span class=o>+</span> <span class=n>r</span> <span class=o>&gt;&gt;</span> <span class=mi>1</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>check</span><span class=p>(</span><span class=n>mid</span><span class=p>))</span> <span class=n>r</span> <span class=o>=</span> <span class=n>mid</span><span class=p>;</span>    <span class=c1>// check()判断mid是否满足性质
-</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>else</span> <span class=n>l</span> <span class=o>=</span> <span class=n>mid</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
+</span></span></span><span class=line><span class=cl>        <span class=k>else</span> <span class=n>l</span> <span class=o>=</span> <span class=n>mid</span> <span class=o>+</span> <span class=mi>1</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=p>}</span>
 </span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>l</span><span class=p>;</span>
 </span></span><span class=line><span class=cl><span class=p>}</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=c1>// 区间[l, r]被划分成[l, mid - 1]和[mid, r]时使用：
-</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kt>int</span> <span class=nf>bsearch_2</span><span class=p>(</span><span class=kt>int</span> <span class=n>l</span><span class=p>,</span> <span class=kt>int</span> <span class=n>r</span><span class=p>)</span>
+</span></span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>bsearch_2</span><span class=p>(</span><span class=kt>int</span> <span class=n>l</span><span class=p>,</span> <span class=kt>int</span> <span class=n>r</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>l</span> <span class=o>&lt;</span> <span class=n>r</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>    <span class=p>{</span>
@@ -126,7 +126,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span></span><span class=line><span class=cl><span class=cm> * 向左收缩，即r = mid，之所以一个+1，一个不加，原因在于边界右区间是&gt;=待寻值得数，包含=的数，所以mid可能也是答案
 </span></span></span><span class=line><span class=cl><span class=cm> */</span>
 </span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;iostream&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>const</span> <span class=kt>int</span> <span class=n>N</span> <span class=o>=</span> <span class=mf>1e5</span> <span class=o>+</span> <span class=mi>10</span><span class=p>;</span>
@@ -178,11 +178,11 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=kt>bool</span> <span class=nf>check</span><span class=p>(</span><span class=kt>double</span> <span class=n>x</span><span class=p>)</span> <span class=p>{</span><span class=cm>/* ... */</span><span class=p>}</span> <span class=c1>// 检查x是否满足某种性质
-</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>double</span> <span class=nf>bsearch_3</span><span class=p>(</span><span class=kt>double</span> <span class=n>l</span><span class=p>,</span> <span class=kt>double</span> <span class=n>r</span><span class=p>)</span>
 </span></span><span class=line><span class=cl><span class=p>{</span>
 </span></span><span class=line><span class=cl>    <span class=k>const</span> <span class=kt>double</span> <span class=n>eps</span> <span class=o>=</span> <span class=mf>1e-6</span><span class=p>;</span>   <span class=c1>// eps 表示精度，取决于题目对精度的要求
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>while</span> <span class=p>(</span><span class=n>r</span> <span class=o>-</span> <span class=n>l</span> <span class=o>&gt;</span> <span class=n>eps</span><span class=p>)</span>
+</span></span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>r</span> <span class=o>-</span> <span class=n>l</span> <span class=o>&gt;</span> <span class=n>eps</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>    <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=kt>double</span> <span class=n>mid</span> <span class=o>=</span> <span class=p>(</span><span class=n>l</span> <span class=o>+</span> <span class=n>r</span><span class=p>)</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>check</span><span class=p>(</span><span class=n>mid</span><span class=p>))</span> <span class=n>r</span> <span class=o>=</span> <span class=n>mid</span><span class=p>;</span>
@@ -212,7 +212,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>20
 </span><span class=lnt>21
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span>
@@ -222,7 +222,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl>    <span class=kt>double</span> <span class=n>l</span> <span class=o>=</span> <span class=mi>0</span><span class=p>,</span> <span class=n>r</span> <span class=o>=</span> <span class=n>a</span> <span class=o>&gt;</span> <span class=mf>1.0</span> <span class=o>?</span> <span class=nl>a</span> <span class=p>:</span> <span class=mf>1.0</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>    <span class=k>const</span> <span class=kt>double</span> <span class=n>eps</span> <span class=o>=</span> <span class=mf>1e-6</span><span class=p>;</span> <span class=c1>// eps 表示精度，取决于题目对精度的要求 经验值：当题目要求保留4位小数时取1e-6，5位小数-1e-7，6位小数-1e-8，比位数大2
-</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>while</span> <span class=p>(</span><span class=n>r</span> <span class=o>-</span> <span class=n>l</span> <span class=o>&gt;</span> <span class=n>eps</span><span class=p>)</span>
+</span></span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>r</span> <span class=o>-</span> <span class=n>l</span> <span class=o>&gt;</span> <span class=n>eps</span><span class=p>)</span>
 </span></span><span class=line><span class=cl>    <span class=p>{</span>
 </span></span><span class=line><span class=cl>        <span class=kt>double</span> <span class=n>mid</span> <span class=o>=</span> <span class=p>(</span><span class=n>l</span> <span class=o>+</span> <span class=n>r</span><span class=p>)</span> <span class=o>/</span> <span class=mi>2</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>mid</span> <span class=o>*</span> <span class=n>mid</span> <span class=o>&gt;=</span> <span class=n>a</span><span class=p>)</span> <span class=n>r</span> <span class=o>=</span> <span class=n>mid</span><span class=p>;</span>
@@ -253,7 +253,7 @@ Anonymous</span></span><span class=post-included-in>&nbsp;included in <a href=/b
 </span><span class=lnt>20
 </span><span class=lnt>21
 </span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;stdio.h&gt;</span><span class=cp>
-</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=k>using</span> <span class=k>namespace</span> <span class=n>std</span><span class=p>;</span>
 </span></span><span class=line><span class=cl>
 </span></span><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>()</span>
