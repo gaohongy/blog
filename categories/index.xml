@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/</link><description/><generator>Hugo 0.153.1 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Tue, 23 Dec 2025 00:19:19 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/</link><description/><generator>Hugo 0.153.2 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Tue, 23 Dec 2025 20:59:02 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
 &lt;p&gt;特化(specialization)和部分特化(Partial Specialization)或者说叫偏特化，都是为了让编译器明确执行路径或者说接口选择&lt;/p&gt;
 &lt;h2 id="特化" class="heading-element"&gt;&lt;span&gt;特化&lt;/span&gt;
  &lt;a href="#%e7%89%b9%e5%8c%96" class="heading-mark"&gt;
@@ -683,11 +683,15 @@
  &lt;/a&gt;
 &lt;/h3&gt;&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251216000418161.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251216000418161.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251216000418161.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251216000418161.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251216000418161.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251216000418161.png"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251215235854686.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251215235854686.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251215235854686.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251215235854686.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251215235854686.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251215235854686.png"&gt;&lt;/a&gt; &lt;sup id="fnref:3"&gt;&lt;a href="#fn:3" class="footnote-ref" role="doc-noteref"&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-&lt;h2 id="flashmla" class="heading-element"&gt;&lt;span&gt;FlashMLA&lt;/span&gt;
- &lt;a href="#flashmla" class="heading-mark"&gt;
+&lt;h2 id="flashmla-prefill" class="heading-element"&gt;&lt;span&gt;FlashMLA Prefill&lt;/span&gt;
+ &lt;a href="#flashmla-prefill" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/h2&gt;&lt;h3 id="整体情况概览" class="heading-element"&gt;&lt;span&gt;整体情况概览&lt;/span&gt;
+ &lt;a href="#%e6%95%b4%e4%bd%93%e6%83%85%e5%86%b5%e6%a6%82%e8%a7%88" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -775,8 +779,8 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;bf16&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;my_sKV_base&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;make_tensor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;make_smem_ptr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plan&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;k&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;].&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;()),&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutKTiles&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{})(&lt;/span&gt;&lt;span class="n"&gt;group_idx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idx_in_group&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;bf16&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;my_gKV_base&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;kv&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;idx_in_group&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id="prefill" class="heading-element"&gt;&lt;span&gt;Prefill&lt;/span&gt;
- &lt;a href="#prefill" class="heading-mark"&gt;
+&lt;/div&gt;&lt;h3 id="execution-path" class="heading-element"&gt;&lt;span&gt;execution path&lt;/span&gt;
+ &lt;a href="#execution-path" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
 &lt;/h3&gt;&lt;p&gt;整体上遵循着生产者-消费者模式，在任务分工上，遵循以下内容&lt;/p&gt;
@@ -788,11 +792,7 @@
 &lt;p&gt;消费者负责加载 Q，是因为 Q 是常驻的“算子输入”，在整个 Loop 开始前，只需要搬运一次 $Q$ 到 Shared Memory 即可。如果交给生产者去搬运，会增加生产者的逻辑复杂度。在加载 Q 数据之外，还会完成计算过程。&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id="execution-path" class="heading-element"&gt;&lt;span&gt;execution path&lt;/span&gt;
- &lt;a href="#execution-path" class="heading-mark"&gt;
- &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
- &lt;/a&gt;
-&lt;/h4&gt;&lt;ol&gt;
+&lt;ol&gt;
 &lt;li&gt;test_flash_mla_prefill.py&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -803,11 +803,13 @@
 &lt;/span&gt;&lt;span class="lnt"&gt;4
 &lt;/span&gt;&lt;span class="lnt"&gt;5
 &lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-py" data-lang="py"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nd"&gt;@torch.inference_mode&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;run_test&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;TestParam&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;bool&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;run_ans&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;# squeeze(0) 在 batch_size 为 1 时会去掉这一维度&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;flash_mla_sparse_fwd&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;squeeze&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;kv&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;squeeze&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;t&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;indices&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;squeeze&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;sm_scale&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;sm_scale&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
@@ -918,11 +920,11 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id="稀疏-indices-生成逻辑" class="heading-element"&gt;&lt;span&gt;稀疏 indices 生成逻辑&lt;/span&gt;
+&lt;/div&gt;&lt;h3 id="稀疏-indices-生成逻辑" class="heading-element"&gt;&lt;span&gt;稀疏 indices 生成逻辑&lt;/span&gt;
  &lt;a href="#%e7%a8%80%e7%96%8f-indices-%e7%94%9f%e6%88%90%e9%80%bb%e8%be%91" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -1012,13 +1014,16 @@
 &lt;p&gt;indices 指示的数值位于 [max(0, t.s_kv - 20000), t.s_kv - 1] 这个可以考虑 decode 阶段要新生成的 token 会更加关注更接近的一些 token，不过在 prefill 阶段的意图尚未理解&lt;/p&gt;
 &lt;p&gt;最终生成的 &lt;code&gt;cur_indices&lt;/code&gt; 的长度只可能是 top_k，因为在 kv 序列长度(s_kv) 超过 top_k 时会截断，不足时则会补全。&lt;/p&gt;
 &lt;p&gt;不过这个生成逻辑应该是不重要的，只是为了提供一个示例，实际场景中会在计算过程中给定&lt;/p&gt;
-&lt;h4 id="稀疏-indices-影响数据读取producer" class="heading-element"&gt;&lt;span&gt;稀疏 indices 影响数据读取(Producer)&lt;/span&gt;
+&lt;h3 id="稀疏-indices-影响数据读取producer" class="heading-element"&gt;&lt;span&gt;稀疏 indices 影响数据读取(Producer)&lt;/span&gt;
  &lt;a href="#%e7%a8%80%e7%96%8f-indices-%e5%bd%b1%e5%93%8d%e6%95%b0%e6%8d%ae%e8%af%bb%e5%8f%96producer" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h4&gt;&lt;p&gt;之前的思维其实一直存在误区，因为我们的思路依然停留在之前边访存边边计算的阶段，所以一直认为 sparse 的引入应该发生在计算过程中。但是目前 hopper 下的主流实现模式已经变为了生产者消费者模式，筛选要与 Q 块发生计算的 K 块或者说 token level 的筛选，在读取数据这个阶段就已经可以发生了，所以 sparse 的引入实际是发生在生产者侧，即读取数据的过程中。&lt;/p&gt;
-&lt;p&gt;token level &amp;lt;=&amp;gt; topk ?&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/h3&gt;&lt;p&gt;之前的思维其实一直存在误区，因为我们的思路依然停留在之前边访存边边计算的阶段，所以一直认为 sparse 的引入应该发生在计算过程中。但是目前 hopper 下的主流实现模式已经变为了生产者消费者模式，筛选要与 Q 块发生计算的 K 块或者说 token level 的筛选，在读取数据这个阶段就已经可以发生了，所以 sparse 的引入实际是发生在生产者侧，即读取数据的过程中。&lt;/p&gt;
+&lt;h4 id="cta-任务分布" class="heading-element"&gt;&lt;span&gt;CTA 任务分布&lt;/span&gt;
+ &lt;a href="#cta-%e4%bb%bb%e5%8a%a1%e5%88%86%e5%b8%83" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
 &lt;/span&gt;&lt;span class="lnt"&gt;2
@@ -1054,7 +1059,69 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;q_h_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;blockIdx&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;h_q&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;B_H&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;s_q_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;blockIdx&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;h_q&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;B_H&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;code&gt;params.h_q/B_H&lt;/code&gt; 负责计算一个 token 由几个 thread block 负责，&lt;code&gt;s_q_idx&lt;/code&gt; 则为一个 thread block 负责的 token 编号，&lt;code&gt;q_h_idx&lt;/code&gt; 则是这个 thread block 在对应的 token 那第几部分以 &lt;code&gt;B_H&lt;/code&gt; 为基本单位的头分组&lt;/p&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;params.h_q/B_H&lt;/code&gt; 负责计算一个 token 由几个 thread block 负责，&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;s_q_idx&lt;/code&gt; 则为一个 thread block 负责的 token 编号&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;q_h_idx&lt;/code&gt; 则是这个 thread block 在对应的 token 那第几部分以 &lt;code&gt;B_H&lt;/code&gt; 为基本单位的头分组&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;threadIdx&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;128&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;NUM_GROUPS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;128&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;NUM_ROWS_PER_GROUP&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;B_TOPK&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;NUM_GROUPS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;idx_in_group&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;group_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;变量&lt;/th&gt;
+ &lt;th&gt;计算/值&lt;/th&gt;
+ &lt;th&gt;物理含义&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;GROUP_SIZE&lt;/td&gt;
+ &lt;td&gt;8&lt;/td&gt;
+ &lt;td&gt;最小协作单位的线程数。在这里，8个线程负责处理一行数据中的列（因为 cp.async 一次搬 16B，8个线程刚好搬 128B，符合对齐要求）。&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;NUM_GROUPS&lt;/td&gt;
+ &lt;td&gt;128 / 8 = 16&lt;/td&gt;
+ &lt;td&gt;逻辑组的总数。整个 Warp Group 被分成了 16 个小组。&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;NUM_ROWS_PER_GROUP&lt;/td&gt;
+ &lt;td&gt;64 / 16 = 4&lt;/td&gt;
+ &lt;td&gt;每个组负责的行数。为了填满 B_TOPK 行，每个逻辑组需要负责搬运 4 行数据。&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;group_idx&lt;/td&gt;
+ &lt;td&gt;0 ~ 15&lt;/td&gt;
+ &lt;td&gt;当前线程属于哪个组。它决定了该线程去搬运 B_TOPK 中的哪几行。&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;idx_in_group&lt;/td&gt;
+ &lt;td&gt;0 ~ 7&lt;/td&gt;
+ &lt;td&gt;当前线程在组内的编号。它决定了该线程在一行数据中负责哪一段列（Tile 内的具体偏移）。&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;idx_in_warpgroup&lt;/code&gt; warpgroup 内 thread 的 local id&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GROUP_SIZE&lt;/code&gt;: 8 个 thread 作为一小组&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NUM_GROUPS&lt;/code&gt;: warpgroup 内的小组数&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;group_idx&lt;/code&gt; 和 &lt;code&gt;idx_in_group&lt;/code&gt; 将 warpgourp 以 8 个 thread 为一小组再分组，确定所在小组的组号以及在小组内的局部 id&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;NUM_ROWS_PER_GROUP&lt;/code&gt;: 每一组负责 topk 的行数&lt;/li&gt;
+&lt;/ul&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
@@ -1070,7 +1137,11 @@
 &lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222014520890.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222014520890.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222014520890.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222014520890.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222014520890.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222014520890.png"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;目前的实现则采用了一种最简单的方式，默认 h_kv 为 1，这样每个 token 所需要使用的就只有一种 topk。从代码上来说，&lt;code&gt;s_q_idx*params.topk&lt;/code&gt; 这种计算偏移量的方式表明对于负责同一个 token 的多个 block 来说，并不需要考虑自己负责的数据到底对应到哪一个 k/v 头的 topk 规则，认为一个 token 的所有 q 头都会共享同一个 topk 规则（k/v 头）。&lt;/p&gt;
 &lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222015602350.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222015602350.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222015602350.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222015602350.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222015602350.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251222015602350.png"&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;h4 id="执行框架" class="heading-element"&gt;&lt;span&gt;执行框架&lt;/span&gt;
+ &lt;a href="#%e6%89%a7%e8%a1%8c%e6%a1%86%e6%9e%b6" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -1129,8 +1200,13 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;p&gt;并不是所有的 Query Head 都看同样的 topk, 属于同一个 KV 组的所有 Query Heads，会共享同一份 indices 提供的 topk 列表&lt;/p&gt;
 &lt;p&gt;对于同一 topk 组内的 k/v 头, q 头对它们的关注情况是一致的。num_topk_blocks 则将一个 topk 组又按照 &lt;code&gt;B_TOPK&lt;/code&gt; 进行了分块&lt;/p&gt;
 &lt;p&gt;num_topk_blocks 影响了传参 block_idx 的含义&lt;/p&gt;
+&lt;p&gt;看这里时，不需要考虑 Q，因为 producer 的指责只是加载 K 数据，每个 block 负责加载&lt;/p&gt;
 &lt;p&gt;生产者和消费者之间的关联，除了加载的数据，还有 &lt;code&gt;is_kv_valid&lt;/code&gt; 这样一个标识&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;h4 id="数据拷贝细节" class="heading-element"&gt;&lt;span&gt;数据拷贝细节&lt;/span&gt;
+ &lt;a href="#%e6%95%b0%e6%8d%ae%e6%8b%b7%e8%b4%9d%e7%bb%86%e8%8a%82" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -1145,21 +1221,9 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;span class="lnt"&gt;11
 &lt;/span&gt;&lt;span class="lnt"&gt;12
 &lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;span class="lnt"&gt;18
-&lt;/span&gt;&lt;span class="lnt"&gt;19
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;threadIdx&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="mi"&gt;128&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;NUM_GROUPS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;128&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;NUM_ROWS_PER_GROUP&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;B_TOPK&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;NUM_GROUPS&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;idx_in_group&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;group_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="n"&gt;GROUP_SIZE&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;load_token_indices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;block_idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;auto&lt;/span&gt; &lt;span class="n"&gt;load_token_indices&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;block_idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;buf_idx&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;buf_idx&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;buf_idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;local_row&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;local_row&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;NUM_ROWS_PER_GROUP&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;local_row&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;offs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;block_idx&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;buf_idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;B_TOPK&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;local_row&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;NUM_GROUPS&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;group_idx&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
@@ -1173,50 +1237,10 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;};&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;如何将 128个线程（即一个 Warp Group，包含4个 Warp） 拆解并分配到具体的数据搬运任务中&lt;/p&gt;
-&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th&gt;变量&lt;/th&gt;
- &lt;th&gt;计算/值&lt;/th&gt;
- &lt;th&gt;物理含义&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td&gt;GROUP_SIZE&lt;/td&gt;
- &lt;td&gt;8&lt;/td&gt;
- &lt;td&gt;最小协作单位的线程数。在这里，8个线程负责处理一行数据中的列（因为 cp.async 一次搬 16B，8个线程刚好搬 128B，符合对齐要求）。&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;NUM_GROUPS&lt;/td&gt;
- &lt;td&gt;128 / 8 = 16&lt;/td&gt;
- &lt;td&gt;逻辑组的总数。整个 Warp Group 被分成了 16 个小组。&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;NUM_ROWS_PER_GROUP&lt;/td&gt;
- &lt;td&gt;64 / 16 = 4&lt;/td&gt;
- &lt;td&gt;每个组负责的行数。为了填满 B_TOPK 行，每个逻辑组需要负责搬运 4 行数据。&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;group_idx&lt;/td&gt;
- &lt;td&gt;0 ~ 15&lt;/td&gt;
- &lt;td&gt;当前线程属于哪个组。它决定了该线程去搬运 B_TOPK 中的哪几行。&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td&gt;idx_in_group&lt;/td&gt;
- &lt;td&gt;0 ~ 7&lt;/td&gt;
- &lt;td&gt;当前线程在组内的编号。它决定了该线程在一行数据中负责哪一段列（Tile 内的具体偏移）。&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;idx_in_warpgroup&lt;/code&gt; warpgroup 内 thread 的 local id&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;GROUP_SIZE&lt;/code&gt;: 8 个 thread 作为一小组&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;NUM_GROUPS&lt;/code&gt;: warpgroup 内的小组数&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;group_idx&lt;/code&gt; 和 &lt;code&gt;idx_in_group&lt;/code&gt; 将 warpgourp 以 8 个 thread 为一小组再分组，确定所在小组的组号以及在小组内的局部 id&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;NUM_ROWS_PER_GROUP&lt;/code&gt;: 每一组负责 topk 的行数&lt;/li&gt;
-&lt;/ul&gt;
+&lt;/div&gt;&lt;p&gt;这里是 128 个线程（即一个 Warp Group）访问 indices 进而生成两个标识数据，具体的读取方式如下图所示&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;indices 的原始 shape 为 [b, s_q, h_k, topk]，考虑 batch_size 为 1 这样简单的情况，在传参过程中将 batch_size 维消除， &lt;code&gt;int* gIndices = params.indices + s_q_idx*params.topk;&lt;/code&gt; 将指针移动到了一个 token 对应的初始位置了（可以理解为消除了 s_q 维），所以图中所画的就是 h_k * topk 的数据，同样简单考虑 h_k 为 1 时，图中的就是一个 topk 的一维空间（简单理解就是一个数组）。&lt;/p&gt;
+&lt;p&gt;这个过程执行完成后的效果是，每个线程都拿到了 4 个 token 值，表示到底要读取哪一个 token 的 k 值，并且每 8 个 thread 作为一组拿到的这个数据是相同的。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
@@ -1257,11 +1281,11 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;li&gt;src-size (动态变量/常量)： 实际从 Global Memory (src) 中读取的有效字节数&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;把不关心的 token 的 k/v 值填充为 0 了，依然还是要计算的吧？即使是 0 这个计算量不也是在的吗？&lt;/p&gt;
-&lt;h4 id="稀疏-indices-如何影响-consumer-计算consumer" class="heading-element"&gt;&lt;span&gt;稀疏 indices 如何影响 Consumer 计算(Consumer)&lt;/span&gt;
+&lt;h3 id="稀疏-indices-如何影响-consumer-计算consumer" class="heading-element"&gt;&lt;span&gt;稀疏 indices 如何影响 Consumer 计算(Consumer)&lt;/span&gt;
  &lt;a href="#%e7%a8%80%e7%96%8f-indices-%e5%a6%82%e4%bd%95%e5%bd%b1%e5%93%8d-consumer-%e8%ae%a1%e7%ae%97consumer" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h4&gt;&lt;p&gt;casual mask 的施加依然停留在计算侧吗？&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;casual mask 的施加依然停留在计算侧吗？&lt;/p&gt;
 &lt;p&gt;token level sparse 是功能性保证，访存是减少了的没问题(remaining bytes in destination dst are filled with zeros, 访存并没有发生)，但 QK 是否依然是全量计算?&lt;/p&gt;
 &lt;p&gt;标识为负无穷是 softmax 的需求，并不能说明 QK^T 是否是全量计算&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -1352,11 +1376,11 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;rescale_rO&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;scale_factors&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;gemm_ss&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;false&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;TiledMMA_PV_RemoteP&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="n"&gt;sS1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sV1l&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rO&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id="decode" class="heading-element"&gt;&lt;span&gt;Decode&lt;/span&gt;
- &lt;a href="#decode" class="heading-mark"&gt;
+&lt;/div&gt;&lt;h2 id="flashmla-decode" class="heading-element"&gt;&lt;span&gt;FlashMLA Decode&lt;/span&gt;
+ &lt;a href="#flashmla-decode" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h3&gt;&lt;ol&gt;
+&lt;/h2&gt;&lt;ol&gt;
 &lt;li&gt;test_flash_mla_decoding.py&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
