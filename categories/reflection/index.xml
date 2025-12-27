@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/reflection/</link><description/><generator>Hugo 0.153.2 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Fri, 26 Dec 2025 23:44:32 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/reflection/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/reflection/</link><description/><generator>Hugo 0.153.3 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Sat, 27 Dec 2025 23:50:08 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/reflection/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
 &lt;p&gt;特化(specialization)和部分特化(Partial Specialization)或者说叫偏特化，都是为了让编译器明确执行路径或者说接口选择&lt;/p&gt;
 &lt;h2 id="特化" class="heading-element"&gt;&lt;span&gt;特化&lt;/span&gt;
  &lt;a href="#%e7%89%b9%e5%8c%96" class="heading-mark"&gt;
@@ -1377,7 +1377,11 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
  &lt;a href="#%e6%95%b0%e6%8d%ae%e6%8b%b7%e8%b4%9d%e7%bb%86%e8%8a%82" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h4&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;/h4&gt;&lt;h5 id="indices-相关数据生成" class="heading-element"&gt;&lt;span&gt;indices 相关数据生成&lt;/span&gt;
+ &lt;a href="#indices-%e7%9b%b8%e5%85%b3%e6%95%b0%e6%8d%ae%e7%94%9f%e6%88%90" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -1412,7 +1416,11 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251223164804423.png"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;indices 的原始 shape 为 [b, s_q, h_k, topk]，考虑 batch_size 为 1 这样简单的情况，在传参过程中将 batch_size 维消除， &lt;code&gt;int* gIndices = params.indices + s_q_idx*params.topk;&lt;/code&gt; 将指针移动到了一个 token 对应的初始位置了（可以理解为消除了 s_q 维），所以图中所画的就是 h_k * topk 的数据，同样简单考虑 h_k 为 1 时，图中的就是一个 topk 的一维空间（简单理解就是一个数组）。&lt;/p&gt;
 &lt;p&gt;这个过程执行完成后的效果是，每个线程都拿到了 4 个 token 值，表示到底要读取哪一个 token 的 k 值，并且每 8 个 thread 作为一组拿到的这个数据是相同的。&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;h5 id="拷贝操作" class="heading-element"&gt;&lt;span&gt;拷贝操作&lt;/span&gt;
+ &lt;a href="#%e6%8b%b7%e8%b4%9d%e6%93%8d%e4%bd%9c" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h5&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
 &lt;/span&gt;&lt;span class="lnt"&gt; 2
@@ -1452,8 +1460,7 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;li&gt;src-size (动态变量/常量)： 实际从 Global Memory (src) 中读取的有效字节数&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;把不关心的 token 的 k/v 值填充为 0 了，依然还是要计算的吧？即使是 0 这个计算量不也是在的吗？&lt;/p&gt;
-&lt;p&gt;我们采用从上至下的分析方式，首先分析一下 &lt;code&gt;cp_async_cacheglobal_l2_prefetch_256B&lt;/code&gt; 的执行时间。&lt;/p&gt;
-&lt;p&gt;最终执行的 ptx 指令是指定每一个 thread 的行为，以下测试代码阐述了这种行为&lt;/p&gt;
+&lt;p&gt;我们采用从上至下的分析方式，首先分析一下 &lt;code&gt;cp_async_cacheglobal_l2_prefetch_256B&lt;/code&gt; 的执行逻辑。实际上最终执行的 ptx 指令是指定每一个 thread 的行为，以下测试代码阐述了这种行为&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
@@ -1548,7 +1555,7 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;这段代码的意图是用 32 个 thread 将 32 个 int 数据从 global memory 拷贝到 shared memory，其中的关键点就在于 &lt;code&gt;cp_async_cacheglobal_l2_prefetch_256B(a + tid, shared_a + tid);&lt;/code&gt;，每个 thread 拿到的地址都是自己负责的那部分数据的地址，因此在我们的问题中，需要确定每一个 thread 所负责的 global memory 和 shared memory 的地址，即另一个需要重点分析的就是 global memory 和 shared memory 的线程布局。&lt;/p&gt;
-&lt;p&gt;对于 shared memory 来说，&lt;code&gt;my_sKV_base + (buf_idx*B_TOPK*D_K + tile_idx*(B_TOPK*64) + local_row*NUM_GROUPS*64)&lt;/code&gt;，这里的执行视角可以放到一个 block 内的 producer warpgroup，综合上下文分析，可以基本确定它的模式如下图所示&lt;/p&gt;
+&lt;p&gt;对于 shared memory 来说，&lt;code&gt;my_sKV_base + (buf_idx*B_TOPK*D_K + tile_idx*(B_TOPK*64) + local_row*NUM_GROUPS*64)&lt;/code&gt;，这里的执行视角可以放到一个 block 内的 producer warpgroup，综合&lt;a href="#%e6%89%a7%e8%a1%8c%e6%a1%86%e6%9e%b6"&gt;拷贝操作的整体执行框架&lt;/a&gt;，可以基本确定它的模式如下图所示&lt;/p&gt;
 &lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251226153311557.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251226153311557.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251226153311557.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251226153311557.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251226153311557.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251226153311557.png"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;在计算 offset 时的变量就是 &lt;code&gt;buf_idx&lt;/code&gt;，&lt;code&gt;tile_idx&lt;/code&gt; 和 &lt;code&gt;local_row&lt;/code&gt;，对于不同的 thread，这些值都会经历相同的过程，因此 offset 上是不会对 thread 进行区分，但是每个 thread 拿到的地址一定是不同的，不然就相当于多个 thread 共同拷贝一个数据，因此对不同 thread 进行区分一定是通过 base address 实现的。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -1574,9 +1581,9 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;在详细分析之前，我们其实大概可以猜出 thread 间的协作关系。每一个小组包含 8 个 thread，它们会协同拷贝 64 个 &lt;code&gt;bf16&lt;/code&gt; 数据，那最直观的方式就是每个 thread 负责 8 个数据，每个数据是一个 &lt;code&gt;bf16&lt;/code&gt;，即每个 thread 对应到 16B 数据，因此每个 thread 持有的地址相差 16。通过输出 &lt;code&gt;my_sKV_base&lt;/code&gt; 指针的值也基本印证了这一点，不过我们还是希望能够从 layout 布局上来解释这一点。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;[Info] thread:256, my_sKV_base info:0x7f7600012400
-[Info] thread:257, my_sKV_base info:0x7f7600012410
-[Info] thread:258, my_sKV_base info:0x7f7600012420&lt;/p&gt;
+&lt;p&gt;[Info] thread:256, my_sKV_base info:0x7f7600012400&lt;/p&gt;
+&lt;p&gt;[Info] thread:257, my_sKV_base info:0x7f7600012410&lt;/p&gt;
+&lt;p&gt;[Info] thread:258, my_sKV_base info:0x7f7600012420&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;code&gt;SmemLayoutKTiles&lt;/code&gt; 的结构相对复杂，它表述的是如何用一个微小的原子布局，去覆盖一个更大的共享内存区域。所以需要确定三个方面：&lt;/p&gt;
 &lt;ul&gt;
@@ -1909,16 +1916,38 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;63 | 4088 | 4089 | 4090 | 4091 | 4092 | 4093 | 4094 | 4095 | 4080 | 4081 | 4082 | 4083 | 4084 | 4085 | 4086 | 4087 | 4072 | 4073 | 4074 | 4075 | 4076 | 4077 | 4078 | 4079 | 4064 | 4065 | 4066 | 4067 | 4068 | 4069 | 4070 | 4071 | 4056 | 4057 | 4058 | 4059 | 4060 | 4061 | 4062 | 4063 | 4048 | 4049 | 4050 | 4051 | 4052 | 4053 | 4054 | 4055 | 4040 | 4041 | 4042 | 4043 | 4044 | 4045 | 4046 | 4047 | 4032 | 4033 | 4034 | 4035 | 4036 | 4037 | 4038 | 4039 |
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; +------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+------+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;得到整个 shared memory 的布局后，后续的关键是确定每个线程持有的数据。 这里需要理解的一点是 &lt;code&gt;tensor(group_idx, idx_in_group*8)&lt;/code&gt; 到底做了什么？并不像是 &lt;code&gt;local_tile&lt;/code&gt; 之类的 cutlass api 负责拿到一个 tensor 的切片，这里是基于 tensor 的 layout 计算出逻辑坐标 &lt;code&gt;(group_idx, idx_in_group*8)&lt;/code&gt; 对应的物理偏移，会返回对应位置的引用。通过以下代码可以验证这一点。&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;&lt;del&gt;得到整个 shared memory 的布局后(这个理解是错误的， 原因后续解释）&lt;/del&gt;，后续的关键是确定每个线程持有的数据。 这里需要理解的一点是 &lt;code&gt;tensor(group_idx, idx_in_group*8)&lt;/code&gt; 到底做了什么？并不像是 &lt;code&gt;local_tile&lt;/code&gt; 之类的 cutlass api 负责拿到一个 tensor 的切片，这里是基于 tensor 的 layout 计算出逻辑坐标 &lt;code&gt;(group_idx, idx_in_group*8)&lt;/code&gt; 对应的物理偏移，会返回对应位置的引用。&lt;/p&gt;
+&lt;p&gt;整体来总结一下，到目前为止我们都分析出了什么内容。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;我们首先分析了 &lt;code&gt;cp.async&lt;/code&gt; 的执行粒度，确定了下一步的分析对象是 thread。&lt;/li&gt;
+&lt;li&gt;接下来对于综合各种信息获得了 shared memory 的一个大致结构。&lt;/li&gt;
+&lt;li&gt;因为完整地址是由基址和偏移量组成的，所以接下来分别从偏移量和基址两个方面进行分析。首先是偏移量，确定了不同线程拿到的数据是一致的，因此区分不同 thread 的重点就在于基址；基址则是每一个 thread 从一个 64x64 的 tile 中获取自己对应的一个地址（这也是前面提到 ”&lt;del&gt;得到整个 shared memory 的布局后&lt;/del&gt;&amp;quot; 是错误的原因，&lt;code&gt;SmemLayoutKTiles&lt;/code&gt; 的意图并非表述完整的 shared memory 空间，只是为了构建出一个如下图所示的 64x64 的 tile，并在蓝色部分确定每个 thread 负责数据的起始地址，从技术上来说不过是用 cutlass 的 layout 自动计算出每个 thread 的基址，取代了手动计算）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227160101542.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227160101542.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227160101542.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227160101542.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227160101542.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227160101542.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;所以总的来说就是每一个 thread 在上图的小矩阵内获得一个 shared memory 中的初始地址，然后通过对 &lt;code&gt;buf_idx&lt;/code&gt;，&lt;code&gt;tile_idx&lt;/code&gt; 和 &lt;code&gt;local_row&lt;/code&gt; 三级划分逻辑的遍历，覆盖整个 shared memory 空间。&lt;/p&gt;
+&lt;p&gt;然后分析 global memory 下的线程布局。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
 &lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;bf16&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;my_gKV_base&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;kv&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;idx_in_group&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;my_gKV_base&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;token_index&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;tile_idx&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;然后分析 global memory 下的线程布局&lt;/p&gt;
-&lt;p&gt;bf16* my_gKV_base = params.kv + idx_in_group*8;
-&lt;code&gt;my_gKV_base + token_index + tile_idx*64&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;我们将 global memory 的访存地址拆分为 4 部分:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;params.kv&lt;/code&gt;: 所有 thread 相同&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;token_index&lt;/code&gt;: 同组内的不同 thread 是相同的(同一组的 thread 对应的是同一个 indices 的 offs，则从 gIndices 中取出的 token 编号是相同的，则对应到的物理偏移量也是相同的，所以是一组内的 thread 共同完成一个 token 的 k 数据读取)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;tile_idx*64&lt;/code&gt;: 同 &lt;code&gt;token_index&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;idx_in_group*8&lt;/code&gt;: 是获取组内物理偏移，因此同组内不同 thread 不同&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;由此我们可以得到如下的 global memory 中的 thread 布局&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227233515360.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227233515360.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227233515360.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227233515360.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227233515360.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251227233515360.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;至此，我们已经得到了 shared memory 和 global memory 下的 thread 布局情况，接下来需要分析的是每次 &lt;code&gt;copy_tiles&lt;/code&gt; 会将哪部分数据从 global memory 搬运到 shared memory。&lt;/p&gt;
+&lt;p&gt;接下来的过程就会和实际计算过程存在联系了，此时要拷贝的数据就是接下来要进行计算的数据&lt;/p&gt;
 &lt;h3 id="稀疏-indices-如何影响-consumer-计算consumer" class="heading-element"&gt;&lt;span&gt;稀疏 indices 如何影响 Consumer 计算(Consumer)&lt;/span&gt;
  &lt;a href="#%e7%a8%80%e7%96%8f-indices-%e5%a6%82%e4%bd%95%e5%bd%b1%e5%93%8d-consumer-%e8%ae%a1%e7%ae%97consumer" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
