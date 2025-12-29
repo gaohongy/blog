@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/algorithm/</link><description/><generator>Hugo 0.153.3 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Sun, 28 Dec 2025 23:49:41 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/algorithm/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/algorithm/</link><description/><generator>Hugo 0.153.4 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Mon, 29 Dec 2025 17:53:58 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/algorithm/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
 &lt;p&gt;特化(specialization)和部分特化(Partial Specialization)或者说叫偏特化，都是为了让编译器明确执行路径或者说接口选择&lt;/p&gt;
 &lt;h2 id="特化" class="heading-element"&gt;&lt;span&gt;特化&lt;/span&gt;
  &lt;a href="#%e7%89%b9%e5%8c%96" class="heading-mark"&gt;
@@ -2082,8 +2082,38 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;shape 只是索引视角，stride 才是物理现实&lt;/p&gt;
 &lt;p&gt;(h, d, s) 恰好让 warp 的自然并行方向与内存连续方向对齐，从而减少 address 计算、减少 bank conflict、减少寄存器压力、让 TMA/WGMMA 能直接用&lt;/p&gt;
-&lt;p&gt;Q 在 global memory 上的 shape&lt;/p&gt;
-&lt;p&gt;Q 在 shared memory 上的 shape&lt;/p&gt;
+&lt;p&gt;考虑一个简单场景：给定一个一维数组 memory = [x0, x1, x2, x3, x4, x5]，在抽象逻辑上我们将其表达为 &amp;laquo;2, 3&amp;gt;, &amp;lt;3, 1&amp;raquo;，也可以表达为 &amp;laquo;3, 2&amp;gt;, &amp;lt;2, 1&amp;raquo;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;span style="color:red;"&gt;目前还没有搞懂为什么 Q 的 shape 要发生修改&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Q 在 global memory 上的 shape&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;取到 token-&lt;code&gt;s_q_idx&lt;/code&gt; 的值，按照 &lt;code&gt;B_H&lt;/code&gt; x &lt;code&gt;D_Q&lt;/code&gt; 的块进行切分，然后选出 &lt;code&gt;q_h_idx&lt;/code&gt; 指示的那部分头数据。&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229110659581.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229110659581.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229110659581.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229110659581.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229110659581.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229110659581.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Q 在 shared memory 上的 shape&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutQTiles&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;decltype&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;coalesce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tile_to_shape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;GMMA&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Layout_K_SW128_Atom&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;bf16&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Shape&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;B_H&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Step&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_2&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Shape&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{}));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;Tensor&lt;/span&gt; &lt;span class="n"&gt;sQ&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;make_tensor&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;make_smem_ptr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;plan&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;q_o&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;q&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;()),&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutQTiles&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;9&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{});&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;虽然与 K 采用的 atom 名称不同，但是从实际输出来看二者的形式是一致的&lt;/p&gt;
 &lt;p&gt;在将 Q 数据从 global memory 拷贝到 shared memory 之后，在实际计算时还会划分为更小的块，所以接下来看一下对于 shared memory 的划分方法&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
@@ -2104,7 +2134,9 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;↓ flat_divide
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;tiles : [..., B_H, 64, NUM_TILES]&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;然后是 K 数据的形态。首先我们可以通过下述代码了解到两个 Warpgroup 是如何划分 K 数据的&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;总的来说，Q 数据从 global memory 到 shared memory 的路径如下图所示&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229155413317.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229155413317.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229155413317.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229155413317.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229155413317.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251229155413317.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;然后是 K 数据的形态。首先我们可以通过下述代码了解到两个 Warpgroup 是如何划分 K 数据的&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
 &lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
