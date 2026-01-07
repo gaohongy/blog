@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/c-c++/</link><description/><generator>Hugo 0.154.2 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Wed, 07 Jan 2026 00:47:29 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/c-c++/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/c-c++/</link><description/><generator>Hugo 0.154.3 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Thu, 08 Jan 2026 01:33:59 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/c-c++/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
 &lt;p&gt;特化(specialization)和部分特化(Partial Specialization)或者说叫偏特化，都是为了让编译器明确执行路径或者说接口选择&lt;/p&gt;
 &lt;h2 id="特化" class="heading-element"&gt;&lt;span&gt;特化&lt;/span&gt;
  &lt;a href="#%e7%89%b9%e5%8c%96" class="heading-mark"&gt;
@@ -2511,6 +2511,95 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;不过有个问题是 619.953 TFlops 这个数据是叠加了人工计算的浮点计算量和实测的执行时间，并非 nsight system 给出的结果。而 nsight system 给出的计算峰值似乎只是 cuda core 的峰值，因为和一些文档中给出的计算峰值数据对应不上。&lt;/p&gt;
 &lt;p&gt;导致一直按照 cuda core 的结果来分析，发现 FlashMLA 居然还处在 memory bound 阶段&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260107105008023.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260107105008023.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260107105008023.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260107105008023.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260107105008023.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260107105008023.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;目前 L1 cache Hit Rate 为 0.34%，L2 cache Hit Rate 为 94.79%。这也与图中 L2 视角下的计算强度较低相吻合，因为在计算量相同的情况下，因为 L2 cache 的数据访问最为频繁，所以计算强度较低（但是频繁不代表数据量大）&lt;/p&gt;
+&lt;p&gt;L1 Compute Bound 仅说明如果数据已经搬到了 Shared Memory/寄存器里，计算单元确实能利用得相对充分，但从全局视角下来看，数据从 DRAM 流向计算但愿的过程中，在 L2 这一关被限制住了&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;memory bound 侧，&lt;/li&gt;
+&lt;li&gt;提高 DRAM 视角下的计算强度，算子融合减少中间数据写回，计算量不变的情况下减少&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;既然带宽没满（没撞斜线），计算也没满（没撞横线），那 GPU 现在到底在干什么？&lt;/p&gt;
+&lt;p&gt;关于 Roofline 的基础知识这里不再赘述，详见 &lt;a href="https://gaohongy.github.io/blog/posts/hpc/gpu-structure-and-programing/#performance-evaluation"target="_blank" rel="external nofollow noopener noreferrer"&gt;GPU Structure and Programing - Performance Evaluation&lt;/a&gt;。&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;&lt;/th&gt;
+ &lt;th&gt;&lt;/th&gt;
+ &lt;th&gt;H100 SXM5(TFLOPS)&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;CUDA Core&lt;/td&gt;
+ &lt;td&gt;FP16&lt;/td&gt;
+ &lt;td&gt;133.8&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;FP32&lt;/td&gt;
+ &lt;td&gt;66.9&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;FP64&lt;/td&gt;
+ &lt;td&gt;33.5&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;Tensor Core&lt;/td&gt;
+ &lt;td&gt;FP8&lt;/td&gt;
+ &lt;td&gt;1978.9&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;INT8&lt;/td&gt;
+ &lt;td&gt;1978.9&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;FP16&lt;/td&gt;
+ &lt;td&gt;989.4&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;BF16&lt;/td&gt;
+ &lt;td&gt;989.4&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;TF32&lt;/td&gt;
+ &lt;td&gt;494.7&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;FP64&lt;/td&gt;
+ &lt;td&gt;66.9&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-txt" data-lang="txt"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sm__pipe_tensor_cycles_active.avg.pct_of_peak_sustained_active [%],70.31
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sm__inst_executed_pipe_tensor_op_gmma.avg.pct_of_peak_sustained_active [%],5.69
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sm__inst_executed_pipe_tensor_op_hmma.avg.pct_of_peak_sustained_active [%],2.84
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sm__inst_executed_pipe_tensor_op_dmma.avg.pct_of_peak_sustained_active [%],0
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sm__inst_executed_pipe_tensor_op_imma.avg.pct_of_peak_sustained_active [%],0&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在 SM 处于活跃状态期间，Tensor 管道有 70.31% 的时间是在处理任务的&lt;/p&gt;
+&lt;p&gt;5.69% 的峰值利用率说明使用了 WGMMA(Generic Matrix Multiply-Accumulate)，但利用率非常低, 2.84% 说明也使用了传统的半精度张量操作 HMMA (Half-precision Matrix Multiply-Accumulate)&lt;/p&gt;
+&lt;p&gt;dmma 和 imma 均为 0 说明未使用双精度和整型&lt;/p&gt;
+&lt;p&gt;我们到底在优化什么性能指标？时间 or 吞吐量&lt;/p&gt;
+&lt;p&gt;如果通过减少无效计算而减少了执行时间，那么 FLOPs 也会一并减少，performance 不一定改变吧&lt;/p&gt;
 &lt;h2 id="flashmla-decode" class="heading-element"&gt;&lt;span&gt;FlashMLA Decode&lt;/span&gt;
  &lt;a href="#flashmla-decode" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
