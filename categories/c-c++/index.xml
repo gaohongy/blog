@@ -1,4 +1,73 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/c-c++/</link><description/><generator>Hugo 0.154.3 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Fri, 09 Jan 2026 23:39:42 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/c-c++/index.xml" rel="self" type="application/rss+xml"/><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/c-c++/</link><description/><generator>Hugo 0.154.5 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Wed, 14 Jan 2026 00:03:53 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/c-c++/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;数据并行 (Data Parallelism - DP)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Memory is a constraint. What to do?
+2. 模型并行 (Model Parallelism - MP)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;张量并行 (Tensor Parallelism - TP)&lt;/li&gt;
+&lt;li&gt;流水线并行 (Pipeline Parallelism - PP)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start="3"&gt;
+&lt;li&gt;序列与上下文并行 (Sequence &amp;amp; Context Parallelism)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;序列并行 (Sequence Parallelism - SP)&lt;/li&gt;
+&lt;li&gt;上下文并行 (Context Parallelism - CP)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start="4"&gt;
+&lt;li&gt;专家并行 (Expert Parallelism - EP)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ol&gt;
+&lt;li&gt;TPx (2D 张量并行 - 维1)：将模型权重和输入数据在模型维度（hidden dimension）上进行切分 。&lt;/li&gt;
+&lt;li&gt;TPy (2D 张量并行 - 维2)：将输入数据在序列长度（sequence length）维度上进行切分，与 TPx 共同构成 2D 张量并行，减少冗余并提高内存效率 。&lt;/li&gt;
+&lt;li&gt;SP (序列并行 - Sequence Parallelism)：通过 AlltoAll 操作将切分维度从序列轴转置到注意力头（attention head）轴，使每个设备独立处理部分注意力头 。&lt;/li&gt;
+&lt;li&gt;CP (上下文并行 - Context Parallelism)：在处理长序列时，通过环形（ring-based）通信在多个设备间切分并同步序列上下文 。&lt;/li&gt;
+&lt;li&gt;DP (数据并行 - Data Parallelism)：将训练数据（mini-batch）切分到不同设备上，每个设备维护模型的一个副本（或通过 ZeRO 进行分片）并同步梯度 。&lt;/li&gt;
+&lt;li&gt;PP (流水线并行 - Pipeline Parallelism)：将模型的不同层（layers）分布在不同的设备阶段，数据以微批次（micro-batches）形式在层间流水化执行 。&lt;/li&gt;
+&lt;li&gt;EP (专家并行 - Expert Parallelism)：针对 MoE（混合专家）模型，将不同的专家分配到不同设备，每个 Token 根据路由算法发送至对应的专家进行计算 。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;SP 和 CP 的主要区别在于 SP 需要切分权重&lt;/p&gt;
+&lt;p&gt;Sequence Parallelism 完成 sequence 维度的并行，覆盖操作包括 LayerNorm、Dropout、FC，但不能切分 self-attention 模块&lt;/p&gt;
+&lt;p&gt;Attention 中 QKV 的计算需要用到一个完整 sequence 信息，计算上的耦合使得该模块不能先运算后进行简单拼接&lt;/p&gt;
+&lt;p&gt;Context Parallelism 解决 SP 中未完成的 self-attention 序列并行问题&lt;/p&gt;
+&lt;h2 id="ring-attention" class="heading-element"&gt;&lt;span&gt;ring attention&lt;/span&gt;
+ &lt;a href="#ring-attention" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113112601468.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113112601468.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113112601468.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113112601468.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113112601468.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113112601468.png"&gt;&lt;/a&gt; &lt;sup id="fnref:2"&gt;&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref"&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;h3 id="stripped-ring-attention" class="heading-element"&gt;&lt;span&gt;stripped ring attention&lt;/span&gt;
+ &lt;a href="#stripped-ring-attention" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;为解决 ring attention 在 casual mask 下的负载不均衡问题，将任务尽量均匀地分布到不同卡上&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113095423656.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113095423656.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113095423656.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113095423656.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113095423656.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113095423656.png"&gt;&lt;/a&gt; &lt;sup id="fnref:3"&gt;&lt;a href="#fn:3" class="footnote-ref" role="doc-noteref"&gt;3&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span style="color:red;"&gt; 目前只关心 Q 的分布，不同卡计算 K/V 的顺序是不同的，这个是否会有什么影响？ &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113143919273.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113143919273.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113143919273.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113143919273.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113143919273.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113143919273.png"&gt;&lt;/a&gt; &lt;sup id="fnref:4"&gt;&lt;a href="#fn:4" class="footnote-ref" role="doc-noteref"&gt;4&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;h2 id="reference" class="heading-element"&gt;&lt;span&gt;Reference&lt;/span&gt;
+ &lt;a href="#reference" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://pfcc.blog/posts/magiattention-sharing"target="_blank" rel="external nofollow noopener noreferrer"&gt;序列并行视角下的各类研究&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="footnotes" role="doc-endnotes"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;&lt;a href="https://www.genesiscloud.com/blog/top-parallelism-techniques-llm-training"target="_blank" rel="external nofollow noopener noreferrer"&gt;Top Parallelism Techniques to Enhance LLM Training &amp;amp; Deployment&lt;/a&gt;&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:2"&gt;
+&lt;p&gt;&lt;a href="https://zhuanlan.zhihu.com/p/4963530231"target="_blank" rel="external nofollow noopener noreferrer"&gt;图解大模型训练系列：序列并行3，Ring Attention&lt;/a&gt;&amp;#160;&lt;a href="#fnref:2" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:3"&gt;
+&lt;p&gt;&lt;a href="https://zhuanlan.zhihu.com/p/683714620"target="_blank" rel="external nofollow noopener noreferrer"&gt;ring attention + flash attention：超长上下文之路&lt;/a&gt;&amp;#160;&lt;a href="#fnref:3" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:4"&gt;
+&lt;p&gt;&lt;a href="https://docs.google.com/presentation/d/180lS8XbeR1_bTMaldg21LKYQkjXftHuh9VnZ3xk27qQ/edit?slide=id.g2c9b285e268_0_22#slide=id.g2c9b285e268_0_22"target="_blank" rel="external nofollow noopener noreferrer"&gt;CUDA-MODE Lecture 13 Ring Attention&lt;/a&gt;&amp;#160;&lt;a href="#fnref:4" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</description></item><item><title>C++ Template</title><link>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</link><pubDate>Thu, 04 Dec 2025 10:30:01 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/c++-template/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;p&gt;Metaprogramming 就是写一段程序，这段程序可以生成或者修改一段程序，Macro and Template 都是实现 Metaprogramming 的手段。&lt;/p&gt;
 &lt;p&gt;特化(specialization)和部分特化(Partial Specialization)或者说叫偏特化，都是为了让编译器明确执行路径或者说接口选择&lt;/p&gt;
 &lt;h2 id="特化" class="heading-element"&gt;&lt;span&gt;特化&lt;/span&gt;
  &lt;a href="#%e7%89%b9%e5%8c%96" class="heading-mark"&gt;
@@ -2497,7 +2566,116 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;gemm_ss&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;clear_accum&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tiled_mma_QK&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sQ_tile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;sK_tile&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;rP&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;};&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id="performance-evaluation" class="heading-element"&gt;&lt;span&gt;Performance Evaluation&lt;/span&gt;
+&lt;/div&gt;&lt;p&gt;信号量汇总：&lt;/p&gt;
+&lt;p&gt;bar_q,&lt;/p&gt;
+&lt;p&gt;warpgroup0 需要计算的部分，加载时分为 tile0&lt;del&gt;tile3 和 tile4&lt;/del&gt;tile8 两部分，所以分为两个信号量&lt;/p&gt;
+&lt;p&gt;bar_k0_free[2], bar_k0_ready[2],&lt;/p&gt;
+&lt;p&gt;warpgroup1 需要计算的部分，分为两个的原因同 warpgroup0
+bar_k1_free[2], bar_k1_ready[2],&lt;/p&gt;
+&lt;p&gt;bar_is_kv_valid_ready;&lt;/p&gt;
+&lt;p&gt;warpgroup0 按理说只负责 k0， qk 计算前等待数据是只等待了 k0 这没有问题，但是最后释放资源却同时释放了 k1&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;等待 k0[0], k0[1]&lt;/li&gt;
+&lt;li&gt;释放 k0[0], k1[0]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;warpgroup1 等待数据只等待了 k1，但是最后释放&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;等待 k1[1], k1[0]&lt;/li&gt;
+&lt;li&gt;释放 k1[1], k0[1]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;为了隐藏延迟，将第二次矩阵乘法（$PV$）拆分成了本地（Local）和远程（Remote）两部分&lt;/p&gt;
+&lt;p&gt;wgmma.mma_async：下达异步订单
+wgmma.commit_group：划定订单批次
+wgmma.wait_group：等待订单交付&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;bar&lt;/code&gt; 和 &lt;code&gt;barrier&lt;/code&gt; 用于 CTA 内的同步控制，后者发布的时间要晚一些。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;enum&lt;/span&gt; &lt;span class="nc"&gt;NamedBarriers&lt;/span&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;wg0_bunch_0_ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;wg1_bunch_0_ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;wg0_s0_ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;wg1_s1_ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;sL_ready&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;warpgroup0_sync&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;5&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;warpgroup1_sync&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;6&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;};&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;wgx_bunch_0_ready 表示是否已经完成 softmax，影响紧接着的 softmax 操作；&lt;/p&gt;
+&lt;p&gt;wgx_sx_ready 表示将部分 softmax 的结果 P 写入 shared memory 是否完成，以便另一个 warpgroup 进行 P_remote $\times$ V 计算&lt;/p&gt;
+&lt;p&gt;在 producer-consumer model 下的应用&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-txt" data-lang="txt"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;/* Producer/consumer model. The producer deposits a value in
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; * shared memory, signals that it is complete but does not wait
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; * using bar.arrive, and begins fetching more data from memory.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; * Once the data returns from memory, the producer must wait
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; * until the consumer signals that it has read the value from
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; * the shared memory location. In the meantime, a consumer
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; * thread waits until the data is stored by the producer, reads
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; * it, and then signals that it is done (without waiting).
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; */
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; // Producer code places produced value in shared memory.
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; st.shared [r0],r1;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; bar.arrive 0,64;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ld.global r1,[r2];
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; bar.sync 1,64;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; // Consumer code, reads value from shared memory
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; bar.sync 0,64;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ld.shared r1,[r0];
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; bar.arrive 1,64;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ...&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;同步控制包含两个方面，一个是 producer-consumer 之间，另一个是 consumer 的两个 warpgroup 之间。前者通过 bar_k0_free 这些实现，后者通过 barrier 实现。&lt;/p&gt;
+&lt;p&gt;数据读取的一致性保证: &lt;code&gt;fence&lt;/code&gt; 指令。 (这部分内容应该放到数据访问的部分)&lt;/p&gt;
+&lt;p&gt;在 Hopper 架构中，数据搬运不再仅仅由 CUDA Core（执行普通指令的单元）完成，而是引入了专门的硬件代理&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Generic Proxy：指传统的 CUDA Core，执行普通的 ld.shared（加载）和 st.shared（存储）指令&lt;/li&gt;
+&lt;li&gt;Async Proxy：指专门处理异步操作的硬件，最典型的是 TMA (Tensor Memory Accelerator)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这两个代理（硬件单元）观察内存的角度可能是不一致的。即便 TMA 已经把数据从全局内存搬到了共享内存，CUDA Core 如果直接去读，可能因为缓存、流水线重排等原因读到旧的数据。在前一个异步访存指令执行结束后执行 fence 从而确保后续的指令能够获取到正确的数据。说白了就是保证了写后读（RAW）的一致性。&lt;/p&gt;
+&lt;h3 id="结果写回" class="heading-element"&gt;&lt;span&gt;结果写回&lt;/span&gt;
+ &lt;a href="#%e7%bb%93%e6%9e%9c%e5%86%99%e5%9b%9e" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;O 数据的写回采用如下模式&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260112145611540.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260112145611540.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260112145611540.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260112145611540.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260112145611540.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260112145611540.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id="performance-evaluation" class="heading-element"&gt;&lt;span&gt;Performance Evaluation&lt;/span&gt;
  &lt;a href="#performance-evaluation" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
@@ -2859,20 +3037,50 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;</description></item><item><title>Transformer</title><link>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</link><pubDate>Fri, 21 Nov 2025 16:04:54 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;&lt;a href="https://www.zhihu.com/question/596771388/answer/1974891633284781738"target="_blank" rel="external nofollow noopener noreferrer"&gt;为什么我还是无法理解transformer&lt;/a&gt;
 &lt;a href="https://nlp.seas.harvard.edu/annotated-transformer/"target="_blank" rel="external nofollow noopener noreferrer"&gt;The Annotated Transformer&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id="并行模式" class="heading-element"&gt;&lt;span&gt;并行模式&lt;/span&gt;
- &lt;a href="#%e5%b9%b6%e8%a1%8c%e6%a8%a1%e5%bc%8f" class="heading-mark"&gt;
- &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
- &lt;/a&gt;
-&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;TPx (2D 张量并行 - 维1)：将模型权重和输入数据在模型维度（hidden dimension）上进行切分 。&lt;/li&gt;
-&lt;li&gt;TPy (2D 张量并行 - 维2)：将输入数据在序列长度（sequence length）维度上进行切分，与 TPx 共同构成 2D 张量并行，减少冗余并提高内存效率 。&lt;/li&gt;
-&lt;li&gt;SP (序列并行 - Sequence Parallelism)：通过 AlltoAll 操作将切分维度从序列轴转置到注意力头（attention head）轴，使每个设备独立处理部分注意力头 。&lt;/li&gt;
-&lt;li&gt;CP (上下文并行 - Context Parallelism)：在处理长序列时，通过环形（ring-based）通信在多个设备间切分并同步序列上下文 。&lt;/li&gt;
-&lt;li&gt;DP (数据并行 - Data Parallelism)：将训练数据（mini-batch）切分到不同设备上，每个设备维护模型的一个副本（或通过 ZeRO 进行分片）并同步梯度 。&lt;/li&gt;
-&lt;li&gt;PP (流水线并行 - Pipeline Parallelism)：将模型的不同层（layers）分布在不同的设备阶段，数据以微批次（micro-batches）形式在层间流水化执行 。&lt;/li&gt;
-&lt;li&gt;EP (专家并行 - Expert Parallelism)：针对 MoE（混合专家）模型，将不同的专家分配到不同设备，每个 Token 根据路由算法发送至对应的专家进行计算 。&lt;/li&gt;
+&lt;p&gt;Transformer 架构定义了“信息的流动方式”：无论是训练还是推理，信息都必须经过多头注意力（MHA）和前馈网络（FFN）。&lt;/p&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;维度&lt;/th&gt;
+ &lt;th&gt;训练过程 (Training)&lt;/th&gt;
+ &lt;th&gt;推理过程 (Inference)&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;输入处理&lt;/td&gt;
+ &lt;td&gt;全量输入（Input + Target）&lt;/td&gt;
+ &lt;td&gt;增量输入（先输入 Prompt，再逐个生成）&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;核心阶段&lt;/td&gt;
+ &lt;td&gt;只有 Forward（前向） 和 Backward（反向）&lt;/td&gt;
+ &lt;td&gt;Prefilling (处理 Prompt) + Decoding (生成)&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;计算模式&lt;/td&gt;
+ &lt;td&gt;高度并行（利用矩阵乘法一次算完整个序列）&lt;/td&gt;
+ &lt;td&gt;Prefilling 是并行的，Decoding 是串行的&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;反量化发生点&lt;/td&gt;
+ &lt;td&gt;如果是量化训练，发生在算子计算时&lt;/td&gt;
+ &lt;td&gt;发生在 Prefilling 和 Decoding 的每一层计算中&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;训练 = 对整个序列进行一次大规模的 Prefilling(forward 的计算方式应该和 forward 是一致的) + 反向传播（计算梯度并更新权重）。&lt;/p&gt;
+&lt;p&gt;推理 = 对输入进行一次 Prefilling（产生 KV Cache） + 循环进行多次 Decoding（消耗 KV Cache 并产生新词）。&lt;/p&gt;
+&lt;p&gt;量化过程数据变化示例：&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113183216620.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113183216620.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113183216620.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113183216620.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113183216620.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260113183216620.png"&gt;&lt;/a&gt; &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;div class="footnotes" role="doc-endnotes"&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id="fn:1"&gt;
+&lt;p&gt;&lt;a href="https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-quantization"target="_blank" rel="external nofollow noopener noreferrer"&gt;A Visual Guide to Quantization&lt;/a&gt;&amp;#160;&lt;a href="#fnref:1" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;SP 和 CP 的主要区别在于 SP 需要切分权重&lt;/p&gt;</description></item><item><title>Pytorch</title><link>https://gaohongy.github.io/blog/posts/ai-infra/pytorch/</link><pubDate>Tue, 18 Nov 2025 14:14:53 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/pytorch/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;在 Pytorch 语义下，目前理解其中的关键就在于&lt;strong&gt;待训练参数&lt;/strong&gt;和&lt;strong&gt;计算逻辑&lt;/strong&gt;两点，并且这两点共同构成了各种封装好的&lt;strong&gt;模块&lt;/strong&gt;。&lt;/p&gt;
+&lt;/div&gt;</description></item><item><title>Pytorch</title><link>https://gaohongy.github.io/blog/posts/ai-infra/pytorch/</link><pubDate>Tue, 18 Nov 2025 14:14:53 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/pytorch/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;在 Pytorch 语义下，目前理解其中的关键就在于&lt;strong&gt;待训练参数&lt;/strong&gt;和&lt;strong&gt;计算逻辑&lt;/strong&gt;两点，并且这两点共同构成了各种封装好的&lt;strong&gt;模块&lt;/strong&gt;。&lt;/p&gt;
 &lt;p&gt;以 &lt;code&gt;troch.nn.Linear&lt;/code&gt; 为例，可以通过 &lt;code&gt;nn.Parameter&lt;/code&gt; 手动创建参数，然后自行创建计算逻辑。但是由于线性计算的需求较为普遍，因此 Pytorch 也直接提供了封装好的线性层模块，按理说这种封装的本质就是在内部实现上用 &lt;code&gt;nn.Parameter&lt;/code&gt; 定义权重（weight）和偏置（bias，可选），同时封装“输入特征与权重矩阵相乘 + 加偏置” 的计算逻辑（有待确定）。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;nn.Linear&lt;/code&gt; 时给定的数值和 &lt;code&gt;nn.Parameter&lt;/code&gt; 构造参数时给定的数值是对应的，这也可以看出 &lt;code&gt;nn.Linear&lt;/code&gt; 实际隐藏了构造参数这个过程&lt;/p&gt;
 &lt;p&gt;$y = x \ A^T + b$: x:(N, in_features), y: (N, out_features), 所以给定 in_features 和 out_features 自然就可以确定权重矩阵的 shape 为 (in_features, out_features)&lt;/p&gt;
@@ -3758,134 +3966,4 @@ q 头与 k/v 头的对应关系由头模式决定（MHA，MQA）;&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>pybind analyze</title><link>https://gaohongy.github.io/blog/posts/c-c++/pybind-analyze/</link><pubDate>Wed, 25 Dec 2024 10:25:15 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/pybind-analyze/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><category domain="https://gaohongy.github.io/blog/categories/python/">Python</category><description>&lt;p&gt;作用在于将 C++ 实现的函数封装为 module，供 python 代码调用。&lt;/p&gt;
-&lt;p&gt;想要理解 pybind 的封装逻辑，还需要理解 python 是如何使用 pybind 生成的内容的，即关键点在于 python 的 import 机制的基本原理。&lt;/p&gt;
-&lt;h2 id="python-的模块加载机制" class="heading-element"&gt;&lt;span&gt;Python 的模块加载机制&lt;/span&gt;
- &lt;a href="#python-%e7%9a%84%e6%a8%a1%e5%9d%97%e5%8a%a0%e8%bd%bd%e6%9c%ba%e5%88%b6" class="heading-mark"&gt;
- &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
- &lt;/a&gt;
-&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Python 源文件（.py），Python 解释器会加载并执行该文件&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;扩展模块（例如 .so、.dll 或 .dylib 文件），Python 解释器会将其当作动态库来加载，并通过相应的 Python C API 或 Python/C++ 接口进行交互。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;pybind 对应的就是第二种模式&lt;/p&gt;
-&lt;h2 id="pybind-hello-world" class="heading-element"&gt;&lt;span&gt;pybind &amp;ldquo;hello-world&amp;rdquo;&lt;/span&gt;
- &lt;a href="#pybind-hello-world" class="heading-mark"&gt;
- &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
- &lt;/a&gt;
-&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;编写供 Python 程序调用的 C++ 代码&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;pybind11/pybind11.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="nf"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;j&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;PYBIND11_MODULE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;example&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;pybind11 example plugin&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// optional module docstring
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;	&lt;span class="n"&gt;m&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;def&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;add&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;A function which adds two numbers&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;ol start="2"&gt;
-&lt;li&gt;C++ 编译为动态库&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;c++ -O3 -Wall -shared -std&lt;span class="o"&gt;=&lt;/span&gt;c++11 -fPIC &lt;span class="k"&gt;$(&lt;/span&gt;python3 -m pybind11 --includes&lt;span class="k"&gt;)&lt;/span&gt; example.cpp -o example&lt;span class="k"&gt;$(&lt;/span&gt;python3-config --extension-suffix&lt;span class="k"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;$(python3 -m pybind11 --includes)&lt;/code&gt;: 负责获取 pybind 所需要使用的头文件&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;$(python3-config --extension-suffix)&lt;/code&gt;: 负责获取文件后缀 &lt;code&gt;.cpython-39-x86_64-linux-gnu.so&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start="3"&gt;
-&lt;li&gt;检查使用效果&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
-&lt;/span&gt;&lt;span class="lnt"&gt;2
-&lt;/span&gt;&lt;span class="lnt"&gt;3
-&lt;/span&gt;&lt;span class="lnt"&gt;4
-&lt;/span&gt;&lt;span class="lnt"&gt;5
-&lt;/span&gt;&lt;span class="lnt"&gt;6
-&lt;/span&gt;&lt;span class="lnt"&gt;7
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-shell" data-lang="shell"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;gt;&amp;gt;&amp;gt; import example
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;gt;&amp;gt;&amp;gt; example
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;lt;module &lt;span class="s1"&gt;&amp;#39;example&amp;#39;&lt;/span&gt; from &lt;span class="s1"&gt;&amp;#39;/work/gaohy/experiments/pybind/example.cpython-39-x86_64-linux-gnu.so&amp;#39;&lt;/span&gt;&amp;gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;gt;&amp;gt;&amp;gt; example.add&lt;span class="o"&gt;(&lt;/span&gt;1,2&lt;span class="o"&gt;)&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="m"&gt;3&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id="对于-pybind11_module-宏的分析" class="heading-element"&gt;&lt;span&gt;对于 PYBIND11_MODULE 宏的分析&lt;/span&gt;
- &lt;a href="#%e5%af%b9%e4%ba%8e-pybind11_module-%e5%ae%8f%e7%9a%84%e5%88%86%e6%9e%90" class="heading-mark"&gt;
- &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
- &lt;/a&gt;
-&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;span class="lnt"&gt;15
-&lt;/span&gt;&lt;span class="lnt"&gt;16
-&lt;/span&gt;&lt;span class="lnt"&gt;17
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#define PYBIND11_MODULE(name, variable) \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; static ::pybind11::module_::module_def PYBIND11_CONCAT(pybind11_module_def_, name) \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_MAYBE_UNUSED; \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_MAYBE_UNUSED \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; static void PYBIND11_CONCAT(pybind11_init_, name)(::pybind11::module_ &amp;amp;); \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_PLUGIN_IMPL(name) { \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_CHECK_PYTHON_VERSION \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_ENSURE_INTERNALS_READY \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; auto m = ::pybind11::module_::create_extension_module( \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_TOSTRING(name), nullptr, &amp;amp;PYBIND11_CONCAT(pybind11_module_def_, name)); \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; try { \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_CONCAT(pybind11_init_, name)(m); \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; return m.ptr(); \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; } \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; PYBIND11_CATCH_INIT_EXCEPTIONS \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; } \
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt; void PYBIND11_CONCAT(pybind11_init_, name)(::pybind11::module_ &amp;amp; (variable))&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id="同-pip-结合" class="heading-element"&gt;&lt;span&gt;同 pip 结合&lt;/span&gt;
- &lt;a href="#%e5%90%8c-pip-%e7%bb%93%e5%90%88" class="heading-mark"&gt;
- &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
- &lt;/a&gt;
-&lt;/h2&gt;</description></item></channel></rss>
+&lt;/div&gt;</description></item></channel></rss>
