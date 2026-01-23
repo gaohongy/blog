@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/tags/</link><description/><generator>Hugo 0.154.5 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Tue, 20 Jan 2026 23:50:29 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/tags/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/tags/</link><description/><generator>Hugo 0.154.5 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Fri, 23 Jan 2026 09:28:45 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/tags/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;数据并行 (Data Parallelism - DP)&lt;/li&gt;
 &lt;/ol&gt;
@@ -2677,7 +2677,10 @@ wgmma.wait_group：等待订单交付&lt;/p&gt;
  &lt;a href="#register-%e5%88%b0-smem" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h4&gt;&lt;p&gt;在目前的参数设置下，每个 thread 需要 4 个 shared memory 地址，32 个寄存器数据&lt;/p&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;code&gt;Tensor rP = partition_fragment_C(TiledMMA_QK{}, Shape&amp;lt;Int&amp;lt;B_H&amp;gt;, Int&amp;lt;B_TOPK&amp;gt;&amp;gt;{});&lt;/code&gt; 不管是 &lt;code&gt;rP&lt;/code&gt; 还是 &lt;code&gt;rO&lt;/code&gt;，每个 thread 拿到的都是一个 warpgroup 负责区域内的寄存器，这个可能是包含多个 64x64 的 tile&lt;/p&gt;
+&lt;p&gt;在一个 64x64 的 tile 内，寄存器上的线程布局如下&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260121153937711.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260121153937711.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260121153937711.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260121153937711.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260121153937711.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260121153937711.png"&gt;&lt;/a&gt; &lt;sup id="fnref:6"&gt;&lt;a href="#fn:6" class="footnote-ref" role="doc-noteref"&gt;6&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;在目前的参数设置下，每个 thread 需要 4 个 shared memory 地址，32 个寄存器数据&lt;/p&gt;
 &lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260120233341828.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260120233341828.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260120233341828.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260120233341828.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260120233341828.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260120233341828.png"&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;int stsm_row = (idx_in_warpgroup/32)*16 + (idx_in_warpgroup%16);&lt;/code&gt; 每个 thread 在获取 shared memory 上的行索引时，&lt;code&gt;(idx_in_warpgroup/32)*16&lt;/code&gt; 作为基址决定了每个 warp 会对应到 16 行，&lt;code&gt;(idx_in_warpgroup%16)&lt;/code&gt; 则作为 thread 在所在 warp 负责的行的局部偏移&lt;/p&gt;
 &lt;p&gt;其中 &lt;code&gt;(idx_in_warpgroup%32/16*8) + 16*i&lt;/code&gt; 则是每个 thread 在获取 shared memory 上的列索引，&lt;code&gt;64/16&lt;/code&gt; 是对列方向的枚举&lt;/p&gt;
@@ -2690,6 +2693,165 @@ wgmma.wait_group：等待订单交付&lt;/p&gt;
 &lt;td class="lntd"&gt;
 &lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="n"&gt;i&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt; &lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="o"&gt;++&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;stsm_addrs&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;sP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stsm_row&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;idx_in_warpgroup&lt;/span&gt;&lt;span class="o"&gt;%&lt;/span&gt;&lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="mi"&gt;8&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="mi"&gt;16&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;i&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;不过目前从小测试程序来看，这个布局理解的似乎有问题&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;asm&lt;/span&gt; &lt;span class="k"&gt;volatile&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;stmatrix.sync.aligned.x4.m8n8.shared.b16 [%0], {%1, %2, %3, %4};&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;::&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;smem_int_ptr&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;src0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;src1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;src2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;src3&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;首先有一个问题是 &lt;code&gt;.x4.m8n8.&lt;/code&gt; 和文档中给定的顺序是不一致的，关于这一点并没有找到什么解释，可能来源于 SM90 的更新&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;.x4&lt;/code&gt; 表示源操作数表示由 4 个 32 位寄存器组成，每个寄存器表示矩阵的一部分&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;.x4.m8n8&lt;/code&gt; 完成的是由一个 warp 拷贝 4 个 8x8 的矩阵从 register 到 shared memory&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122112418395.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122112418395.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122112418395.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122112418395.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122112418395.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122112418395.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;结果位置错乱是 swizzle 引发的，这就会涉及到一个困惑已久的问题。&lt;/p&gt;
+&lt;p&gt;在 CuTe 的体系下，Tensor 是逻辑上的对象，它封装了 Layout（包含 Shape, Stride, Swizzle）的所有信息，这里面涉及到一个坐标自动转换逻辑，我们在使用 CuTe 的 API 时，自动转换机制就会发生。但是如果我们通过原始指针进行访问，是无法经过正确的映射的“&lt;/p&gt;
+&lt;p&gt;区分逻辑存储和物理存储。可视化出的是物理存储（因为没有经过 CuTe 的 API 进行访问），所以无法进行正确的 swizzle 坐标映射，因此看上去结果是错的。但是对于 $QK^T$ 后续计算流程来说，它们始终使用的都是包含了布局信息的 tensor 以及能够正确处理坐标映射规则的 CuTe API，所以它们也并不关心物理存储上的方式。&lt;/p&gt;
+&lt;p&gt;可视化出的是物理结构&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在布局中不带 swizzle 时，逻辑结构等同于物理结构&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutPTiles&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;decltype&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;make_layout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;make_shape&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;B_H&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{}),&lt;/span&gt; &lt;span class="c1"&gt;// 动态适配 B_H
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;make_stride&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="p"&gt;{})&lt;/span&gt; &lt;span class="c1"&gt;// 线性行优先步长
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122152453816.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122152453816.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122152453816.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122152453816.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122152453816.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122152453816.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;可以看出这个结构正是同官网给出的寄存器上线程布局是一致的&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在布局中添加 swizzle 时，逻辑结构不等同于物理结构&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutPTiles&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;decltype&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;coalesce&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tile_to_shape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;GMMA&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;Layout_K_SW128_Atom&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;bf16&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Shape&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;B_H&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;Step&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_2&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;Shape&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{}));&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;逻辑结构就等同于不添加 swizzle 时的状态，物理结构如下图所示&lt;/p&gt;
+&lt;p&gt;仅写入第一部分时&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122150555211.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122150555211.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122150555211.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122150555211.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122150555211.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122150555211.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;全部写入后&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122151358239.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122151358239.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122151358239.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122151358239.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122151358239.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122151358239.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;所以我们可以得到的结论是，带不带 swizzle 并不影响实际的计算结果，我们可视化看到的位置错乱那只是物理结构上受 swizzle 影响后的结果，但是逻辑结构上可能依然是正确的，我们应该使用逻辑结构去比较计算结果。&lt;/p&gt;
+&lt;p&gt;所以 FlashMLA 最终结果 O（也包含 swizzle）是如何同 reference 计算结果进行对比的？
+还有一个问题就是给定的 shared memory 的坐标同 stmatrix 的 4 个 8x8 矩阵之间是什么关联？难不成是给定 warp 内 thread 相同的基址，然后就拷贝连续的 4 个 8x8 矩阵？我需要知道 shared memory 给定的地址的作用。从四次拷贝到 shared memory 的整体覆盖区域来看，和我们根据代码理解的是相同的，不过每个 thread 负责的内容就和理解上略有不同了。&lt;/p&gt;
+&lt;p&gt;我们目前观察数据的视角或许有问题，目前 shared memory 上的数据都赋值为一样的，完整写入的情况下，swizzle 的影响就看不出来的&lt;/p&gt;
+&lt;p&gt;从 kernel 返回的 tensor 的布局是什么？&lt;/p&gt;
+&lt;p&gt;swizzle 是 shared memory 上的概念，而且它影响到了 smem 上的数据索引方式。由于数据流转的过程是 register -&amp;gt; shared memory -&amp;gt; global memory，register 和 global memory 既然都能接触到 smem，所以它们自然也是需要感知这一点的，感知发生在二者的数据同 smem 交互过程中。&lt;/p&gt;
+&lt;p&gt;在 gmem 和 smem 交互过程中，重要的是这个 &lt;code&gt;CUtensorMapSwizzle::CU_TENSOR_MAP_SWIZZLE_NONE&lt;/code&gt;,&lt;code&gt;CUtensorMapSwizzle::CU_TENSOR_MAP_SWIZZLE_128B&lt;/code&gt; 选项，表明在 gmem 和 smem 交互时如何映射 smem 上的逻辑坐标和物理坐标。不过这里是因为使用了 TMA，并不会由我们手动控制逻辑坐标和物理索引，因此是存在这个独立的配置项的。在 register 和 smem 交互过程中，就直接利用逻辑索引了，就涉及不到对于是否使用了 swizzle 的考量。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;span class="lnt"&gt;31
+&lt;/span&gt;&lt;span class="lnt"&gt;32
+&lt;/span&gt;&lt;span class="lnt"&gt;33
+&lt;/span&gt;&lt;span class="lnt"&gt;34
+&lt;/span&gt;&lt;span class="lnt"&gt;35
+&lt;/span&gt;&lt;span class="lnt"&gt;36
+&lt;/span&gt;&lt;span class="lnt"&gt;37
+&lt;/span&gt;&lt;span class="lnt"&gt;38
+&lt;/span&gt;&lt;span class="lnt"&gt;39
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;CUtensorMap&lt;/span&gt; &lt;span class="n"&gt;tensor_map_P&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// rank is the number of dimensions of the array.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;constexpr&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="n"&gt;rank&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;uint64_t&lt;/span&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rank&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{(&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;topk&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;h_q&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;unsigned&lt;/span&gt; &lt;span class="kt"&gt;long&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;s_q&lt;/span&gt;&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// The stride is the number of bytes to traverse from the first element of one row to the next. It must be a multiple of 16.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;uint64_t&lt;/span&gt; &lt;span class="n"&gt;stride&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rank&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;topk&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;bf16&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;h_q&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;params&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;topk&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="k"&gt;sizeof&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;bf16&lt;/span&gt;&lt;span class="p"&gt;)};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// The box_size is the size of the shared memory buffer that is used as the destination of a TMA transfer.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// 单次 TMA 拷贝任务中，每个维度搬运的数据元素数量
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="n"&gt;box_size&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rank&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;B_H&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// The distance between elements in units of sizeof(element). A stride of 2 can be used to load only the real component of a complex-valued tensor, for instance.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="n"&gt;elem_stride&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;rank&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;};&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Create the tensor descriptor.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUresult&lt;/span&gt; &lt;span class="n"&gt;res&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;CUTLASS_CUDA_DRIVER_WRAPPER_CALL&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;cuTensorMapEncodeTiled&lt;/span&gt;&lt;span class="p"&gt;)(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;tensor_map_P&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// CUtensorMap *tensorMap,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUtensorMapDataType&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;CU_TENSOR_MAP_DATA_TYPE_BFLOAT16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;rank&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// cuuint32_t tensorRank,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;out_P&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// void *globalAddress,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// const cuuint64_t *globalDim,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;stride&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// const cuuint64_t *globalStrides,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;box_size&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// const cuuint32_t *boxDim,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;elem_stride&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="c1"&gt;// const cuuint32_t *elementStrides,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Interleave patterns can be used to accelerate loading of values that
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// are less than 4 bytes long.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUtensorMapInterleave&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;CU_TENSOR_MAP_INTERLEAVE_NONE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Swizzling can be used to avoid shared memory bank conflicts.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// CUtensorMapSwizzle::CU_TENSOR_MAP_SWIZZLE_NONE,
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUtensorMapSwizzle&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;CU_TENSOR_MAP_SWIZZLE_128B&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// L2 Promotion can be used to widen the effect of a cache-policy to a wider
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// set of L2 cache lines.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUtensorMapL2promotion&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;CU_TENSOR_MAP_L2_PROMOTION_NONE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="c1"&gt;// Any element that is outside of bounds will be set to zero by the TMA transfer.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUtensorMapFloatOOBfill&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;CU_TENSOR_MAP_FLOAT_OOB_FILL_NONE&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h4 id="smem-到-gmem" class="heading-element"&gt;&lt;span&gt;smem 到 gmem&lt;/span&gt;
@@ -3056,7 +3218,7 @@ wgmma.wait_group：等待订单交付&lt;/p&gt;
  &lt;a href="#compact-attention" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h2&gt;&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png"&gt;&lt;/a&gt; &lt;sup id="fnref:6"&gt;&lt;a href="#fn:6" class="footnote-ref" role="doc-noteref"&gt;6&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251218114217525.png"&gt;&lt;/a&gt; &lt;sup id="fnref:7"&gt;&lt;a href="#fn:7" class="footnote-ref" role="doc-noteref"&gt;7&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;h2 id="kv-cache" class="heading-element"&gt;&lt;span&gt;KV Cache&lt;/span&gt;
  &lt;a href="#kv-cache" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
@@ -3102,7 +3264,10 @@ wgmma.wait_group：等待订单交付&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://github.com/deepseek-ai/FlashMLA/blob/main/docs/20250422-new-kernel-deep-dive.md#:~:text=remember%20that%20in,with%20different%20names"target="_blank" rel="external nofollow noopener noreferrer"&gt;20250422-new-kernel-deep-dive.md&lt;/a&gt;&amp;#160;&lt;a href="#fnref:5" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;li id="fn:6"&gt;
-&lt;p&gt;&lt;a href="https://arxiv.org/abs/2305.13245"target="_blank" rel="external nofollow noopener noreferrer"&gt;Ainslie J, Lee-Thorp J, De Jong M, et al. Gqa: Training generalized multi-query transformer models from multi-head checkpoints[J]. arXiv preprint arXiv:2305.13245, 2023.&lt;/a&gt;&amp;#160;&lt;a href="#fnref:6" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://docs.nvidia.com/cuda/parallel-thread-execution/#asynchronous-warpgroup-level-matrix-register-fragment-wgmma-64n16"target="_blank" rel="external nofollow noopener noreferrer"&gt;9.7.15.5.1.1.1. Matrix Fragments for wgmma.mma_async.m64nNk16&lt;/a&gt;&amp;#160;&lt;a href="#fnref:6" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id="fn:7"&gt;
+&lt;p&gt;&lt;a href="https://arxiv.org/abs/2305.13245"target="_blank" rel="external nofollow noopener noreferrer"&gt;Ainslie J, Lee-Thorp J, De Jong M, et al. Gqa: Training generalized multi-query transformer models from multi-head checkpoints[J]. arXiv preprint arXiv:2305.13245, 2023.&lt;/a&gt;&amp;#160;&lt;a href="#fnref:7" class="footnote-backref" role="doc-backlink"&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;</description></item><item><title>Transformer</title><link>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</link><pubDate>Fri, 21 Nov 2025 16:04:54 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;&lt;a href="https://www.zhihu.com/question/596771388/answer/1974891633284781738"target="_blank" rel="external nofollow noopener noreferrer"&gt;为什么我还是无法理解transformer&lt;/a&gt;
@@ -3628,7 +3793,64 @@ wgmma.wait_group：等待订单交付&lt;/p&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h2 id="性能评估" class="heading-element"&gt;&lt;span&gt;性能评估&lt;/span&gt;
+&lt;/div&gt;&lt;h2 id="数据切分" class="heading-element"&gt;&lt;span&gt;数据切分&lt;/span&gt;
+ &lt;a href="#%e6%95%b0%e6%8d%ae%e5%88%87%e5%88%86" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;目前比较容易混淆的两个概念是 &lt;code&gt;partition_C&lt;/code&gt; 和 &lt;code&gt;partition_fragment_C&lt;/code&gt;。共同点在于二者都是基于 &lt;code&gt;tiled_mma&lt;/code&gt; 的布局模式确定调用这个 api 的 thread 所对应的数据；区别在于前者是面向 gmem 或者 smem，后者是开辟寄存器。&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-fallback" data-lang="fallback"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;// 1. 自动分配寄存器空间，用于存放计算结果
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Tensor rC = partition_fragment_C(tiled_mma, Shape&amp;lt;M, N&amp;gt;{});
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;// 2. 手动划分全局内存，确定写回的目标位置
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;auto thr_mma = tiled_mma.get_slice(threadIdx.x);
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Tensor mC = thr_mma.partition_C(gmem_C); // gmem_C 是指向显存的指针
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;// 3. 计算完成后，将寄存器数据写回对应的内存位置
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;copy(rC, mC);&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="逻辑坐标到物理偏移量" class="heading-element"&gt;&lt;span&gt;逻辑坐标到物理偏移量&lt;/span&gt;
+ &lt;a href="#%e9%80%bb%e8%be%91%e5%9d%90%e6%a0%87%e5%88%b0%e7%89%a9%e7%90%86%e5%81%8f%e7%a7%bb%e9%87%8f" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutPTiles&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="k"&gt;decltype&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;make_layout&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;make_shape&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;B_H&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{}),&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;make_stride&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Int&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;64&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt; &lt;span class="n"&gt;NUM_TILES&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="n"&gt;_1&lt;/span&gt;&lt;span class="p"&gt;{})&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutP&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutPTiles&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;对于这样一个 &lt;code&gt;SmemLayoutP&lt;/code&gt;，我们在通过 tensor 访问时，面对的都是逻辑布局，对应到物理布局上可能就是跳跃的，如下图所示&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122232921625.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122232921625.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122232921625.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122232921625.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122232921625.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260122232921625.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id="性能评估" class="heading-element"&gt;&lt;span&gt;性能评估&lt;/span&gt;
  &lt;a href="#%e6%80%a7%e8%83%bd%e8%af%84%e4%bc%b0" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
