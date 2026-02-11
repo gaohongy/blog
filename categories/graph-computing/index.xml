@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/graph-computing/</link><description/><generator>Hugo 0.155.3 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Sat, 24 Jan 2026 23:46:13 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/graph-computing/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/graph-computing/</link><description/><generator>Hugo 0.155.3 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Wed, 11 Feb 2026 23:35:57 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/graph-computing/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;数据并行 (Data Parallelism - DP)&lt;/li&gt;
 &lt;/ol&gt;
@@ -1512,4 +1512,35 @@
  &lt;a href="#%e5%90%8c-pip-%e7%bb%93%e5%90%88" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h2&gt;</description></item></channel></rss>
+&lt;/h2&gt;&lt;h2 id="封装模式" class="heading-element"&gt;&lt;span&gt;封装模式&lt;/span&gt;
+ &lt;a href="#%e5%b0%81%e8%a3%85%e6%a8%a1%e5%bc%8f" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;通过 &lt;code&gt;PYBIND11_MODULE&lt;/code&gt; 完成最底层的 C++ function 的封装，向 Python 提供了底层算子的支持，需要注意这里是一次潜在的修改 function name 的机会，向 Python 暴露的函数名称并不一定等同于底层的算子名称。&lt;/p&gt;
+&lt;p&gt;一般会在 C++ function 封装之上构建一个 Python package，完成一些参数处理，校验等预处理工作，在 package 向外导出函数时也是有可能修改名称的，如下面代码所示&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# __init__.py&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;.recompute_kascade_gqa_prefill&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;flashattn&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;prefill_recompute_kernel&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;.reuse_kascade_gqa_prefill&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;flashattn&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;prefill_reuse_kernel&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;__all__&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;prefill_recompute_kernel&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;#34;prefill_reuse_kernel&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# recompute_kascade_gqa_prefill.py&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;flashattn&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;batch&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;heads&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;seq_len&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;dim&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;tune&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;groups&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;kernel_type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;#34;prefill&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;# 由于这一部分代码使用了 python DSL，所以底层并没有 C++ function 了，如果是贯穿式工作则底层还应当存在一个 pybind 封装&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;package 向外暴露的函数名称是 &lt;code&gt;prefill_recompute_kernel&lt;/code&gt; 和 &lt;code&gt;prefill_reuse_kernel&lt;/code&gt;。然而实际上包含前面两个名称和 &lt;code&gt;flashattn&lt;/code&gt; 在内都已经是在 python 层面的封装了。&lt;/p&gt;</description></item></channel></rss>
