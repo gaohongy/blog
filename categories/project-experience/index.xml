@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/project-experience/</link><description/><generator>Hugo 0.160.1 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Mon, 13 Apr 2026 23:17:50 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/project-experience/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/project-experience/</link><description/><generator>Hugo 0.161.1 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Sun, 10 May 2026 00:24:18 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/project-experience/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;数据并行 (Data Parallelism - DP)&lt;/li&gt;
 &lt;/ol&gt;
@@ -177,7 +177,45 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="n"&gt;run_qk_mma&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;cutlass&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;half_t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;32&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;QKMmaParams&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cudaStream_t&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="n"&gt;run_qk_mma&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;cutlass&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;half_t&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;64&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;QKMmaParams&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;cudaStream_t&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;从上面提到的编译链接流程不难看出，我们在 main.cu 中实际可以调用的函数模版类型的多少取决于我们显式实例化的类型的多少，这样的话模版在一定程度上就变为了伪模板。这实际上是C++ 工程实践中一个 tradeoff，分离编译 + 显式实例化带来了工程上的可维护性以及提升了编译速度，但是却丧失了一定灵活性。&lt;/p&gt;</description></item><item><title>Transformer</title><link>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</link><pubDate>Fri, 21 Nov 2025 16:04:54 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;&lt;a href="https://www.zhihu.com/question/596771388/answer/1974891633284781738"target="_blank" rel="external nofollow noopener noreferrer"&gt;为什么我还是无法理解transformer&lt;/a&gt;
+&lt;/div&gt;&lt;p&gt;从上面提到的编译链接流程不难看出，我们在 main.cu 中实际可以调用的函数模版类型的多少取决于我们显式实例化的类型的多少，这样的话模版在一定程度上就变为了伪模板。这实际上是C++ 工程实践中一个 tradeoff，分离编译 + 显式实例化带来了工程上的可维护性以及提升了编译速度，但是却丧失了一定灵活性。&lt;/p&gt;
+&lt;h2 id="调试技巧" class="heading-element"&gt;&lt;span&gt;调试技巧&lt;/span&gt;
+ &lt;a href="#%e8%b0%83%e8%af%95%e6%8a%80%e5%b7%a7" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;编译时确定一个编译时常量的值&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;通过实例化一个没有实现的类模版，会报以下错误，从而我们就知道了一个编译时常量的值&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;error: incomplete type &amp;ldquo;cute::ValuePrinter&amp;lt;4&amp;gt;&amp;rdquo; is not allowed&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;N&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="nc"&gt;ValuePrinter&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="n"&gt;ValuePrinter&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;RegNumA&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;{};&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这里我们可以把 RegNumA 其他数据&lt;/p&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;编译时确定一个类型&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;template&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="k"&gt;typename&lt;/span&gt; &lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="nc"&gt;TypePrinter&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description></item><item><title>Transformer</title><link>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</link><pubDate>Fri, 21 Nov 2025 16:04:54 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/transformer/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;&lt;a href="https://www.zhihu.com/question/596771388/answer/1974891633284781738"target="_blank" rel="external nofollow noopener noreferrer"&gt;为什么我还是无法理解transformer&lt;/a&gt;
 &lt;a href="https://nlp.seas.harvard.edu/annotated-transformer/"target="_blank" rel="external nofollow noopener noreferrer"&gt;The Annotated Transformer&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Transformer 架构定义了“信息的流动方式”：无论是训练还是推理，信息都必须经过多头注意力（MHA）和前馈网络（FFN）。&lt;/p&gt;
 &lt;table&gt;
@@ -283,7 +321,8 @@
  &lt;a href="#%e5%88%86%e5%b1%82%e8%ae%be%e8%ae%a1" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h2&gt;&lt;p&gt;CUTLASS 在解决问题时的一个基本思想是，定义一个在硬件上最优的最小执行单元（Atom），然后通过几何上的平铺（Tiling）和组合，将其无损地扩展至任意规模的问题空间。&lt;/p&gt;
+&lt;/h2&gt;&lt;p&gt;&lt;span style="color:red;"&gt; 目前这一章节还没有对 cutlass 所提供的所有可能的分层方式完全梳理清楚，只是在遇到一些情况时就记录一下，不过基本思想是没有问题的 &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;CUTLASS 在解决问题时的一个基本思想是，定义一个在硬件上最优的最小执行单元（Atom），然后通过几何上的平铺（Tiling）和组合，将其无损地扩展至任意规模的问题空间。&lt;/p&gt;
 &lt;p&gt;我们可以从 attention 计算中对于 K 数据在 shared memroy 上的布局以及规定 global memory 到 shared memory 拷贝过程中 thread 任务分工模式上来理解采用这一思想的好处，&lt;/p&gt;
 &lt;p&gt;最为简单且直观的方式就是直接定义完整布局和在完整布局上的 thread 任务分工模式，但是当我们修改 &lt;code&gt;kBlockN&lt;/code&gt; 或 &lt;code&gt;kHeadDim&lt;/code&gt; 时，必须同时修改 &lt;code&gt;GmemTiledCopyK&lt;/code&gt; 中 thread 的分工模式，维护成本高，容易出错。&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -341,7 +380,8 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// 3. 自动扩展到完整布局
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;SmemLayoutK&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;tile_to_shape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;SmemLayoutAtomK&lt;/span&gt;&lt;span class="p"&gt;{},&lt;/span&gt; &lt;span class="n"&gt;make_shape&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;kBlockN&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;kHeadDim&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png"&gt;&lt;/a&gt; &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;&lt;span style="color:red;"&gt;这里写的不太准确，&lt;code&gt;SmemLayoutAtomK&lt;/code&gt; 和 &lt;code&gt;SmemLayoutK&lt;/code&gt; 是 shared memory 上的分布情况，&lt;code&gt;GmemLayoutAtomK&lt;/code&gt; 则是完成 global memory 到 shared memory 数据拷贝时的任务分工，当时应该是想表达基于 cutlass 完成的任务扩展，在 shared memory 的空间大小变化时，任务分工并不需要手动计算即可自动对应完成，但是这里没有表达出这个意思 &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224163834316.png"&gt;&lt;/a&gt; &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;p&gt;目前对下图所示的这三层的抽象形式仍存疑，可能还是主要对实现形式不明确&lt;/p&gt;
 &lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224174515738.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224174515738.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224174515738.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224174515738.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224174515738.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20251224174515738.png"&gt;&lt;/a&gt; &lt;sup id="fnref:2"&gt;&lt;a href="#fn:2" class="footnote-ref" role="doc-noteref"&gt;2&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://developer.nvidia.com/blog/cutlass-linear-algebra-cuda/"target="_blank" rel="external nofollow noopener noreferrer"&gt;https://developer.nvidia.com/blog/cutlass-linear-algebra-cuda/&lt;/a&gt;&lt;/p&gt;
@@ -382,6 +422,18 @@
 &lt;li&gt;&lt;strong&gt;括号的存在不改变重复的倍率&lt;/strong&gt;: 不管是 ((2, 3), 6, 7) 还是 ((2, 3), (6, 7))，对于 6 来说，它看到左边是一个总长度为 $2 \times 3 = 6$ 的整体，于是把这个长度为 6 的块重复排布 6 次，对于 7 来说看到左边已经形成了一个总长度为 $6 \times 6 = 36$ 的大块。于是把这 36 个数作为一个整体，再重复排布 7 次&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;括号的存在决定了坐标访问的层级和数据访问的粒度&lt;/strong&gt;: ((2, 3), 6, 7) 和 ((2, 3), (6, 7)) 各个数据在重复的这件事情上是保持一致的，区别就在于括号的方式所影响的索引方式，例如访问前者时需要 ((i, j), k, l)，访问后者时需要 ((i, j), (k, l))，k 和 l 在分开时可能代表了两种不同含义的索引，合并时则是由二者统一决定含义的方式。当然这样说起来还是有些抽象，因为划分层级结构主要是为了适配任务需求，所以还是需要代入实际问题才可能理解&lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;当我们怀着以上对于 tensor layout 的理解去看其他问题，我们大概率会发现没办法直接套入那个问题当中。这是因为 Shape 的维度本身没有任何物理含义，它的语义完全是由 Stride 赋予的，或者更加直接一点来说，它的含义是由编码者赋予的。不过也不是说完全不定，多少会有一些适应硬件的默认语义。&lt;/p&gt;
+&lt;p&gt;而上面的这种解释，可能面对的就是一种矩阵形态下的任务分块形式，换到其他问题场景中，自然可能就不再成立了&lt;/p&gt;
+&lt;p&gt;我们看现有的布局勉强可能可以理解，但是现在如果需要去根据实际问题去设计，我们应该遵循什么规则呢？&lt;/p&gt;
+&lt;p&gt;因为目前还没有正确的转换经历，后续需要验证 &lt;a href="https://gemini.google.com/app/ec32d79b49ca7679"target="_blank" rel="external nofollow noopener noreferrer"&gt;https://gemini.google.com/app/ec32d79b49ca7679&lt;/a&gt; 这里提到的说法是否符合实际&lt;/p&gt;
+&lt;h3 id="视图转换" class="heading-element"&gt;&lt;span&gt;视图转换&lt;/span&gt;
+ &lt;a href="#%e8%a7%86%e5%9b%be%e8%bd%ac%e6%8d%a2" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;acc_layout Layout: ((_2,_2),_2,_8):((_1,_2),_4,_8)
+l Layout: ((_2,_2),_2,(_2,_4)):((_1,_2),_4,(_8,_16))&lt;/p&gt;
+&lt;p&gt;acc_s Layout: ((_2,_2),_2,_8):((_1,_2),_4,_8)
+tOrP Layout: (((_2,_2),_2),_2,_4):(((_1,_2),_8),_4,_16)&lt;/p&gt;
 &lt;h2 id="copy" class="heading-element"&gt;&lt;span&gt;Copy&lt;/span&gt;
  &lt;a href="#copy" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
@@ -1015,6 +1067,84 @@
 &lt;/ul&gt;
 &lt;p&gt;也就是说采用 (N, K) 并不会影响计算过程中数据的读取。那这么做有什么好处吗？&lt;/p&gt;
 &lt;p&gt;通过将 B 定义为 (N, K)，CUTLASS 使得 A 和 B 在进入 Tensor Core 之前，都能以相同的方式（即在 K 维上连续）进行 Tile 的划分和数据的加载，从而简化 Copy_Atom 和 MMA_Atom 的算子组合，或者说对于二者的处理可以复用相似的逻辑。&lt;/p&gt;
+&lt;p&gt;对这一问题的分析需要分为两个层面，&lt;/p&gt;
+&lt;p&gt;我们可以确定的是 MMA PTX 所要求的矩阵乘法是需要在满足数学意义下完成的，而在 CUTLASS 中 A 采用 (M, K)，B 采用 (N, K)，却可以在不满足数学意义的情况下正确完成，所以显然是由 CUTLASS 完成了这中间的转换过程，所以我们要回答的核心问题是 CUTLASS 为什么要有别于 PTX 指令的约束而采用另一套定义方法，以及在采用这种定义方法后又是如何做到的向 PTX 指令进行适配&lt;/p&gt;
+&lt;p&gt;所以我们可以从两方面进行分析，一是 CUTLASS 的设计理念，二是从 CUTLASS 的规范转换到 MMA PTX 的规范的转换过程&lt;/p&gt;
+&lt;p&gt;在 cutlass 自身提供的文档 &lt;a href="https://github.com/NVIDIA/cutlass/blob/main/media/docs/cpp/cute/0x_gemm_tutorial.md"target="_blank" rel="external nofollow noopener noreferrer"&gt;0x_gemm_tutorial&lt;/a&gt; 中提到了下面这些内容&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;We&amp;rsquo;ve found that the BLAS convention of using &amp;ldquo;non-transposed&amp;rdquo; (N) and &amp;ldquo;transposed&amp;rdquo; (T) flags in conjunction with the mode conventions of &lt;code&gt;MxK * KxN&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Furthermore, knowing that matrix multiply always performs a reduction in the K-mode, it is very convenient from a software perspective to always have the K-mode in the same place and adopt the mode convention &lt;code&gt;MxK * NxK&lt;/code&gt;. Implementations will always reduce over the second mode (the K mode) of both input matrices and leads to cases where implementations can treat both input matrices the same way.&lt;/p&gt;
+&lt;p&gt;How do we translate this into the BLAS user&amp;rsquo;s experience?&lt;/p&gt;
+&lt;p&gt;Regardless, we&amp;rsquo;ll still use the BLAS &amp;ldquo;NT&amp;rdquo; and &amp;ldquo;TN&amp;rdquo; notations for high-level descriptions of kernels when it&amp;rsquo;s appropriate.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;BLAS&lt;/th&gt;
+ &lt;th&gt;A Majorness&lt;/th&gt;
+ &lt;th&gt;A Layout&lt;/th&gt;
+ &lt;th&gt;B Majorness&lt;/th&gt;
+ &lt;th&gt;B Layout&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;NT&lt;/td&gt;
+ &lt;td&gt;M-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(M,K):(1,ldA)&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;N-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(N,K):(1,ldB)&lt;/code&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;TN&lt;/td&gt;
+ &lt;td&gt;K-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(M,K):(ldA,1)&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;K-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(N,K):(ldB,1)&lt;/code&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;NN&lt;/td&gt;
+ &lt;td&gt;M-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(M,K):(1,ldA)&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;K-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(N,K):(ldB,1)&lt;/code&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;TT&lt;/td&gt;
+ &lt;td&gt;K-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(M,K):(ldA,1)&lt;/code&gt;&lt;/td&gt;
+ &lt;td&gt;N-major&lt;/td&gt;
+ &lt;td&gt;&lt;code&gt;(N,K):(1,ldB)&lt;/code&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;从这些内容来看，就能够理解 cutlass 采用 &lt;code&gt;N&lt;/code&gt; 和 &lt;code&gt;T&lt;/code&gt; 实际是为了向 BLAS 对齐，同时发现了采用 &lt;code&gt;MxK * NxK&lt;/code&gt; 去描述矩阵乘的过程在两个矩阵的处理上会更简便&lt;/p&gt;
+&lt;p&gt;以上内容就回答了第一个问题，下面分析第二个较为困难的问题&lt;/p&gt;
+&lt;p&gt;这个应该是和 TV 布局相关的，在采用 copy view 的 TV layout 和 mma view 的 TV layout 结果应该是不同的&lt;/p&gt;
+&lt;h4 id="shared-memory-到-register" class="heading-element"&gt;&lt;span&gt;shared memory 到 register&lt;/span&gt;
+ &lt;a href="#shared-memory-%e5%88%b0-register" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h4&gt;&lt;p&gt;&lt;span style="color:red;"&gt;TODO 这部分内容和下面的 “存储主序“ 存在交叉，需要合并&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;mma 有 alayout, blayout 的区别&lt;/p&gt;
+&lt;p&gt;ldmatrix 有转置选项&lt;/p&gt;
+&lt;p&gt;&lt;del&gt;寄存器上不存在布局的概念，只存在 mma 的要求&lt;/del&gt;。&lt;/p&gt;
+&lt;p&gt;ldmatrix 完成了从规整布局到 mma 布局的转换，cutlass 应该完成了中间的协调过程&lt;/p&gt;
+&lt;p&gt;从实测过程看出，在调整起始地址后每个 thread 持有的数据顺序也会发生变化，所以是否转置结果好像都是正确的原因在于 cutlass 完成了协调过程&lt;/p&gt;
+&lt;p&gt;每个 thread 读取的数据是它持有地址所对应的数据，但是最后持有的则是分发后的&lt;/p&gt;
+&lt;p&gt;ldmatrix 的 trans 是指线程的布局是按行的还是按列的，因为这一指令本身就是为了配置 mma 的，所以如果不理解这里的行列可以直接看 mma 中 thread 的布局图&lt;/p&gt;
+&lt;p&gt;这就是不添加 trans 时读取的效果&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154656083.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154656083.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154656083.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154656083.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154656083.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154656083.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这就是添加了 trans 读取后的效果&lt;/p&gt;
+&lt;p&gt;&lt;a class="lightgallery" href="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154731369.png" title="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154731369.png" data-thumbnail="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154731369.png" data-sub-html="&lt;h2&gt;https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154731369.png&lt;/h2&gt;"&gt;&lt;img loading="lazy" src='https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154731369.png' alt="https://cdn.jsdelivr.net/gh/gaohongy/cloudImages@master/20260415154731369.png"&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;但是 trans 是否会影响一个 warp 持有矩阵的形态？&lt;/p&gt;
+&lt;p&gt;thread 通过持有不同的数据从而组成不同的形态，但是形态本身是站在 mma 的视角才会看到的内容，或者说矩阵形态的解释权是在 mma 指令的手上，如果没有 mma，那么 thread 持有的就是一堆零散的数据。感觉也不太对，如果按照这个说法，线程布局的改变就可以改变 mma 所能接收的矩阵 shape 了，但是实际是 mma 所接收的数据形态就是固定的，改变的只是 thread 在这个里面的排布方式。例如 m16n8k16，对于 B 操作数来说，在 mma 这里始终就是 16x8&lt;/p&gt;
+&lt;p&gt;register 是有 shape 的，但是这种 shape 是 mma 赋予的，每个 thread 持有的就是那几个数据，但是这个数据到底在哪个位置，是 mma 指令所决定的，所以它自然也决定了 register 上矩阵数据的形态&lt;/p&gt;
+&lt;p&gt;cute::copy 似乎并不要求 shared memory 和最终参与计算的 mma 所要求的形态之间保持一致，它在中间进行协调&lt;/p&gt;
+&lt;p&gt;ldmatrix 的 trans 并不能影响矩阵的 shape，它做到的是在固定矩阵 shape 情况下在 8x8 块内 thread 的分布是按行排布还是按列排布。矩阵 shape 的转置至少要放到 shared memory 这一级&lt;/p&gt;
+&lt;p&gt;不过 mma 的 row 和 col 的含义目前还尚不明确&lt;/p&gt;
+&lt;p&gt;不过感觉 ldmatrix 还是有一些内容没有完全理解，同样是相同的指令 &lt;code&gt;ldmatrix.sync.aligned.x4.trans.m8n8.shared.b16&lt;/code&gt; 和 &lt;code&gt;ldmatrix.sync.aligned.x4.trans.m8n8.shared.b16&lt;/code&gt;，只是相差一个 trans 选项，但是 cutlass 封装为两种完全不同的类 SM75_U32x4_LDSM_N 和 SM75_U16x8_LDSM_T&lt;/p&gt;
+&lt;p&gt;ldmatrix 的 trans 远比想象中复杂，尤其是在和 cutlass 的交互过程中，但是一个比较好的切入点可以参考 qk-mma notes.md 中 24.8 的内容记录，后续可以从这个点入手去理解，同时可以参考 &lt;a href="https://gemini.google.com/app/e4349f13a51f2866"target="_blank" rel="external nofollow noopener noreferrer"&gt;https://gemini.google.com/app/e4349f13a51f2866&lt;/a&gt;&lt;/p&gt;
 &lt;h3 id="tiled-mma" class="heading-element"&gt;&lt;span&gt;tiled mma&lt;/span&gt;
  &lt;a href="#tiled-mma" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
@@ -1183,11 +1313,38 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; | (M112-127) | | | |_________|
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; |____________|_____|____________|&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h3 id="存储主序" class="heading-element"&gt;&lt;span&gt;存储主序&lt;/span&gt;
+&lt;/div&gt;&lt;p&gt;tiled mma 虽然说已经包裹了一层 mma 完成了粒度的扩展，但并不代表由一次 tiled mma 就可以完成全部的计算，目前接触到的维度的扩展分为 N 维度的和 K 维度的&lt;/p&gt;
+&lt;p&gt;N 维度是指 FlashAttention 的 $QK^T$ 计算时对于 K 的 N 维度的迭代，K 维度是指 $QK^T$ 在 K 维度上的迭代&lt;/p&gt;
+&lt;p&gt;K 维度的遍历需要先理解每个 thread 持有寄存器数据的各个维度, 代表的是 TiledMMA 划分后，每个线程在逻辑维度上持有的分片数量&lt;/p&gt;
+&lt;p&gt;在 TiledMMA 划分后的 Tensor 中，维度通常遵循以下约定：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;size&amp;lt;0&amp;gt;: 当前 thread 持有寄存器数量。例如 tiled mma 如果负责的完整区域就是 m16n8k16，那么按照 &lt;a href="https://docs.nvidia.com/cuda/parallel-thread-execution/#warp-level-matrix-fragment-mma-16816-float"target="_blank" rel="external nofollow noopener noreferrer"&gt;Matrix Fragments for mma.m16n8k16&lt;/a&gt; 的要求，每个 thread 在 A 矩阵中会持有 8 个数据，在 B 矩阵中会持有 4 个数据，在 C 矩阵中持有 4 个数据&lt;/li&gt;
+&lt;li&gt;size&amp;lt;1&amp;gt;：&lt;/li&gt;
+&lt;li&gt;size&amp;lt;2&amp;gt;：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;另外一个需要理解的事情是 &lt;code&gt;cutlass/include/cute/algorithm/gemm.hpp&lt;/code&gt; 中给的各种不同版本 gemm 的 dispatch 其中一个划分的关键点是判断 tensor 的 rank，所以这里也需要理解一下怎么判断 tensor 的 rank&lt;/p&gt;
+&lt;p&gt;对于一个 3D tensor，如果我们指定了一个维度后它自然就变为了 2D tensor&lt;/p&gt;
+&lt;h3 id="cutlass-支持的-gemm" class="heading-element"&gt;&lt;span&gt;cutlass 支持的 gemm&lt;/span&gt;
+ &lt;a href="#cutlass-%e6%94%af%e6%8c%81%e7%9a%84-gemm" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;在 &lt;code&gt;cutlass/include/cute/algorithm/gemm.hpp&lt;/code&gt; 中包含多个 dispatch&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Dispatch [4]: (V,M) x (V,N) =&amp;gt; (V,M,N)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;$$\begin{bmatrix} a_1 \ a_2 \ \vdots \ a_m \end{bmatrix} \times \begin{bmatrix} b_1 &amp;amp; b_2 &amp;amp; \dots &amp;amp; b_n \end{bmatrix} =
+\begin{bmatrix}
+a_1b_1 &amp;amp; a_1b_2 &amp;amp; \dots &amp;amp; a_1b_n \
+a_2b_1 &amp;amp; a_2b_2 &amp;amp; \dots &amp;amp; a_2b_n \
+\vdots &amp;amp; \vdots &amp;amp; \ddots &amp;amp; \vdots \
+a_mb_1 &amp;amp; a_mb_2 &amp;amp; \dots &amp;amp; a_mb_n
+\end{bmatrix}$$&lt;/p&gt;
+&lt;h3 id="存储主序" class="heading-element"&gt;&lt;span&gt;存储主序&lt;/span&gt;
  &lt;a href="#%e5%ad%98%e5%82%a8%e4%b8%bb%e5%ba%8f" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h3&gt;&lt;p&gt;&lt;code&gt;SM80_16x8x16_F32F16F16F32_TN&lt;/code&gt; 中最后的 TN 以此指代两个操作数 A 和 B 矩阵的存储主序&lt;/p&gt;
+&lt;/h3&gt;&lt;p&gt;&lt;span style="color:red;"&gt;TODO 这部分内容和前面的 &amp;ldquo;反直觉的一点“, “shared memory 到 register” 存在交叉，需要合并&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;SM80_16x8x16_F32F16F16F32_TN&lt;/code&gt; 中最后的 TN 以此指代两个操作数 A 和 B 矩阵的存储主序&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;T (Transposed / Row-Major)：行优先。在内存中，沿着列索引移动是连续的&lt;/li&gt;
 &lt;li&gt;N (Normal / Column-Major)：列优先。在内存中，沿着行索引移动是连续的&lt;/li&gt;
@@ -1195,7 +1352,95 @@
 &lt;p&gt;从性能的角度考虑：&lt;/p&gt;
 &lt;p&gt;A 矩阵必须是 Row-Major (T)：这样在 K 维度（计算的内积维度）上提取数据最快。&lt;/p&gt;
 &lt;p&gt;B 矩阵必须是 Column-Major (N)：同样是为了在 K 维度上提取数据最快。&lt;/p&gt;
-&lt;p&gt;不过这里的主序是指在寄存器上的主序，外部或许不用太感知这件事&lt;/p&gt;
+&lt;p&gt;不过 &lt;code&gt;SM80_16x8x16_F32F16F16F32_TN&lt;/code&gt; 只是 cutlass 中抽象出的一个类，要想了解本质的内容，还是需要从 ptx 指令本身的 &lt;code&gt;row&lt;/code&gt; 和 &lt;code&gt;col&lt;/code&gt; 入手&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;span class="lnt"&gt;22
+&lt;/span&gt;&lt;span class="lnt"&gt;23
+&lt;/span&gt;&lt;span class="lnt"&gt;24
+&lt;/span&gt;&lt;span class="lnt"&gt;25
+&lt;/span&gt;&lt;span class="lnt"&gt;26
+&lt;/span&gt;&lt;span class="lnt"&gt;27
+&lt;/span&gt;&lt;span class="lnt"&gt;28
+&lt;/span&gt;&lt;span class="lnt"&gt;29
+&lt;/span&gt;&lt;span class="lnt"&gt;30
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="c1"&gt;// cutlass/include/cute/arch/mma_sm80.hpp
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;struct&lt;/span&gt; &lt;span class="nc"&gt;SM80_16x8x16_F32F16F16F32_TN&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;DRegisters&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;ARegisters&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;BRegisters&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;using&lt;/span&gt; &lt;span class="n"&gt;CRegisters&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;];&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUTE_HOST_DEVICE&lt;/span&gt; &lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="kt"&gt;void&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="nf"&gt;fma&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;d0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;d1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;d2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;d3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;a0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;a1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;a2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;a3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;b0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;uint32_t&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;b1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;c0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;c1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;c2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kt"&gt;float&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;c3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#if defined(CUTE_ARCH_MMA_SM80_ENABLED)
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;asm&lt;/span&gt; &lt;span class="k"&gt;volatile&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32 &amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;{%0, %1, %2, %3},&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;{%4, %5, %6, %7},&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;{%8, %9},&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;{%10, %11, %12, %13};&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;=f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;=f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;=f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;=f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;d3&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="o"&gt;:&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a3&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;r&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;b1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="s"&gt;&amp;#34;f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c0&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c2&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;f&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;c3&lt;/span&gt;&lt;span class="p"&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#else
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;CUTE_INVALID_CONTROL_PATH&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;Attempting to use SM80_16x8x16_F32F16F16F32_TN without CUTE_ARCH_MMA_SM80_ENABLED&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#endif
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;};&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;这个环节的选择要同前一步骤的 shared memory -&amp;gt; register 的拷贝方式挂钩。重点需要关注这里的 &lt;code&gt;trans&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-asm" data-lang="asm"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="nf"&gt;ldmatrix.sync.aligned.shape.num&lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="no"&gt;.trans&lt;/span&gt;&lt;span class="err"&gt;}{&lt;/span&gt;&lt;span class="no"&gt;.ss&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="no"&gt;.type&lt;/span&gt; &lt;span class="no"&gt;r&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="no"&gt;p&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;&lt;span class="c1"&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;.shape&lt;/span&gt; &lt;span class="err"&gt;=&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="no"&gt;.m8n8&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;.m16n16&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="c1"&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;.num&lt;/span&gt; &lt;span class="err"&gt;=&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="no"&gt;.x1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;.x2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;.x4&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="c1"&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;.ss&lt;/span&gt; &lt;span class="err"&gt;=&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="no"&gt;.shared&lt;/span&gt;&lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="no"&gt;cta&lt;/span&gt;&lt;span class="err"&gt;}}&lt;/span&gt;&lt;span class="c1"&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;.type&lt;/span&gt; &lt;span class="err"&gt;=&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt;&lt;span class="no"&gt;.b16&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;.b8&lt;/span&gt;&lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="c1"&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;.dst_fmt&lt;/span&gt; &lt;span class="err"&gt;=&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt; &lt;span class="no"&gt;.b8x16&lt;/span&gt; &lt;span class="err"&gt;}&lt;/span&gt;&lt;span class="c1"&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="na"&gt;.src_fmt&lt;/span&gt; &lt;span class="err"&gt;=&lt;/span&gt; &lt;span class="err"&gt;{&lt;/span&gt; &lt;span class="no"&gt;.b6x16_p32&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="no"&gt;.b4x16_p64&lt;/span&gt; &lt;span class="err"&gt;};&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;数据拷贝时是否 &lt;code&gt;trans&lt;/code&gt; 同 mma 时对于 &lt;code&gt;row.col&lt;/code&gt; 的选择之间关联？&lt;/p&gt;
 &lt;h2 id="数据切分" class="heading-element"&gt;&lt;span&gt;数据切分&lt;/span&gt;
  &lt;a href="#%e6%95%b0%e6%8d%ae%e5%88%87%e5%88%86" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
