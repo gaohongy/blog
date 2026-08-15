@@ -1,8 +1,300 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/graph-computing/</link><description/><generator>Hugo 0.161.1 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Mon, 13 Jul 2026 09:28:15 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/graph-computing/index.xml" rel="self" type="application/rss+xml"/><item><title>Distributed Parallel Strategies for Large Models</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-parallel-strategies-for-large-models/</link><pubDate>Mon, 29 Jun 2026 18:27:45 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-parallel-strategies-for-large-models/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;h2 id="通信原语" class="heading-element"&gt;&lt;span&gt;通信原语&lt;/span&gt;
- &lt;a href="#%e9%80%9a%e4%bf%a1%e5%8e%9f%e8%af%ad" class="heading-mark"&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/graph-computing/</link><description/><generator>Hugo 0.161.1 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Sat, 15 Aug 2026 09:33:25 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/graph-computing/index.xml" rel="self" type="application/rss+xml"/><item><title>MOE Inference</title><link>https://gaohongy.github.io/blog/posts/ai-infra/moe-inference/</link><pubDate>Mon, 03 Aug 2026 19:40:50 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/moe-inference/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;h2 id="ffn-理解" class="heading-element"&gt;&lt;span&gt;FFN 理解&lt;/span&gt;
+ &lt;a href="#ffn-%e7%90%86%e8%a7%a3" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;h3 id="标准-ffn" class="heading-element"&gt;&lt;span&gt;标准 FFN&lt;/span&gt;
+ &lt;a href="#%e6%a0%87%e5%87%86-ffn" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;$FFN(x) = max(0, xW_1 + b_1)W_2 + b_2$&lt;/p&gt;
+&lt;p&gt;$x$ 是 attention layer 的输出，第一步经过 $xW_1$ 将维度升高，对于升高后的维度使用 ReLU 对信息进行取舍，最后经过 $w_2$ 将信息降维回之前的维度&lt;/p&gt;
+&lt;p&gt;每一个 FFN 的过程就代表了一个专家，这个专家本质上包含了 $W_1$ 和 $W_2$ 两个参数矩阵&lt;/p&gt;
+&lt;h3 id="门控gated-ffn" class="heading-element"&gt;&lt;span&gt;门控(Gated) FFN&lt;/span&gt;
+ &lt;a href="#%e9%97%a8%e6%8e%a7gated-ffn" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;p&gt;$FFN(x) = \left( \text{Act}(x \cdot w_1) \odot (x \cdot w_3) \right) \cdot w_2$&lt;/p&gt;
+&lt;p&gt;简单来说和标准 FFN 一致，对升维后信息进行筛选，然后再降维。区别是筛选机制，标准直接采用的 ReLU，门控则是通过 gated&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;$x$: 上一层 Transformer/Self-Attention 模块输出的特征张量&lt;/li&gt;
+&lt;li&gt;$\odot$: Hadamard 积, 按元素逐个相乘&lt;/li&gt;
+&lt;li&gt;$w_1$: Gate Projection, 门控映射矩阵&lt;/li&gt;
+&lt;li&gt;$w_3$: Up Projection, 升维映射矩阵&lt;/li&gt;
+&lt;li&gt;$w_2$: Down Projection, 降维映射矩阵&lt;/li&gt;
+&lt;li&gt;$\text{Act}$: 非线性激活函数, 绝大多数情况下采用的是 SiLU（Sigmoid Linear Unit）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;实际实现时，为了提高效率，会把 $w_1$ 和 $w_3$ 两部分结合起来计算。缺少的中间的Hadamard 积在实现上完成&lt;/p&gt;
+&lt;p&gt;$$[y_1, y_3] = x \cdot w_{13} = x \cdot [w_1, w_3]$$&lt;/p&gt;
+&lt;h2 id="从-deepseek-moe-模型看-moe-architecture" class="heading-element"&gt;&lt;span&gt;从 deepseek-moe 模型看 MOE Architecture&lt;/span&gt;
+ &lt;a href="#%e4%bb%8e-deepseek-moe-%e6%a8%a1%e5%9e%8b%e7%9c%8b-moe-architecture" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
 &lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;DeepseekModel 创建整个 transformer 架构，构建各个 block&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-py" data-lang="py"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;layers&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ModuleList&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;DeepseekDecoderLayer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;layer_idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;layer_idx&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;num_hidden_layers&lt;/span&gt;&lt;span class="p"&gt;)]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="2"&gt;
+&lt;li&gt;DeepseekDecoderLayer 创建一个 block，包含 attention 和 moe layer&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;span class="lnt"&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-py" data-lang="py"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;self_attn&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Deepseek_ATTENTION_CLASSES&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_attn_implementation&lt;/span&gt;&lt;span class="p"&gt;](&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;layer_idx&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;layer_idx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;mlp&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DeepseekMoE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;n_routed_experts&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; \
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;layer_idx&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;=&lt;/span&gt; &lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;first_k_dense_replace&lt;/span&gt; &lt;span class="ow"&gt;and&lt;/span&gt; &lt;span class="n"&gt;layer_idx&lt;/span&gt; &lt;span class="o"&gt;%&lt;/span&gt; &lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;moe_layer_freq&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; \
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;else&lt;/span&gt; &lt;span class="n"&gt;DeepseekMLP&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;input_layernorm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DeepseekRMSNorm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hidden_size&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;eps&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rms_norm_eps&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;post_attention_layernorm&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DeepseekRMSNorm&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hidden_size&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;eps&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;rms_norm_eps&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="3"&gt;
+&lt;li&gt;DeepseekMoE 创建一个 moe layer&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="transformer-骨架之外" class="heading-element"&gt;&lt;span&gt;transformer 骨架之外&lt;/span&gt;
+ &lt;a href="#transformer-%e9%aa%a8%e6%9e%b6%e4%b9%8b%e5%a4%96" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h3&gt;&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-py" data-lang="py"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;DeepseekForCausalLM&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;DeepseekPreTrainedModel&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="fm"&gt;__init__&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;model&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;DeepseekModel&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lm_head&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;nn&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Linear&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;hidden_size&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;config&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;vocab_size&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;bias&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="kc"&gt;False&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;forward&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;outputs&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;model&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;input_ids&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;input_ids&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;attention_mask&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;attention_mask&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;position_ids&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;position_ids&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;past_key_values&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;past_key_values&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;inputs_embeds&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;inputs_embeds&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;use_cache&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;use_cache&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;output_attentions&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;output_attentions&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;output_hidden_states&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;output_hidden_states&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;return_dict&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;return_dict&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;logits&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;lm_head&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hidden_states&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在 DeepseekModel 这个 transformer 骨架的基础上，还额外包含了 DeepseekForCausalLM 这样一层。从输出数据的内容来理解各自的区别会更简单一些&lt;/p&gt;
+&lt;p&gt;transformer 骨架生成的只是 hidden states，它的 shape 可能是 [batch, seq_len, hidden_size]&lt;/p&gt;
+&lt;p&gt;DeepseekForCausalLM 则通过 $logits = HW^{T}$，例如 [batch, seq_len, 2048] 的 H，[102400, 2048] 的 W，最终得到 [batch, seq_len, 102400] 的 logits。实际上这一步的目的是通过 &lt;code&gt;lm_head&lt;/code&gt; 将 hidden state 从模型隐藏空间投影到 vocabulary space，也就是说这里的 102400 就是词表的大小&lt;/p&gt;
+&lt;p&gt;最后一步才是通过 softmax 获取到每个 token 的生成概率&lt;/p&gt;</description></item><item><title>Inference Optimization</title><link>https://gaohongy.github.io/blog/posts/ai-infra/inference-optimization/</link><pubDate>Mon, 03 Aug 2026 18:46:32 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/inference-optimization/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;h2 id="对-batch-的理解" class="heading-element"&gt;&lt;span&gt;对 Batch 的理解&lt;/span&gt;
+ &lt;a href="#%e5%af%b9-batch-%e7%9a%84%e7%90%86%e8%a7%a3" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;batch 的概念总能听到，而我们能普遍接触到的就是普通用户使用网页端大模型的这个视角&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;训练阶段的 batch 是 dataloader 产生的，因为输入数据集自然包含了多个用户的输入&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-txt" data-lang="txt"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sample 1:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;#34;The cat sits on the mat&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sample 2:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;#34;Transformer is powerful&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;sample 3:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&amp;#34;Deep learning ...&amp;#34;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;由此自然就组合为了 batch 的输入&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-txt" data-lang="txt"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Batch:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; sample1 tokens,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; sample2 tokens,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; sample3 tokens,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="2"&gt;
+&lt;li&gt;推理阶段。从单个用户的视角来说，每个人的请求都只是一个 batch，例如下面三个用户的请求&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-txt" data-lang="txt"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;用户 A:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;帮我写一个论文摘要
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;用户 B:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;解释一下 Transformer
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;用户 C:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;写一个 Python 程序&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;但是对于底层的推理引擎来说，从性能角度考虑，一定不会逐用户的处理三项请求，而是会产生如下的 batch 数据&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt;1
+&lt;/span&gt;&lt;span class="lnt"&gt;2
+&lt;/span&gt;&lt;span class="lnt"&gt;3
+&lt;/span&gt;&lt;span class="lnt"&gt;4
+&lt;/span&gt;&lt;span class="lnt"&gt;5
+&lt;/span&gt;&lt;span class="lnt"&gt;6
+&lt;/span&gt;&lt;span class="lnt"&gt;7
+&lt;/span&gt;&lt;span class="lnt"&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-txt" data-lang="txt"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;GPU batch:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;[
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; request A token sequence,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; request B token sequence,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; request C token sequence,
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; request D token sequence
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;]&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start="3"&gt;
+&lt;li&gt;MOE 阶段的 batch&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;MoE 中 expert 接收的 batch size 和 LLM serving 中的用户数量完全不是一个概念&lt;/p&gt;
+&lt;p&gt;如果从 Transformer 数据流来看，Attention 的输出为 $X \in \mathbb{R}^{B \times S \times H}$&lt;/p&gt;
+&lt;p&gt;进入 MOE FFN layer 后，X 会 从 [B, S, H] reshape 为 [T, H]。之后会将 T 个 token 分配给不同的 expert，每个 expert 拿到的 token 数量则是这个 expert 的 batch size。这一点其实是可以同 FFN 的计算公式对应上的&lt;/p&gt;
+&lt;h2 id="inference--serving" class="heading-element"&gt;&lt;span&gt;Inference &amp;amp; Serving&lt;/span&gt;
+ &lt;a href="#inference--serving" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;LLM inference 研究模型怎么算得快&lt;/li&gt;
+&lt;li&gt;LLM serving 研究很多人同时调用模型时，整个系统怎么服务得好。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Inference 侧重 kernel/parallelism; Serving 建立在 inference 之上，但增加了调度、资源管理和多用户场景。&lt;/p&gt;</description></item><item><title>Distributed Parallel Strategies for Large Models</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-parallel-strategies-for-large-models/</link><pubDate>Mon, 29 Jun 2026 18:27:45 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-parallel-strategies-for-large-models/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;h2 id="通信原语" class="heading-element"&gt;&lt;span&gt;通信原语&lt;/span&gt;
+ &lt;a href="#%e9%80%9a%e4%bf%a1%e5%8e%9f%e8%af%ad" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th style="text-align: center"&gt;原语&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;输入&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;输出&lt;/th&gt;
+ &lt;th style="text-align: center"&gt;&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Broadcast&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;一个rank有数据&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;所有人一样&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;一个 rank 把数据发送给所有其他 rank&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Scatter&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;一个rank有完整数据&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人一部分&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;一个 rank 给不同 rank 不同数据&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Gather&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人一部分&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;一个rank完整&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;所有 rank 发送数据给一个 rank&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Reduce&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人数据&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;一个结果&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;所有 rank 提供数据，经过某种操作（sum/max/min）后，只保留一个结果&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;All-Gather&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人一部分&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;所有人完整&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每个 rank 提供一份数据，最后所有 rank 都拿到完整数据&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;All-Reduce&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人数据&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;所有人相同结果&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;先做 Reduce, 再把结果广播给所有 rank&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;Reduce-Scatter&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人完整部分&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人得到reduce后的shard&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;先求和，然后切分发送&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td style="text-align: center"&gt;All-to-All&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人切片发送&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每人重新组合&lt;/td&gt;
+ &lt;td style="text-align: center"&gt;每个 rank 把数据切片后分别发送给所有 rank，最后每个 rank 收集属于自己的那部分&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;具体功能效果见 &lt;a href="https://chatgpt.com/c/6a545259-9f08-83ee-9dc4-acf1869981c9"target="_blank" rel="external nofollow noopener noreferrer"&gt;parallemism method&lt;/a&gt;&lt;/p&gt;
+&lt;ol&gt;
 &lt;li&gt;All-Gather。通信完成后，每个进程都获得所有进程数据块的拼接总和。所有人最后拿到的内容是完全一样的。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
@@ -54,7 +346,99 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Rank 1: [A1, B1, C1]
 &lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Rank 2: [A2, B2, C2]&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;</description></item><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;不同的并行策略下有不同的通信方式的需求，但是下面的内容的正确性有待确定&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
+&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
+&lt;/span&gt;&lt;span class="lnt"&gt; 2
+&lt;/span&gt;&lt;span class="lnt"&gt; 3
+&lt;/span&gt;&lt;span class="lnt"&gt; 4
+&lt;/span&gt;&lt;span class="lnt"&gt; 5
+&lt;/span&gt;&lt;span class="lnt"&gt; 6
+&lt;/span&gt;&lt;span class="lnt"&gt; 7
+&lt;/span&gt;&lt;span class="lnt"&gt; 8
+&lt;/span&gt;&lt;span class="lnt"&gt; 9
+&lt;/span&gt;&lt;span class="lnt"&gt;10
+&lt;/span&gt;&lt;span class="lnt"&gt;11
+&lt;/span&gt;&lt;span class="lnt"&gt;12
+&lt;/span&gt;&lt;span class="lnt"&gt;13
+&lt;/span&gt;&lt;span class="lnt"&gt;14
+&lt;/span&gt;&lt;span class="lnt"&gt;15
+&lt;/span&gt;&lt;span class="lnt"&gt;16
+&lt;/span&gt;&lt;span class="lnt"&gt;17
+&lt;/span&gt;&lt;span class="lnt"&gt;18
+&lt;/span&gt;&lt;span class="lnt"&gt;19
+&lt;/span&gt;&lt;span class="lnt"&gt;20
+&lt;/span&gt;&lt;span class="lnt"&gt;21
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class="lntd"&gt;
+&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-txt" data-lang="txt"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Data Parallel:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; All-Reduce
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Reduce-Scatter
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Tensor Parallel:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; All-Reduce
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; All-Gather
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Pipeline Parallel:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Send/Recv
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Sequence Parallel:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Scatter
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; All-Gather
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;Context Parallel:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; All-Gather
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; Ring Attention通信
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;MoE:
+&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; All-to-All&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id="cp-x-ulysses-sp" class="heading-element"&gt;&lt;span&gt;CP x Ulysses SP&lt;/span&gt;
+ &lt;a href="#cp-x-ulysses-sp" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;CP=4 表示每个 CP group 内有 4 个 GPU 参与 context parallel&lt;/p&gt;
+&lt;p&gt;其实不管是何种并行，它的数量表示的都是参与并行的 GPU 数量，这些 GPU 会作为一个单独的组别，多出来的 GPU 则会重复。举个例子&lt;/p&gt;
+&lt;p&gt;当sequence length 为 16000, 有 8 个 GPU，CP 为 4 时，会形成两个 CP group, 通信发生在 CP group 内部&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;CP group 0: GPU0 GPU1 GPU2 GPU3&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;GPU0: token 0~3999&lt;/li&gt;
+&lt;li&gt;GPU1: token 4000~7999&lt;/li&gt;
+&lt;li&gt;GPU2: token 8000~11999&lt;/li&gt;
+&lt;li&gt;GPU3: token 12000~15999&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;CP group 1: GPU4 GPU5 GPU6 GPU7&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;GPU4~7 保持相同的划分模式，如果没有其他维度的并行，这 4 张卡的计算就是浪费的&lt;/p&gt;
+&lt;p&gt;当有多种并行机制叠加时，具体组别的划分就要看推理框架的具体实现了，它们可能有着不同的 GPU-to-grid 的映射方式，这里我们只说一种可能的情况，更重要的是理解在多维并行存在时的数据划分方式&lt;/p&gt;
+&lt;p&gt;序列长度保持不变，head 数量为 16，8 个 GPU，CP 为 4，SP 为 2&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;CP group 0: GPU0 GPU1 GPU2 GPU3&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;GPU0: token 0~3999, heads 0-7&lt;/li&gt;
+&lt;li&gt;GPU1: token 4000~7999, heads 0-7&lt;/li&gt;
+&lt;li&gt;GPU2: token 8000~11999, heads 0-7&lt;/li&gt;
+&lt;li&gt;GPU3: token 12000~15999, heads 0-7&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start="2"&gt;
+&lt;li&gt;CP group 1: GPU4 GPU5 GPU6 GPU7&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;GPU4: token 0~3999, heads 8-15&lt;/li&gt;
+&lt;li&gt;GPU5: token 4000~7999, heads 8-15&lt;/li&gt;
+&lt;li&gt;GPU6: token 8000~11999, heads 8-15&lt;/li&gt;
+&lt;li&gt;GPU7: token 12000~15999, heads 8-15&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id="ep" class="heading-element"&gt;&lt;span&gt;EP&lt;/span&gt;
+ &lt;a href="#ep" class="heading-mark"&gt;
+ &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
+ &lt;/a&gt;
+&lt;/h2&gt;&lt;p&gt;每个 GPU 都拿到完整的 expert&lt;/p&gt;</description></item><item><title>Distributed Training and Reasoning Optimization of LLM</title><link>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</link><pubDate>Mon, 12 Jan 2026 17:07:52 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/distributed-training-and-reasoning-optimization-of-llm/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;p&gt;Sufficient memory: Can we go faster? &lt;sup id="fnref:1"&gt;&lt;a href="#fn:1" class="footnote-ref" role="doc-noteref"&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;数据并行 (Data Parallelism - DP)&lt;/li&gt;
 &lt;/ol&gt;
@@ -2651,139 +3035,4 @@ a_mb_1 &amp;amp; a_mb_2 &amp;amp; \dots &amp;amp; a_mb_n
 &lt;li&gt;其他问题解决&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;在添加完引导程序准备启动程序时，可能会在开机时仍然找不到引导程序，这是因为某些主板的 UEFI 会硬编码引导路径，仅识别固定路径 EFI/BOOT/BOOTX64.EFI，忽略其他自定义路径（如 EFI/ARCH/grubx64.efi），所以需要额外将 GRUB 安装到 UEFI 规范中的后备引导路径，当然这一点在 archlinux 的安装流程中也有说明。&lt;/p&gt;</description></item><item><title>CUDA Performance Analysis</title><link>https://gaohongy.github.io/blog/posts/hpc/cuda-performance-analysis/</link><pubDate>Fri, 08 Aug 2025 14:14:27 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/hpc/cuda-performance-analysis/</guid><category domain="https://gaohongy.github.io/blog/categories/hpc/">HPC</category><description>&lt;p&gt;学习视频参考(视频有提供ppt）：https://www.bilibili.com/video/BV13w411o7cu/?from=search&amp;amp;seid=13327380806166965269&amp;amp;spm_id_from=333.337.0.0&amp;amp;vd_source=98d46c524d240bd89f118ad90be17aef&lt;/p&gt;
-&lt;p&gt;调优一定要找好 baseline，就是我们需要首先知道自己的目标是什么，才能知道是否有必要调优以及如何调优&lt;/p&gt;</description></item><item><title>Runtime Library</title><link>https://gaohongy.github.io/blog/posts/linux/runtime-library/</link><pubDate>Mon, 12 May 2025 20:21:46 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/linux/runtime-library/</guid><category domain="https://gaohongy.github.io/blog/categories/linux/">Linux</category><description>&lt;p&gt;程序运行的基本步骤：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;操作系统创建进程，将控制权移交给程序的入口（一般为运行库的某个入口函数）&lt;/li&gt;
-&lt;li&gt;入口函数执行初始化&lt;/li&gt;
-&lt;li&gt;入口函数负责调用 main 函数执行程序主体&lt;/li&gt;
-&lt;li&gt;main 执行完毕后，返回入口函数，进行清理工作，通过系统调用结束进程&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;code&gt;_start&lt;/code&gt; -&amp;gt; &lt;code&gt;__libc_start_main&lt;/code&gt; -&amp;gt; &lt;code&gt;main&lt;/code&gt;&lt;/p&gt;</description></item><item><title>IO</title><link>https://gaohongy.github.io/blog/posts/c-c++/io/</link><pubDate>Tue, 29 Apr 2025 11:02:14 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/c-c++/io/</guid><category domain="https://gaohongy.github.io/blog/categories/c-c++/">C-C++</category><description>&lt;table&gt;
- &lt;thead&gt;
- &lt;tr&gt;
- &lt;th style="text-align: center"&gt;分类&lt;/th&gt;
- &lt;th style="text-align: center"&gt;方法/函数&lt;/th&gt;
- &lt;th style="text-align: center"&gt;头文件&lt;/th&gt;
- &lt;th style="text-align: center"&gt;用途&lt;/th&gt;
- &lt;th style="text-align: center"&gt;示例代码&lt;/th&gt;
- &lt;th style="text-align: center"&gt;适用场景&lt;/th&gt;
- &lt;/tr&gt;
- &lt;/thead&gt;
- &lt;tbody&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;C++ 流式读写&lt;/td&gt;
- &lt;td style="text-align: center"&gt;std::ifstream&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&lt;fstream&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;文本/二进制读&lt;/td&gt;
- &lt;td style="text-align: center"&gt;cpp std::ifstream fin(&amp;ldquo;a.txt&amp;rdquo;); fin &amp;raquo; x;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;类型安全的高层读写&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;std::ofstream&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&lt;fstream&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;文本/二进制写&lt;/td&gt;
- &lt;td style="text-align: center"&gt;cpp std::ofstream fout(&amp;ldquo;a.txt&amp;rdquo;); fout &amp;laquo; x;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;std::fstream&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&lt;fstream&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;文本/二进制读写&lt;/td&gt;
- &lt;td style="text-align: center"&gt;cpp std::fstream file(&amp;ldquo;a.bin&amp;rdquo;, std::ios::binary|std::ios::in|out);&lt;/td&gt;
- &lt;td style="text-align: center"&gt;需要随机访问的二进制文件&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;C 标准库&lt;/td&gt;
- &lt;td style="text-align: center"&gt;fopen() + fread()/fwrite()&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&amp;lt;stdio.h&amp;gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;二进制读写&lt;/td&gt;
- &lt;td style="text-align: center"&gt;c FILE* f = fopen(&amp;ldquo;a.bin&amp;rdquo;, &amp;ldquo;rb&amp;rdquo;); fread(&amp;amp;x, sizeof(int), 1, f);&lt;/td&gt;
- &lt;td style="text-align: center"&gt;跨平台二进制操作&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;fopen() + fscanf()/fprintf()&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&amp;lt;stdio.h&amp;gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;格式化文本读写&lt;/td&gt;
- &lt;td style="text-align: center"&gt;c fprintf(f, &amp;ldquo;%d&amp;rdquo;, x);&lt;/td&gt;
- &lt;td style="text-align: center"&gt;结构化文本文件&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;fgets()/fputs()&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&amp;lt;stdio.h&amp;gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;行式文本读写&lt;/td&gt;
- &lt;td style="text-align: center"&gt;c fgets(buf, 100, f);&lt;/td&gt;
- &lt;td style="text-align: center"&gt;逐行处理文本&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;POSIX 系统调用&lt;/td&gt;
- &lt;td style="text-align: center"&gt;open() + read()/write()&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&amp;lt;fcntl.h&amp;gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;低层二进制读写&lt;/td&gt;
- &lt;td style="text-align: center"&gt;c int fd = open(&amp;ldquo;a.bin&amp;rdquo;, O_RDWR); read(fd, &amp;amp;x, sizeof(x));&lt;/td&gt;
- &lt;td style="text-align: center"&gt;需要精细控制（如非阻塞IO）&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;mmap()&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&amp;lt;sys/mman.h&amp;gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;内存映射文件&lt;/td&gt;
- &lt;td style="text-align: center"&gt;c void* p = mmap(&amp;hellip;, fd, &amp;hellip;);&lt;/td&gt;
- &lt;td style="text-align: center"&gt;大文件随机访问&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;内存文件&lt;/td&gt;
- &lt;td style="text-align: center"&gt;fmemopen() (POSIX)&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&amp;lt;stdio.h&amp;gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;将内存模拟为文件&lt;/td&gt;
- &lt;td style="text-align: center"&gt;c FILE* memf = fmemopen(buf, size, &amp;ldquo;r+&amp;rdquo;);&lt;/td&gt;
- &lt;td style="text-align: center"&gt;内存数据流处理&lt;/td&gt;
- &lt;/tr&gt;
- &lt;tr&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;std::stringstream&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&lt;sstream&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;C++ 内存流&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;td style="text-align: center"&gt;&lt;/td&gt;
- &lt;/tr&gt;
- &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;有时候涉及到文件流和字符串流综合运用的场景&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;div class="chroma"&gt;
-&lt;table class="lntable"&gt;&lt;tr&gt;&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code&gt;&lt;span class="lnt"&gt; 1
-&lt;/span&gt;&lt;span class="lnt"&gt; 2
-&lt;/span&gt;&lt;span class="lnt"&gt; 3
-&lt;/span&gt;&lt;span class="lnt"&gt; 4
-&lt;/span&gt;&lt;span class="lnt"&gt; 5
-&lt;/span&gt;&lt;span class="lnt"&gt; 6
-&lt;/span&gt;&lt;span class="lnt"&gt; 7
-&lt;/span&gt;&lt;span class="lnt"&gt; 8
-&lt;/span&gt;&lt;span class="lnt"&gt; 9
-&lt;/span&gt;&lt;span class="lnt"&gt;10
-&lt;/span&gt;&lt;span class="lnt"&gt;11
-&lt;/span&gt;&lt;span class="lnt"&gt;12
-&lt;/span&gt;&lt;span class="lnt"&gt;13
-&lt;/span&gt;&lt;span class="lnt"&gt;14
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class="lntd"&gt;
-&lt;pre tabindex="0" class="chroma"&gt;&lt;code class="language-cpp" data-lang="cpp"&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;fstream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;sstream&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt; &lt;span class="cpf"&gt;&amp;lt;string&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="kt"&gt;void&lt;/span&gt; &lt;span class="nf"&gt;parseFileLines&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt; &lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;ifstream&lt;/span&gt; &lt;span class="n"&gt;fin&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;filename&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;string&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;getline&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fin&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt; &lt;span class="c1"&gt;// 逐行读取文件
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;istringstream&lt;/span&gt; &lt;span class="n"&gt;iss&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;line&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt; &lt;span class="c1"&gt;// 每行转为字符串流
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="kt"&gt;int&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;iss&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="c1"&gt;// 从字符串流解析数据
-&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="n"&gt;std&lt;/span&gt;&lt;span class="o"&gt;::&lt;/span&gt;&lt;span class="n"&gt;cout&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;Parsed: &amp;#34;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;x&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;, &amp;#34;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span class="s"&gt;&amp;#34;&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s"&gt;&amp;#34;&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt; &lt;span class="p"&gt;}&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class="line"&gt;&lt;span class="cl"&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description></item></channel></rss>
+&lt;p&gt;调优一定要找好 baseline，就是我们需要首先知道自己的目标是什么，才能知道是否有必要调优以及如何调优&lt;/p&gt;</description></item></channel></rss>
