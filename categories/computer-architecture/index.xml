@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/computer-architecture/</link><description/><generator>Hugo 0.161.1 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Sat, 15 Aug 2026 09:33:25 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/computer-architecture/index.xml" rel="self" type="application/rss+xml"/><item><title>MOE Inference</title><link>https://gaohongy.github.io/blog/posts/ai-infra/moe-inference/</link><pubDate>Mon, 03 Aug 2026 19:40:50 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/moe-inference/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;h2 id="ffn-理解" class="heading-element"&gt;&lt;span&gt;FFN 理解&lt;/span&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title/><link>https://gaohongy.github.io/blog/categories/computer-architecture/</link><description/><generator>Hugo 0.161.1 &amp; FixIt v0.3.18</generator><language>en</language><lastBuildDate>Tue, 01 Sep 2026 16:20:09 +0800</lastBuildDate><atom:link href="https://gaohongy.github.io/blog/categories/computer-architecture/index.xml" rel="self" type="application/rss+xml"/><item><title>MOE Inference</title><link>https://gaohongy.github.io/blog/posts/ai-infra/moe-inference/</link><pubDate>Mon, 03 Aug 2026 19:40:50 +0800</pubDate><guid>https://gaohongy.github.io/blog/posts/ai-infra/moe-inference/</guid><category domain="https://gaohongy.github.io/blog/categories/ai-infra/">AI-Infra</category><description>&lt;h2 id="ffn-理解" class="heading-element"&gt;&lt;span&gt;FFN 理解&lt;/span&gt;
  &lt;a href="#ffn-%e7%90%86%e8%a7%a3" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
@@ -2926,10 +2926,17 @@ a_mb_1 &amp;amp; a_mb_2 &amp;amp; \dots &amp;amp; a_mb_n
  &lt;a href="#%e5%bc%95%e5%af%bc%e7%b1%bb%e5%9e%8b%e4%b8%8e%e7%a3%81%e7%9b%98%e5%88%86%e5%8c%ba%e8%a1%a8%e6%a0%bc%e5%bc%8f" class="heading-mark"&gt;
  &lt;svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"&gt;&lt;path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"&gt;&lt;/path&gt;&lt;/svg&gt;
  &lt;/a&gt;
-&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;开机引导方式为 Legacy 引导 -&amp;gt; 磁盘存储数据的结构需要为 MBR 分区&lt;/li&gt;
-&lt;li&gt;UEFI 引导 -&amp;gt; GPT 分区&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/h2&gt;&lt;p&gt;BIOS 还是 UEFI 这只是发展过程中产生的两种启动模式，但是启动逻辑是始终如一的.&lt;/p&gt;
+&lt;p&gt;开机过程分为主板侧和磁盘侧两部分。主板上存在一块 ROM，像我们平时进入的 BIOS 设置界面（或 UEFI 固件设置界面）都是 ROM 上的程序提供的功能。除了提供这个设置功能外，它还负责将后续启动过程交给磁盘侧来继续完成，而磁盘侧的结构和流程就进一步细分成&amp;quot;传统 BIOS 模式 (Legacy) &amp;ldquo;和&amp;quot;现代 UEFI 模式&amp;quot;两种了。&lt;/p&gt;
+&lt;p&gt;虽然说磁盘侧的后续过程被细分为 BIOS 和 UEFI 两种，但是 BIOS 固件和 UEFI 固件实际是主板 ROM 上的两种类型，正是因为它们的特性不同，才导致了对磁盘上的结构以及数据要求的不同。&lt;/p&gt;
+&lt;p&gt;BIOS 固件只会无脑加载磁盘的 0 号扇区，后来为了适应 BIOS 固件的这种启动行为，在磁盘设计上提出了 MBR 分区表类型(Master Boot Record，主引导记录)。更具体来说在磁盘的 0 号扇区有 512 字节的数据，446 字节的主引导代码，64 字节的分区表以及 2 字节的结束有效标志，之后的磁盘区域就是存放的操作系统分区了。由 BIOS 固件到 MBR 上的引导代码，操作系统的启动过程也就从主板侧来到了磁盘侧，后续就是加载真正的操作系统内核了。&lt;/p&gt;
+&lt;p&gt;UEFI 固件则已经类似于一个操作系统。与 BIOS 固件对接 MBR 分区表格式对应，UEFI 固件所对应的分区表格式叫做 GPT (GUID Partition Table, 全局唯一标识符分区表)。这种分区表格式在数据组织上，在最开始的位置是一个 FAT32 格式的 ESP 系统分区 (EFI System Partition)，其中存放的是下面这些引导文件。在 ESP 之后就是操作系统分区。整体过程就是从 UEFI 固件到 efi 引导文件，最后到操作系统分区中的系统内容。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;/EFI/boot/bootx64.efi (Fallback 文件，适用于磁盘迁移时找不到对应引导文件时的选择)&lt;/li&gt;
+&lt;li&gt;/EFI/ubuntu/grubx64.efi (GRUB)&lt;/li&gt;
+&lt;li&gt;/EFI/Microsoft/Boot/bootmgfw.efi (Windows Boot Manager)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;值得提到的一点是在 UEFI 启动模式下的多系统启动，常规的方式在系统启动时通过 Fxxx 键进入 UEFI 设置界面，修改操作系统的启动优先顺序，但是这无疑是麻烦的，所以就出现了一种链式加载（Chainloading）的方式。具体来说，启动时会走 GRUB，由 GRUB 再选择是走 ubuntu 的 efi 还是 windows 的 efi。这相当让 GRUB 作为&amp;quot;引导引导程序&amp;rdquo;，它的实现方式是使用 &lt;code&gt;os-prober&lt;/code&gt;程序为 GRUB 生成配置文件，从而可以添加一个启动时走 windows efi 的配置项。这样的好处是在希望切换系统时按照正常的启动流程即可，无需再次进入 UEFI 的设置界面。&lt;/p&gt;
 &lt;table&gt;
  &lt;thead&gt;
  &lt;tr&gt;
